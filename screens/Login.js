@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ImageBackground, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons'; // Importing Ionicons from react-native-vector-icons
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
@@ -32,106 +33,130 @@ export default function Login({ navigation }) {
   };
 
   return (
-    <ImageBackground 
-      source={require('../assets/backr.png')} // Update this to your image path
-      style={styles.background}
-    >
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Icon name="arrow-back" size={24} color="#FFFFFF"  />
+        <Icon name="earth-outline" size={28} color="#000" style={styles.earth}/>
+      </View>
       <View style={styles.overlay}>
-        <Text style={styles.textstyle}>SIGN IN</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor="#888"
-          value={email}
-          onChangeText={setEmail}
+        <Image
+          source={require('../assets/cadenas_cut.png')}
+          style={styles.image}
         />
+        <Text style={styles.welcomeText}>Welcome Back!</Text>
+        <Text style={styles.subtitle}>Make your day full of productivity!</Text>
+        <View style={styles.inputContainer}>
+          <Icon name="mail-outline" size={20} color="#888" style={styles.icon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            placeholderTextColor="#888"
+            value={email}
+            onChangeText={setEmail}
+          />
+        </View>
         {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
-        <TextInput
-          style={styles.input1}
-          placeholder="Password"
-          placeholderTextColor="#888"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+        <View style={styles.inputContainer}>
+          <Icon name="lock-closed-outline" size={20} color="#888" style={styles.icon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            placeholderTextColor="#888"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
+          <Icon name="eye-off-outline" size={20} color="#888" style={styles.icon} />
+        </View>
         {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
-        <TouchableOpacity
-          style={[styles.rememberMeContainer, rememberMe && styles.rememberMeSelected]}
-          onPress={() => setRememberMe(!rememberMe)}
-        >
-          <Text style={styles.rememberMeText}>{rememberMe ? '✓ ' : ''}Remember Me</Text>
-        </TouchableOpacity>
+        <View style={styles.optionsContainer}>
+          <TouchableOpacity
+            style={[styles.rememberMeContainer, rememberMe && styles.rememberMeSelected]}
+            onPress={() => setRememberMe(!rememberMe)}
+          >
+            <Text style={styles.rememberMeText}>{rememberMe ? '✓ ' : ''}Remember Me</Text>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+          </TouchableOpacity>
+        </View>
         <TouchableOpacity
           style={styles.button}
           onPress={handleLogin}
         >
-          <Text style={styles.buttonText}>Login</Text>
+          <Text style={styles.buttonText}>Sign In</Text>
         </TouchableOpacity>
-        <Text style={styles.copyrightText}>© IPACT Consult 2024</Text>
+        <View style={styles.footerContainer}>
+          <Text style={styles.footerText}>Not a member? </Text>
+          <TouchableOpacity>
+            <Text style={styles.signUpText}>Sign Up!</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  background: {
+  container: {
     flex: 1,
-    resizeMode: 'cover', // or 'stretch' if you want to stretch the image
+  
+    backgroundColor: 'white',
+  },
+  earth:{
+    marginTop:25,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 20,
   },
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // optional overlay to make text more readable
+    backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: 20,
   },
-  textstyle: {
-    fontSize: 30,
+  image: {
+    width: 200,
+    height: 230,
+    marginBottom: 20,
+  },
+  welcomeText: {
+    fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 100,
-    color: '#f28b82', // or your preferred color
+    marginBottom: 10,
+    color: '#333',
   },
-  button: {
-    backgroundColor: '#f28b82', // or your preferred color
-    paddingVertical: 15,
-    paddingHorizontal: 25,
-    borderRadius: 25,
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  buttonText: {
-    color: '#fff',
+  subtitle: {
     fontSize: 16,
-    fontWeight: 'bold',
+    color: '#666',
+    marginBottom: 30,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f1f1f1',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    marginBottom: 15,
+    borderRadius: 15,
+    width: '90%',
+    height:55,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   input: {
-    backgroundColor: '#f1f1f1', // or your preferred color
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    marginBottom: 15,
-    borderRadius: 25,
-    textAlign: 'center',
+    flex: 1,
     fontSize: 16,
-    width: '90%', // or your preferred width
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    color: '#333',
   },
-  input1: {
-    backgroundColor: '#f1f1f1', // or your preferred color
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    marginBottom: 15,
-    borderRadius: 25,
-    textAlign: 'center',
-    fontSize: 16,
-    width: '90%', // or your preferred width
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+  icon: {
+    marginRight: 10,
   },
   errorText: {
     color: 'red',
@@ -139,27 +164,59 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     marginBottom: 10,
   },
+  optionsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    marginBottom: 70,
+    
+  },
   rememberMeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 30,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 25,
-    borderWidth: 1,
-    borderColor: '#888',
+    marginHorizontal:30,
   },
   rememberMeSelected: {
     backgroundColor: '#f28b82',
     borderColor: '#f28b82',
   },
   rememberMeText: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#888',
   },
-  copyrightText: {
-    marginTop: 20,
+  forgotPasswordText: {
     fontSize: 14,
+    color: '#f28b82',
+    marginHorizontal:30,
+  },
+  button: {
+    backgroundColor: '#f28b82',
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    borderRadius: 15,
+    alignItems: 'center',
+    width: '90%',
+    marginBottom: 20,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
     fontWeight: 'bold',
+  },
+  footerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom:40,
+  },
+  footerText: {
+    fontSize: 14,
+    color: '#888',
+  },
+  signUpText: {
+    fontSize: 16,
+    color: '#f28b82',
+    fontWeight: 'bold',
+ 
   },
 });

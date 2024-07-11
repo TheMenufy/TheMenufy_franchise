@@ -3,20 +3,103 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from 'react-native-vector-icons';
 import FranchiseScreen from '../screens/Franchise';
 import RestaurantScreen from '../screens/Restaurants';
 
 const Tab = createBottomTabNavigator();
 
+function CustomTabBar({ state, descriptors, navigation }) {
+  return (
+    <View style={styles.tabBar}>
+      {state.routes.map((route, index) => {
+        const { options } = descriptors[route.key];
+        const isFocused = state.index === index;
+
+        const onPress = () => {
+          const event = navigation.emit({
+            type: 'tabPress',
+            target: route.key,
+          });
+
+          if (!isFocused && !event.defaultPrevented) {
+            navigation.navigate(route.name);
+          }
+        };
+
+        const onLongPress = () => {
+          navigation.emit({
+            type: 'tabLongPress',
+            target: route.key,
+          });
+        };
+
+        let iconName;
+        if (route.name === 'Home') {
+          iconName = 'home';
+        } else if (route.name === 'Profile') {
+          iconName = 'person';
+        } else if (route.name === 'Franchise') {
+          iconName = 'business';
+        } else if (route.name === 'Restaurants') {
+          iconName = 'restaurant';
+        } else if (route.name === 'Users') {
+          iconName = 'people';
+        }
+
+        if (route.name === 'Home') {
+          return (
+            <TouchableOpacity
+              key={route.key}
+              accessibilityRole="button"
+              accessibilityStates={isFocused ? ['selected'] : []}
+              accessibilityLabel={options.tabBarAccessibilityLabel}
+              testID={options.tabBarTestID}
+              onPress={onPress}
+              onLongPress={onLongPress}
+              style={styles.homeButton}
+            >
+              <Ionicons name={iconName} size={30} color="white" />
+            </TouchableOpacity>
+          );
+        } else {
+          return (
+            <TouchableOpacity
+              key={route.key}
+              accessibilityRole="button"
+              accessibilityStates={isFocused ? ['selected'] : []}
+              accessibilityLabel={options.tabBarAccessibilityLabel}
+              testID={options.tabBarTestID}
+              onPress={onPress}
+              onLongPress={onLongPress}
+              style={styles.tabButton}
+            >
+              <Ionicons
+                name={iconName}
+                size={25}
+                color={isFocused ? 'tomato' : 'gray'}
+              />
+              <Text style={{ color: isFocused ? 'tomato' : 'gray' }}>
+                {route.name}
+              </Text>
+            </TouchableOpacity>
+          );
+        }
+      })}
+    </View>
+  );
+}
+
 const Home = () => {
   return (
-    <Tab.Navigator>
-      <Tab.Screen name="Home" component={HomeScreen} />
+    <Tab.Navigator tabBar={(props) => <CustomTabBar {...props} />}
+    initialRouteName="Home">
       <Tab.Screen name="Profile" component={ProfileScreen} />
-      <Tab.Screen name="Franchises" component={FranchisesScreen} />
+      <Tab.Screen name="Franchise" component={FranchisesScreen} />
+      <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Restaurants" component={RestaurantsScreen} />
       <Tab.Screen name="Users" component={UsersScreen} />
-      <Tab.Screen name="Archives" component={ArchivesScreen} />
+    
     </Tab.Navigator>
   );
 };
@@ -33,12 +116,7 @@ const HomeScreen = ({ navigation }) => {
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
         <Text style={styles.welcomeText}>Welcome!</Text>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('AddFranchise')}>
-          <Text style={styles.buttonText}>Add Franchise</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('AddRestaurant')}>
-          <Text style={styles.buttonText}>Add Restaurant</Text>
-        </TouchableOpacity>
+       
 
         <View style={styles.newsSection}>
           <Text style={styles.newsHeading}>Latest News</Text>
@@ -55,13 +133,11 @@ const HomeScreen = ({ navigation }) => {
 };
 
 const ProfileScreen = () => {
-  // Exemple de données d'administrateur
   const admin = {
     firstName: 'John',
     lastName: 'Doe',
     role: 'Administrator',
     phoneNumber: '+1234567890',
-    // Remplacez imageUrl par l'URL de l'image de profil de l'administrateur
     imageUrl: 'https://example.com/admin_profile.jpg', 
   };
 
@@ -77,9 +153,7 @@ const ProfileScreen = () => {
         <Text style={styles.name}>{admin.firstName} {admin.lastName}</Text>
         <Text style={styles.role}>{admin.role}</Text>
         <Text style={styles.phoneNumber}>{admin.phoneNumber}</Text>
-        {/* Ajoutez d'autres informations si nécessaire */}
       </View>
-      {/* Autres contenus de la page de profil ici */}
     </View>
   );
 };
@@ -100,13 +174,6 @@ const UsersScreen = () => {
   );
 };
 
-const ArchivesScreen = () => {
-  return (
-    <View style={styles.container}>
-      <Text>Archives Screen</Text>
-    </View>
-  );
-};
 
 const styles = StyleSheet.create({
   scrollContainer: {
@@ -128,7 +195,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   button: {
-    backgroundColor: '#FFA07A', // Oranger clair
+    backgroundColor: '#FFA07A',
     padding: 15,
     borderRadius: 10,
     marginVertical: 10,
@@ -194,6 +261,27 @@ const styles = StyleSheet.create({
   phoneNumber: {
     fontSize: 16,
     color: '#888',
+  },
+  tabBar: {
+    flexDirection: 'row',
+    height: 60,
+    backgroundColor: 'white',
+    borderTopWidth: 0.5,
+    borderTopColor: '#ccc',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  tabButton: {
+    alignItems: 'center',
+  },
+  homeButton: {
+    width: 60,
+    height: 60,
+    borderRadius: 35,
+    backgroundColor: 'tomato',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: -10,
   },
 });
 
