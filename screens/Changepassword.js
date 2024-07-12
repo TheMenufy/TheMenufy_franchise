@@ -2,23 +2,14 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons'; // Importing Ionicons from react-native-vector-icons
 
-export default function Login({ navigation }) {
+export default function Changepassword({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
-  const handleforgetpassword = () => {
-    let valid = true;
 
-   
-
-    if (valid) {
-      // Proceed with navigation or login logic
-      navigation.navigate('forgetpassword');
-    }
-  };
-  const handleLogin = () => {
+  const handlechangepasswordverificaion = () => {
     let valid = true;
 
     if (email === '') {
@@ -28,32 +19,23 @@ export default function Login({ navigation }) {
       setEmailError('');
     }
 
-    if (password === '') {
-      setPasswordError('Password is required');
-      valid = false;
-    } else {
-      setPasswordError('');
-    }
-
+    
     if (valid) {
-      // Proceed with navigation or login logic
-      navigation.navigate('home');
+     
+      navigation.navigate('changepasswordverificarion');
     }
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Icon name="arrow-back" size={24} color="#FFFFFF"  />
+        <Icon name="arrow-back" size={28} color="#000" style={styles.earth}  />
         <Icon name="earth-outline" size={28} color="#000" style={styles.earth}/>
       </View>
       <View style={styles.overlay}>
-        <Image
-          source={require('../assets/cadenas_cut.png')}
-          style={styles.image}
-        />
-        <Text style={styles.welcomeText}>Welcome Back!</Text>
-        <Text style={styles.subtitle}>Make your day full of productivity!</Text>
+       
+        <Text style={styles.welcomeText}>What's your email address ?</Text>
+        <Text style={styles.subtitle}>Enter the email address associeted with your account </Text>
         <View style={styles.inputContainer}>
           <Icon name="mail-outline" size={20} color="#888" style={styles.icon} />
           <TextInput
@@ -65,39 +47,17 @@ export default function Login({ navigation }) {
           />
         </View>
         {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
-        <View style={styles.inputContainer}>
-          <Icon name="lock-closed-outline" size={20} color="#888" style={styles.icon} />
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            placeholderTextColor="#888"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
-          <Icon name="eye-off-outline" size={20} color="#888" style={styles.icon} />
-        </View>
-        {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
-        <View style={styles.optionsContainer}>
-          <TouchableOpacity
-            style={[styles.rememberMeContainer, rememberMe && styles.rememberMeSelected]}
-            onPress={() => setRememberMe(!rememberMe)}
-          >
-            <Text style={styles.rememberMeText}>{rememberMe ? '✓ ' : ''}Remember Me</Text>
-          </TouchableOpacity>
-          <TouchableOpacity   onPress={handleforgetpassword}>
-            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-          
-          </TouchableOpacity>
-        </View>
+        
+       
+       
+        <View style={styles.footerContainer}>
         <TouchableOpacity
           style={styles.button}
-          onPress={handleLogin}
+          onPress={handlechangepasswordverificaion}
+    
         >
-          <Text style={styles.buttonText}>Sign In</Text>
+          <Text style={styles.buttonText}>Continue</Text>
         </TouchableOpacity>
-        <View style={styles.footerContainer}>
-
         </View>
       </View>
     </View>
@@ -133,13 +93,14 @@ const styles = StyleSheet.create({
   welcomeText: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 30,
     color: '#333',
   },
   subtitle: {
     fontSize: 16,
     color: '#666',
-    marginBottom: 30,
+    marginBottom: 25,
+    marginHorizontal:10
   },
   inputContainer: {
     flexDirection: 'row',
@@ -200,11 +161,11 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#f28b82',
     paddingVertical: 15,
-    paddingHorizontal: 25,
+    paddingHorizontal: 15,
     borderRadius: 15,
     alignItems: 'center',
     width: '90%',
-    marginBottom: 20,
+ 
   },
   buttonText: {
     color: '#fff',
@@ -214,7 +175,10 @@ const styles = StyleSheet.create({
   footerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom:40,
+marginTop:350
+    
+
+ 
   },
   footerText: {
     fontSize: 14,
