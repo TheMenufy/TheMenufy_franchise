@@ -23,11 +23,12 @@ export default function Forgetpasswordverificarion({ navigation }) {
     if (newCode.join('').length === 4) {
       // Validate code
       if (newCode.join('') === '0000') { // Example correct code
-        setIsCodeIncorrect(false);
-        navigation.navigate('changepassword');
+        
+       navigation.navigate('Changepasswordwithverif');
         // Proceed with verification
       } else {
-        setIsCodeIncorrect(true);
+       
+       
       }
     }
   };

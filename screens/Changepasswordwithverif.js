@@ -2,28 +2,24 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons'; // Importing Ionicons from react-native-vector-icons
 
-export default function Changepassword({ navigation }) {
-  const [email, setEmail] = useState('');
+export default function Changepasswordwithverif({ navigation }) {
+  const [Confirmpassword, setConfirmpassword] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
 
-  const handlechangepasswordverificaion = () => {
+  const handleChangepasswordwithverifverificaion = () => {
     let valid = true;
 
-    if (email === '') {
-      setEmailError('Email is required');
-      valid = false;
-    } else {
-      setEmailError('');
-    }
+   
 
     
     if (valid) {
      
-      navigation.navigate('changepasswordverificarion');
+      navigation.navigate('login');
     }
+
   };
 
   return (
@@ -34,29 +30,43 @@ export default function Changepassword({ navigation }) {
       </View>
       <View style={styles.overlay}>
        
-        <Text style={styles.welcomeText}>What's your email address ?</Text>
-        <Text style={styles.subtitle}>Enter the email address associeted with your account </Text>
+        <Text style={styles.welcomeText}>What's your new password ?</Text>
+        <Text style={styles.subtitle}>Enter the new password  </Text>
         <View style={styles.inputContainer}>
-          <Icon name="mail-outline" size={20} color="#888" style={styles.icon} />
+          <Icon name="lock-closed-outline" size={20} color="#888" style={styles.icon} />
           <TextInput
             style={styles.input}
-            placeholder="Email"
+            placeholder="Password"
             placeholderTextColor="#888"
-            value={email}
-            onChangeText={setEmail}
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
           />
+          <Icon name="eye-off-outline" size={20} color="#888" style={styles.icon} />
         </View>
-        {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
+        <View style={styles.inputContainer}>
+          <Icon name="lock-closed-outline" size={20} color="#888" style={styles.icon} />
+          <TextInput
+            style={styles.input}
+            placeholder="Confirm Password"
+            placeholderTextColor="#888"
+            value={Confirmpassword}
+            onChangeText={setConfirmpassword}
+            secureTextEntry
+          />
+          <Icon name="eye-off-outline" size={20} color="#888" style={styles.icon} />
+        </View>
+     
         
        
        
         <View style={styles.footerContainer}>
         <TouchableOpacity
           style={styles.button}
-          onPress={handlechangepasswordverificaion}
+          onPress={handleChangepasswordwithverifverificaion}
     
         >
-          <Text style={styles.buttonText}>Continue</Text>
+          <Text style={styles.buttonText}>Go back to login</Text>
         </TouchableOpacity>
         </View>
       </View>
