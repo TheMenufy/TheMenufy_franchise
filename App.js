@@ -20,13 +20,13 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="login">
         <Stack.Screen name="login" component={login}  options={{ headerShown: false }}/>
-        <Stack.Screen name="home" component={home} options={{ headerTitleAlign: 'center' }}/>
+        <Stack.Screen name="home" component={home} options={{ headerTitleAlign: 'center' ,headerShown: false }}/>
         <Stack.Screen name="forgetpassword" component={ForgetPassword} options={{ headerShown: false }}/>
         <Stack.Screen name="Forgetpasswordverificarion" component={Forgetpasswordverificarion} options={{ headerShown: false }}/>
         <Stack.Screen name="Restaurants" component={RestaurantScreen} options={{ title: 'Restaurants' }} />
         <Stack.Screen name="DetailRestaurant" component={DetailRestaurant} options={{ title: 'Restaurant Details' }} />
         <Stack.Screen name="Changepasswordwithverif" component={Changepasswordwithverif} options={{ headerShown: false }}/>
-        <Stack.Screen name="EditProfile" component={EditProfilePage} options={{ headerShown: false }}/>
+        <Stack.Screen name="EditProfile" component={EditProfilePage} options={{ headerShown: true }}/>
         <Stack.Screen name="ProfilePage" component={ProfilePage} options={{ headerShown: false }}/>
 
       </Stack.Navigator>

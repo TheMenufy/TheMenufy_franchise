@@ -19,7 +19,7 @@ const ProfilePage = () => {
   const navigation = useNavigation();
 
   const handleEditProfile = () => {
-    navigation.navigate('EditProfile');
+    navigation.push('EditProfile');
   };
 
   return (
@@ -30,7 +30,7 @@ const ProfilePage = () => {
 
       <View style={styles.profileHeader}>
         <View style={styles.profileImageContainer}>
-          <Image style={styles.profileImage} source={{ uri: admin.imageUrl }} />
+        <Image style={styles.profileImage}  source={require('../assets/prof.png')}/>
         </View>
         <Text style={styles.name}>{admin.firstName} {admin.lastName}</Text>
         <Text style={styles.role}>{admin.role}</Text>
@@ -43,7 +43,6 @@ const ProfilePage = () => {
         <Text style={styles.detailText}>Location: {admin.location}</Text>
         <Text style={styles.detailText}>Phone: {admin.phoneNumber}</Text>
         <Text style={styles.detailText}>Date of Birth: {admin.DateofBirth}</Text>
-
         <Text style={styles.detailTitle}>Member Since</Text>
         <Text style={styles.detailText}>{admin.joinDate}</Text>
       </View>

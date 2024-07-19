@@ -3,11 +3,18 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
 
+
+const imageMap = {
+  "Torino.jpg": require('../assets/Torino.jpg'),
+  "sushi.jpg": require('../assets/sushi.jpg'),
+  "KFC.jpg": require('../assets/KFC.jpg'),
+  // Add more images as needed
+};
 const ConversationsPage = () => {
   const conversations = [
-    { id: 1, name: "Pizza Palace", lastMessage: "Your order is on the way!", time: "2 min ago" },
-    { id: 2, name: "Burger Town", lastMessage: "Don't forget to rate us!", time: "10 min ago" },
-    { id: 3, name: "KFC", lastMessage: "New spicy wings available now.", time: "30 min ago" },
+    { id: 1, name: "Pizza Palace", lastMessage: "Your order is on the way!", time: "2 min ago",image :"Torino.jpg"},
+    { id: 2, name: "Burger Town", lastMessage: "Don't forget to rate us!", time: "10 min ago",image :"sushi.jpg" },
+    { id: 3, name: "KFC", lastMessage: "New spicy wings available now.", time: "30 min ago",image :"KFC.jpg" },
   ];
 
   return (
@@ -17,9 +24,9 @@ const ConversationsPage = () => {
         {conversations.map(conversation => (
           <TouchableOpacity key={conversation.id} style={styles.conversationCard}>
             <View style={styles.conversationHeader}>
-              <Image
-                style={styles.conversationImage}
-                source={{ uri: `https://example.com/${conversation.name.toLowerCase().replace(/ /g, "_")}_profile.jpg` }}
+            <Image
+                            style={styles.conversationImage}
+                            source={imageMap[conversation.image]}
               />
               <View style={styles.conversationDetails}>
                 <Text style={styles.conversationName}>{conversation.name}</Text>
@@ -39,6 +46,9 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: '#fff',
     paddingVertical: 20,
+  
+ 
+
   },
   container: {
     flex: 1,
@@ -46,7 +56,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   heading: {
-    fontSize: 28,
+    fontSize: 25,
     fontWeight: 'bold',
     marginBottom: 20,
   },
