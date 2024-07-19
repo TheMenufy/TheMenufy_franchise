@@ -93,11 +93,11 @@ function CustomTabBar({ state, descriptors, navigation }) {
 const Home = () => {
   return (
     <Tab.Navigator tabBar={(props) => <CustomTabBar {...props} />} initialRouteName="Home">
-      <Tab.Screen name="Profile" component={ProfileScreen} />
-      <Tab.Screen name="Menu" component={FranchisesScreen} />
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Restaurants" component={RestaurantsScreen} />
-      <Tab.Screen name="Chat" component={ConversationsScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen}options={{ headerTitleAlign: 'center'}} />
+      <Tab.Screen name="Menu" component={FranchisesScreen}options={{ headerTitleAlign: 'center'}} />
+      <Tab.Screen name="Home" component={HomeScreen}options={{ headerTitleAlign: 'center'}} />
+      <Tab.Screen name="Restaurants" component={RestaurantsScreen} options={{ headerTitleAlign: 'center'}}/>
+      <Tab.Screen name="Chat" component={ConversationsScreen} options={{ headerTitleAlign: 'center'}}/>
     </Tab.Navigator>
   );
 };
@@ -311,10 +311,13 @@ const styles = StyleSheet.create({
   },
   setupButton: {
     backgroundColor: '#f28b82',
-    padding: 10,
-    borderRadius: 5,
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    borderRadius: 15,
+    marginHorizontal:16,
     alignItems: 'center',
-    marginBottom: 10,
+    width: '90%',
+    marginBottom: 20,
   },
   setupButtonText: {
     color: 'white',
