@@ -12,52 +12,44 @@ const FranchiseScreen = () => {
         {/* CardView for Torino */}
         <View style={styles.card}>
           <ImageBackground
-            source={require('../assets/Torino.jpg')}
+            source={require('../assets/pizza.jpg')}
             style={styles.cardBackground}
           >
-            <Text style={styles.cardText}>Torino</Text>
+            <Text style={styles.cardText}>Categories</Text>
           </ImageBackground>
         </View>
         
         {/* CardView for Baguette Baguette */}
         <View style={styles.card}>
           <ImageBackground
-            source={require('../assets/bg.jpg')}
+            source={require('../assets/sushi.jpg')}
             style={styles.cardBackground}
           >
-            <Text style={styles.cardText}>Baguette Baguette</Text>
+            <Text style={styles.cardText}>Products</Text>
           </ImageBackground>
         </View>
         
         {/* CardView for KFC */}
         <View style={styles.card}>
           <ImageBackground
-            source={require('../assets/KFC.jpg')}
+            source={require('../assets/mozzarella.jpg')}
             style={styles.cardBackground}
           >
-            <Text style={styles.cardText}>KFC</Text>
+            <Text style={styles.cardText}>Choices</Text>
           </ImageBackground>
         </View>
         
         {/* CardView for Foret Noire */}
         <View style={styles.card}>
           <ImageBackground
-            source={require('../assets/Foretnoire.png')}
+            source={require('../assets/pates.jpg')}
             style={styles.cardBackground}
           >
-            <Text style={styles.cardText}>Foret Noire</Text>
+            <Text style={styles.cardText}>Items</Text>
           </ImageBackground>
         </View>
         
-        {/* CardView for Street 19 */}
-        <View style={styles.card}>
-          <ImageBackground
-            source={require('../assets/Street19.jpg')}
-            style={styles.cardBackground}
-          >
-            <Text style={styles.cardText}>Street 19</Text>
-          </ImageBackground>
-        </View>
+       
         
       </View>
     </ScrollView>

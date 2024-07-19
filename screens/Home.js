@@ -1,11 +1,11 @@
-// Home.js
-
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FranchiseScreen from '../screens/Franchise';
 import RestaurantScreen from '../screens/Restaurants';
+import ProfilePage from '../screens/Profile';
+import ConversationsPage from '../screens/Chat';
 
 const Tab = createBottomTabNavigator();
 
@@ -39,29 +39,52 @@ function CustomTabBar({ state, descriptors, navigation }) {
           iconName = 'home';
         } else if (route.name === 'Profile') {
           iconName = 'person';
-        } else if (route.name === 'Archives') {
-          iconName = 'archive';
+        } else if (route.name === 'Menu') {
+          iconName = 'menu';
         } else if (route.name === 'Restaurants') {
           iconName = 'restaurant';
-        } else if (route.name === 'Convs') {
+        } else if (route.name === 'Chat') {
           iconName = 'chatbubbles';
         }
 
-        return (
-          <TouchableOpacity
-            key={route.key}
-            accessibilityRole="button"
-            accessibilityStates={isFocused ? ['selected'] : []}
-            accessibilityLabel={options.tabBarAccessibilityLabel}
-            testID={options.tabBarTestID}
-            onPress={onPress}
-            onLongPress={onLongPress}
-            style={route.name === 'Home' ? styles.homeButton : styles.tabButton}
-          >
-            <Ionicons name={iconName} size={route.name === 'Home' ? 30 : 25} color={isFocused ? 'tomato' : 'gray'} />
-            {route.name !== 'Home' && <Text style={{ color: isFocused ? 'tomato' : 'gray' }}>{route.name}</Text>}
-          </TouchableOpacity>
-        );
+        if (route.name === 'Home') {
+          return (
+            <TouchableOpacity
+              key={route.key}
+              accessibilityRole="button"
+              accessibilityStates={isFocused ? ['selected'] : []}
+              accessibilityLabel={options.tabBarAccessibilityLabel}
+              testID={options.tabBarTestID}
+              onPress={onPress}
+              onLongPress={onLongPress}
+              style={styles.homeButton}
+            >
+              <Ionicons name={iconName} size={30} color="white" />
+            </TouchableOpacity>
+          );
+        } else {
+          return (
+            <TouchableOpacity
+              key={route.key}
+              accessibilityRole="button"
+              accessibilityStates={isFocused ? ['selected'] : []}
+              accessibilityLabel={options.tabBarAccessibilityLabel}
+              testID={options.tabBarTestID}
+              onPress={onPress}
+              onLongPress={onLongPress}
+              style={styles.tabButton}
+            >
+              <Ionicons
+                name={iconName}
+                size={25}
+                color={isFocused ? 'tomato' : 'gray'}
+              />
+              <Text style={{ color: isFocused ? 'tomato' : 'gray' }}>
+                {route.name}
+              </Text>
+            </TouchableOpacity>
+          );
+        }
       })}
     </View>
   );
@@ -71,15 +94,15 @@ const Home = () => {
   return (
     <Tab.Navigator tabBar={(props) => <CustomTabBar {...props} />} initialRouteName="Home">
       <Tab.Screen name="Profile" component={ProfileScreen} />
-      <Tab.Screen name="Archives" component={FranchisesScreen} />
+      <Tab.Screen name="Menu" component={FranchisesScreen} />
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Restaurants" component={RestaurantsScreen} />
-      <Tab.Screen name="Convs" component={ConversationsScreen} />
+      <Tab.Screen name="Chat" component={ConversationsScreen} />
     </Tab.Navigator>
   );
 };
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
   const latestNews = [
     { id: 1, title: "New Franchise Opened: Pizza Palace", description: "Pizza Palace has opened a new branch in downtown." },
     { id: 2, title: "Special Offer at Burger Town", description: "Burger Town is offering a 20% discount on all items this weekend." },
@@ -89,6 +112,13 @@ const HomeScreen = () => {
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
+        <TouchableOpacity
+          style={styles.setupButton}
+          onPress={() => navigation.navigate('SetupSystem')}
+        >
+          <Text style={styles.setupButtonText}>Setup System</Text>
+        </TouchableOpacity>
+        
         <Text style={styles.welcomeText}>Welcome!</Text>
         
         <View style={styles.profileSummary}>
@@ -113,41 +143,7 @@ const HomeScreen = () => {
 };
 
 const ProfileScreen = () => {
-  const admin = {
-    firstName: 'John',
-    lastName: 'Doe',
-    role: 'Administrator',
-    phoneNumber: '+1234567890',
-    imageUrl: 'https://example.com/admin_profile.jpg',
-    email: 'john.doe@example.com',
-    location: 'Tunis, Tunisia',
-    experience: '5 years in restaurant management',
-    joinDate: 'Joined on January 1, 2020',
-  };
-
-  return (
-    <View style={styles.container}>
-      <View style={styles.profileHeader}>
-        <View style={styles.profileImageContainer}>
-          <Image style={styles.profileImage} source={{ uri: admin.imageUrl }} />
-        </View>
-        <Text style={styles.name}>{admin.firstName} {admin.lastName}</Text>
-        <Text style={styles.role}>{admin.role}</Text>
-        <Text style={styles.phoneNumber}>{admin.phoneNumber}</Text>
-      </View>
-
-      <View style={styles.detailsSection}>
-        <Text style={styles.detailTitle}>Contact Information</Text>
-        <Text style={styles.detailText}>Email: {admin.email}</Text>
-        <Text style={styles.detailText}>Location: {admin.location}</Text>
-        <Text style={styles.detailText}>Phone: {admin.phoneNumber}</Text>
-
-        <Text style={styles.detailTitle}>Professional Experience</Text>
-        <Text style={styles.detailText}>Experience: {admin.experience}</Text>
-        <Text style={styles.detailText}>{admin.joinDate}</Text>
-      </View>
-    </View>
-  );
+  return <ProfilePage />;
 };
 
 const RestaurantsScreen = () => {
@@ -159,34 +155,7 @@ const FranchisesScreen = () => {
 };
 
 const ConversationsScreen = () => {
-  const conversations = [
-    { id: 1, name: "Pizza Palace", lastMessage: "Your order is on the way!", time: "2 min ago" },
-    { id: 2, name: "Burger Town", lastMessage: "Don't forget to rate us!", time: "10 min ago" },
-    { id: 3, name: "KFC", lastMessage: "New spicy wings available now.", time: "30 min ago" },
-  ];
-
-  return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <View style={styles.container}>
-        <Text style={styles.heading}>Conversations</Text>
-        {conversations.map(conversation => (
-          <TouchableOpacity key={conversation.id} style={styles.conversationCard}>
-            <View style={styles.conversationHeader}>
-              <Image
-                style={styles.conversationImage}
-                source={{ uri: `https://example.com/${conversation.name.toLowerCase().replace(/ /g, "_")}_profile.jpg` }}
-              />
-              <View style={styles.conversationDetails}>
-                <Text style={styles.conversationName}>{conversation.name}</Text>
-                <Text style={styles.lastMessage}>{conversation.lastMessage}</Text>
-              </View>
-              <Text style={styles.messageTime}>{conversation.time}</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </View>
-    </ScrollView>
-  );
+  return <ConversationsPage />;
 };
 
 const styles = StyleSheet.create({
@@ -339,6 +308,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: -10,
+  },
+  setupButton: {
+    backgroundColor: '#f28b82',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  setupButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   heading: {
     fontSize: 28,

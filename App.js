@@ -10,6 +10,8 @@ import DetailRestaurant from './screens/DetailRestaurant';
 import Forgetpasswordverificarion from './screens/Forgetpasswordverificarion';
 
 import Changepasswordwithverif from './screens/Changepasswordwithverif';
+import EditProfilePage from './screens/EditProfile';
+import ProfilePage from './screens/Profile';
 
 const Stack = createNativeStackNavigator();
 
@@ -24,6 +26,8 @@ export default function App() {
         <Stack.Screen name="Restaurants" component={RestaurantScreen} options={{ title: 'Restaurants' }} />
         <Stack.Screen name="DetailRestaurant" component={DetailRestaurant} options={{ title: 'Restaurant Details' }} />
         <Stack.Screen name="Changepasswordwithverif" component={Changepasswordwithverif} options={{ headerShown: false }}/>
+        <Stack.Screen name="EditProfile" component={EditProfilePage} options={{ headerShown: false }}/>
+        <Stack.Screen name="ProfilePage" component={ProfilePage} options={{ headerShown: false }}/>
 
       </Stack.Navigator>
     </NavigationContainer>
