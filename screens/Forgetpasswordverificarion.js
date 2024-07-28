@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons'; 
+import axios from 'axios';
 
-export default function Forgetpasswordverificarion({ navigation }) {
+export default function ForgetPasswordVerification({ navigation }) {
   const [code, setCode] = useState(['', '', '', '']);
   const [timeLeft, setTimeLeft] = useState(120);
   const [isCodeIncorrect, setIsCodeIncorrect] = useState(false);
@@ -21,15 +22,22 @@ export default function Forgetpasswordverificarion({ navigation }) {
     setCode(newCode);
 
     if (newCode.join('').length === 4) {
-      // Validate code
-      if (newCode.join('') === '0000') { // Example correct code
-        
-       navigation.navigate('Changepasswordwithverif');
-        // Proceed with verification
+      validateCode(newCode.join(''));
+    }
+  };
+
+  const validateCode = async (code) => {
+    try {
+      const response = await axios.post('http://192.168.1.15:5555/auth/verifCode', { code });
+      if (response.data.tokenLogin) {
+        // Handle successful login, e.g., save token and navigate to the home screen
+        setIsCodeIncorrect(false);
       } else {
-       
-       
+        setIsCodeIncorrect(true);
       }
+    } catch (error) {
+      setIsCodeIncorrect(true);
+      console.error('Error verifying code:', error.message);
     }
   };
 
@@ -38,7 +46,7 @@ export default function Forgetpasswordverificarion({ navigation }) {
       setTimeLeft(120);
       setCode(['', '', '', '']);
       setIsCodeIncorrect(false);
-      // Resend code logic here
+      // Add resend code logic here, such as making an API call to resend the code
     }
   };
 
