@@ -27,12 +27,17 @@ export default function ForgetPasswordVerification({ navigation }) {
   };
 
   const validateCode = async (code) => {
+ 
     try {
-      const response = await axios.post('http://192.168.1.15:5555/auth/verifCode', { code });
-      if (response.data.tokenLogin) {
-        // Handle successful login, e.g., save token and navigate to the home screen
+      // Send the code with the correct key as per the server's expectations
+      const response = await axios.post('http://192.168.1.15:5555/auth/verifCode', { activationCodeForgotPass: code });
+     
+      if (response.status==201) {
+       
+        navigation.navigate('Changepasswordwithverif');
         setIsCodeIncorrect(false);
       } else {
+        // Code is incorrect or another error occurred
         setIsCodeIncorrect(true);
       }
     } catch (error) {
@@ -40,7 +45,8 @@ export default function ForgetPasswordVerification({ navigation }) {
       console.error('Error verifying code:', error.message);
     }
   };
-
+  
+  
   const handleResendCode = () => {
     if (timeLeft === 0) {
       setTimeLeft(120);

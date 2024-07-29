@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons'; // Importing Ionicons from react-native-vector-icons
 import axios from 'axios';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -26,9 +26,13 @@ export default function Login({ navigation }) {
         password,
         rememberMe
       });
+      const { tokenLogin, user } = response.data;
+      console.log(user);
+      await AsyncStorage.setItem('userToken', tokenLogin);
+      await AsyncStorage.setItem('userData', JSON.stringify(user));
 
       if (response.data.tokenLogin) {
-        // Handle successful login, e.g., save token and navigate to the home screen
+        navigation.navigate('home');
       }
     } catch (error) {
       if (error.response && error.response.data) {

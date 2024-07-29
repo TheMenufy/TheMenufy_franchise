@@ -71,7 +71,7 @@ export default function ForgetPassword({ navigation }) {
         <View style={styles.footerContainer}>
         <TouchableOpacity
           style={styles.button}
-          onPress={handleForgetPasswordverificaion}
+          onPress={handleForgetPasswordVerification}
     
         >
           <Text style={styles.buttonText}>Continue</Text>
