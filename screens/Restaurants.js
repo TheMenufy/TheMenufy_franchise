@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ImageBackground, ScrollView, TouchableOpacity, Button } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const RestaurantScreen = () => {
@@ -7,11 +7,6 @@ const RestaurantScreen = () => {
 
   const navigateToDetail = (restaurantName, restaurantImage) => {
     navigation.navigate('DetailRestaurant', { name: restaurantName, image: restaurantImage });
-  };
-
-  const addRestaurant = () => {
-    // Logique pour ajouter un restaurant
-    navigation.navigate('AddRestaurant'); // Assurez-vous que cette route est définie dans votre navigation
   };
 
   return (
@@ -81,11 +76,6 @@ const RestaurantScreen = () => {
             <Text style={styles.cardText}>Street 19 Hammam Lif</Text>
           </ImageBackground>
         </TouchableOpacity>
-        
-        {/* Bouton pour ajouter un restaurant */}
-        <TouchableOpacity style={styles.addButton} onPress={addRestaurant}>
-          <Text style={styles.addButtonText}>Add Restaurant</Text>
-        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -124,19 +114,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     backgroundColor: 'rgba(0,0,0,0.5)',
     padding: 10,
-  },
-  addButton: {
-    marginTop: 20,
-    backgroundColor: 'tomato',
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  addButtonText: {
-    fontSize: 18,
-    color: '#fff',
-    fontWeight: 'bold',
   },
 });
 

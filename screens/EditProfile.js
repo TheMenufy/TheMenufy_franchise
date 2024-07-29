@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput, ScrollView } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
+//import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 const EditProfile = () => {
   const admin = {
@@ -88,18 +88,7 @@ const EditProfile = () => {
               <LabeledInput label="Last Name" defaultValue={admin.lastName} />
               <LabeledInput label="Email" defaultValue={admin.email} />
               <LabeledInput label="Address" defaultValue={admin.location} />
-              <View style={styles.inputContainer}>
-                <Text style={styles.label}>Date of Birth</Text>
-                <TouchableOpacity onPress={showDatePicker} style={styles.input}>
-                  <Text>{dateOfBirth || 'Select Date of Birth'}</Text>
-                </TouchableOpacity>
-                <DateTimePickerModal
-                  isVisible={isDatePickerVisible}
-                  mode="date"
-                  onConfirm={handleConfirm}
-                  onCancel={hideDatePicker}
-                />
-              </View>
+              
               <TouchableOpacity style={styles.saveButton} onPress={handleSaveProfile}>
                 <Text style={styles.saveButtonText}>Save</Text>
               </TouchableOpacity>

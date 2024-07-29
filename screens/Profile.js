@@ -1,25 +1,44 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProfilePage = () => {
-  const admin = {
-    firstName: 'John',
-    lastName: 'Doe',
-    role: 'Administrator',
-    phoneNumber: '+1234567890',
-    imageUrl: 'https://example.com/admin_profile.jpg',
-    email: 'john.doe@example.com',
-    location: 'Tunis, Tunisia',
-    DateofBirth: 'August 11, 2000',
-    joinDate: 'January 1, 2020',
-  };
-
+  const [admin, setAdmin] = useState({});
   const navigation = useNavigation();
+
+  useEffect(() => {
+    // Fetch user data from AsyncStorage
+    const fetchUserData = async () => {
+      try {
+        const userData = await AsyncStorage.getItem('userData');
+        if (userData) {
+          setAdmin(JSON.parse(userData));
+        }
+      } catch (error) {
+        console.error('Failed to load user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const handleEditProfile = () => {
     navigation.push('EditProfile');
+  };
+
+  const handleLogout = async () => {
+    try {
+      // Clear user data from AsyncStorage
+      await AsyncStorage.removeItem('userToken');
+      await AsyncStorage.removeItem('userData');
+      // Navigate to login screen
+      navigation.navigate('Login');
+    } catch (error) {
+      console.error('Logout failed:', error);
+      alert('An error occurred while logging out. Please try again.');
+    }
   };
 
   return (
@@ -30,22 +49,27 @@ const ProfilePage = () => {
 
       <View style={styles.profileHeader}>
         <View style={styles.profileImageContainer}>
-        <Image style={styles.profileImage}  source={require('../assets/prof.png')}/>
+        
+          <Image  source={{ uri: admin.image || '../assets/prof.png' }}style={styles.profileImage} />
         </View>
-        <Text style={styles.name}>{admin.firstName} {admin.lastName}</Text>
+        <Text style={styles.name}>{admin.firstName} {admin.name}</Text>
         <Text style={styles.role}>{admin.role}</Text>
-        <Text style={styles.phoneNumber}>{admin.phoneNumber}</Text>
+        <Text style={styles.phoneNumber}>{admin.phone}</Text>
       </View>
 
       <View style={styles.detailsSection}>
         <Text style={styles.detailTitle}>Contact Information</Text>
         <Text style={styles.detailText}>Email: {admin.email}</Text>
-        <Text style={styles.detailText}>Location: {admin.location}</Text>
-        <Text style={styles.detailText}>Phone: {admin.phoneNumber}</Text>
-        <Text style={styles.detailText}>Date of Birth: {admin.DateofBirth}</Text>
+        <Text style={styles.detailText}>Location: {admin.address}</Text>
+        <Text style={styles.detailText}>Phone: {admin.phone}</Text>
+        <Text style={styles.detailText}>Date of Birth: {admin.dateOfBirth}</Text>
         <Text style={styles.detailTitle}>Member Since</Text>
         <Text style={styles.detailText}>{admin.joinDate}</Text>
       </View>
+
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <Text style={styles.logoutButtonText}>Logout</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -67,11 +91,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 1,
-    elevation: 3, // For Android elevation
+    elevation: 3,
   },
   profileHeader: {
     alignItems: 'center',
-    marginTop: 60, // Adjust as needed to avoid overlapping with edit button
+    marginTop: 60,
     marginBottom: 20,
   },
   profileImageContainer: {
@@ -125,6 +149,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 5,
     color: '#666',
+  },
+  logoutButton: {
+    marginTop: 20,
+    backgroundColor: 'tomato',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  logoutButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
