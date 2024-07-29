@@ -1,30 +1,48 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons'; // Importing Ionicons from react-native-vector-icons
-
+import axios from 'axios';
 export default function ForgetPassword({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  
 
-  const handleForgetPasswordverificaion = () => {
+  const handleForgetPasswordVerification = async () => {
     let valid = true;
-
+  
     if (email === '') {
       setEmailError('Email is required');
       valid = false;
     } else {
       setEmailError('');
     }
-
-    
+  
     if (valid) {
-     
-      navigation.navigate('Forgetpasswordverificarion');
+      try {
+        const response = await axios.put('http://192.168.1.17:5555/auth/forgotPwd', { email });
+  
+        if (response.status === 200) {
+          // Navigate to verification screen or show success message
+          navigation.navigate('Forgetpasswordverificarion');
+        } else {
+          // Handle other response statuses appropriately
+          setEmailError(response.data.message || 'Unknown error occurred');
+        }
+      } catch (error) {
+        if (error.response && error.response.data) {
+          const errorMessage = error.response.data.message;
+          setEmailError(errorMessage);
+        } else {
+          console.error('Network error:', error.message);
+          setEmailError('Network error, please try again later.');
+        }
+      }
     }
   };
+  
 
   return (
     <View style={styles.container}>
@@ -53,7 +71,7 @@ export default function ForgetPassword({ navigation }) {
         <View style={styles.footerContainer}>
         <TouchableOpacity
           style={styles.button}
-          onPress={handleForgetPasswordverificaion}
+          onPress={handleForgetPasswordVerification}
     
         >
           <Text style={styles.buttonText}>Continue</Text>

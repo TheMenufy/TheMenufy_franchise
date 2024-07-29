@@ -12,6 +12,9 @@ import Forgetpasswordverificarion from './screens/Forgetpasswordverificarion';
 import Changepasswordwithverif from './screens/Changepasswordwithverif';
 import EditProfilePage from './screens/EditProfile';
 import ProfilePage from './screens/Profile';
+import SetupSystem from './screens/SetupSystem';
+import MenuScreen from './screens/MenuScreen';
+import RestaurantCategoriesScreen from './screens/RestaurantCategoriesScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -28,6 +31,9 @@ export default function App() {
         <Stack.Screen name="Changepasswordwithverif" component={Changepasswordwithverif} options={{ headerShown: false }}/>
         <Stack.Screen name="EditProfile" component={EditProfilePage} options={{ headerShown: true }}/>
         <Stack.Screen name="ProfilePage" component={ProfilePage} options={{ headerShown: false }}/>
+        <Stack.Screen name="SetupSystem" component={SetupSystem} options={{ headerShown: false }}/>
+        <Stack.Screen name="MenuScreen" component={MenuScreen} options={{ headerShown: false }}/>
+        <Stack.Screen name="RestaurantCategoriesScreen" component={RestaurantCategoriesScreen} options={{ headerShown: false }}/>
 
       </Stack.Navigator>
     </NavigationContainer>

@@ -1,37 +1,53 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons'; // Importing Ionicons from react-native-vector-icons
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import axios from 'axios';
 
 export default function Changepasswordwithverif({ navigation }) {
-  const [Confirmpassword, setConfirmpassword] = useState('');
   const [password, setPassword] = useState('');
-  const [emailError, setEmailError] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
 
-  const handleChangepasswordwithverifverificaion = () => {
-    let valid = true;
-
-   
-
-    
-    if (valid) {
-     
-      navigation.navigate('login');
+  const handleChangepasswordwithverifverificaion = async () => {
+    if (password === '' || confirmPassword === '') {
+      setPasswordError('All fields are required.');
+      return;
     }
 
+    if (password !== confirmPassword) {
+      setPasswordError('Passwords do not match.');
+      return;
+    }
+
+    try {
+      const response = await axios.put('http://192.168.1.17:5555/auth/resetPwd', {
+        password,
+        confirmPassword,
+      });
+
+      if (response.data.message) {
+        // Password updated successfully
+        alert('Password updated successfully');
+        navigation.navigate('login'); // Navigate to login or another screen
+      } else {
+        // Handle error
+        setPasswordError('An error occurred. Please try again.');
+      }
+    } catch (error) {
+      setPasswordError('An error occurred. Please try again.');
+      console.error('Error resetting password:', error.message);
+    }
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Icon name="arrow-back" size={28} color="#000" style={styles.earth}  />
-        <Icon name="earth-outline" size={28} color="#000" style={styles.earth}/>
+        <Icon name="arrow-back" size={28} color="#000" style={styles.earth} />
+        <Icon name="earth-outline" size={28} color="#000" style={styles.earth} />
       </View>
       <View style={styles.overlay}>
-       
-        <Text style={styles.welcomeText}>What's your new password ?</Text>
-        <Text style={styles.subtitle}>Enter the new password  </Text>
+        <Text style={styles.welcomeText}>What's your new password?</Text>
+        <Text style={styles.subtitle}>Enter the new password</Text>
         <View style={styles.inputContainer}>
           <Icon name="lock-closed-outline" size={20} color="#888" style={styles.icon} />
           <TextInput
@@ -42,7 +58,6 @@ export default function Changepasswordwithverif({ navigation }) {
             onChangeText={setPassword}
             secureTextEntry
           />
-          <Icon name="eye-off-outline" size={20} color="#888" style={styles.icon} />
         </View>
         <View style={styles.inputContainer}>
           <Icon name="lock-closed-outline" size={20} color="#888" style={styles.icon} />
@@ -50,24 +65,18 @@ export default function Changepasswordwithverif({ navigation }) {
             style={styles.input}
             placeholder="Confirm Password"
             placeholderTextColor="#888"
-            value={Confirmpassword}
-            onChangeText={setConfirmpassword}
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
             secureTextEntry
           />
-          <Icon name="eye-off-outline" size={20} color="#888" style={styles.icon} />
         </View>
-     
-        
-       
-       
+        {passwordError ? (
+          <Text style={styles.errorText}>{passwordError}</Text>
+        ) : null}
         <View style={styles.footerContainer}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleChangepasswordwithverifverificaion}
-    
-        >
-          <Text style={styles.buttonText}>Go back to login</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleChangepasswordwithverifverificaion}>
+            <Text style={styles.buttonText}>Go back to login</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -77,11 +86,10 @@ export default function Changepasswordwithverif({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  
     backgroundColor: 'white',
   },
-  earth:{
-    marginTop:25,
+  earth: {
+    marginTop: 25,
   },
   header: {
     flexDirection: 'row',
@@ -95,11 +103,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 20,
   },
-  image: {
-    width: 200,
-    height: 230,
-    marginBottom: 20,
-  },
   welcomeText: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -110,7 +113,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     marginBottom: 25,
-    marginHorizontal:10
+    marginHorizontal: 10,
   },
   inputContainer: {
     flexDirection: 'row',
@@ -121,7 +124,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderRadius: 15,
     width: '90%',
-    height:55,
+    height: 55,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -142,31 +145,10 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     marginBottom: 10,
   },
-  optionsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-    marginBottom: 70,
-    
-  },
-  rememberMeContainer: {
+  footerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal:30,
-  },
-  rememberMeSelected: {
-    backgroundColor: '#f28b82',
-    borderColor: '#f28b82',
-  },
-  rememberMeText: {
-    fontSize: 14,
-    color: '#888',
-  },
-  forgotPasswordText: {
-    fontSize: 14,
-    color: '#f28b82',
-    marginHorizontal:30,
+    marginTop: 350,
   },
   button: {
     backgroundColor: '#f28b82',
@@ -175,29 +157,10 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     alignItems: 'center',
     width: '90%',
- 
   },
   buttonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
-  },
-  footerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-marginTop:350
-    
-
- 
-  },
-  footerText: {
-    fontSize: 14,
-    color: '#888',
-  },
-  signUpText: {
-    fontSize: 16,
-    color: '#f28b82',
-    fontWeight: 'bold',
- 
   },
 });
