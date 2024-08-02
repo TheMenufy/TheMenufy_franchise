@@ -29,6 +29,12 @@ const SetupSystem = () => {
     linkedin: '',
   });
 
+  // États pour gérer l'affichage des rubriques
+  const [isEstablishmentOpen, setIsEstablishmentOpen] = useState(true);
+  const [isImageOpen, setIsImageOpen] = useState(false);
+  const [isThemeColorOpen, setIsThemeColorOpen] = useState(false);
+  const [isSocialOpen, setIsSocialOpen] = useState(false);
+
   const handleSave = () => {
     // Reset errors
     let validationErrors = {
@@ -102,95 +108,130 @@ const SetupSystem = () => {
           <Text style={styles.backButtonText}>Back</Text>
         </TouchableOpacity>
 
-        <Text style={styles.heading}>Establishment Information</Text>
-        
-        <TextInput
-          style={styles.input}
-          placeholder="Establishment Name"
-          value={establishmentName}
-          onChangeText={setEstablishmentName}
-        />
-        {errors.establishmentName ? <Text style={styles.error}>{errors.establishmentName}</Text> : null}
+        <View style={styles.card}>
+          <TouchableOpacity style={styles.sectionHeader} onPress={() => setIsEstablishmentOpen(!isEstablishmentOpen)}>
+            <Text style={styles.sectionTitle}>Establishment Information</Text>
+            <Text style={styles.sectionToggle}>{isEstablishmentOpen ? '-' : '+'}</Text>
+          </TouchableOpacity>
+          {isEstablishmentOpen && (
+            <View style={styles.sectionContent}>
+              <TextInput
+                style={styles.input}
+                placeholder="Establishment Name"
+                value={establishmentName}
+                onChangeText={setEstablishmentName}
+              />
+              {errors.establishmentName ? <Text style={styles.error}>{errors.establishmentName}</Text> : null}
 
-        <TextInput
-          style={styles.input}
-          placeholder="Address"
-          value={address}
-          onChangeText={setAddress}
-        />
-        {errors.address ? <Text style={styles.error}>{errors.address}</Text> : null}
+              <TextInput
+                style={styles.input}
+                placeholder="Address"
+                value={address}
+                onChangeText={setAddress}
+              />
+              {errors.address ? <Text style={styles.error}>{errors.address}</Text> : null}
 
-        <TextInput
-          style={styles.input}
-          placeholder="Phone Number"
-          value={phoneNumber}
-          onChangeText={setPhoneNumber}
-          keyboardType="phone-pad"
-        />
-        {errors.phoneNumber ? <Text style={styles.error}>{errors.phoneNumber}</Text> : null}
+              <TextInput
+                style={styles.input}
+                placeholder="Phone Number"
+                value={phoneNumber}
+                onChangeText={setPhoneNumber}
+                keyboardType="phone-pad"
+              />
+              {errors.phoneNumber ? <Text style={styles.error}>{errors.phoneNumber}</Text> : null}
 
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
-        {errors.email ? <Text style={styles.error}>{errors.email}</Text> : null}
-
-        <Text style={styles.subheading}>Franchise Image</Text>
-        <TouchableOpacity style={styles.imagePicker} onPress={selectImage}>
-          {franchiseImage ? (
-            <Image source={{ uri: franchiseImage }} style={styles.image} />
-          ) : (
-            <Text style={styles.imagePlaceholder}>Select Image</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+              />
+              {errors.email ? <Text style={styles.error}>{errors.email}</Text> : null}
+            </View>
           )}
-        </TouchableOpacity>
-
-        <Text style={styles.subheading}>Theme Color</Text>
-        <View style={styles.sliderContainer}>
-          <Slider
-            value={themeColor}
-            onValueChange={setThemeColor}
-            minimumValue={0}
-            maximumValue={1}
-            step={0.01}
-            style={[styles.slider, { backgroundColor: getColorFromSliderValue(themeColor) }]}
-          />
         </View>
 
-        <Text style={styles.subheading}>Social Networks</Text>
-        <View style={styles.socialContainer}>
-          <Image source={require('../assets/facebook.png')} style={styles.logo} />
-          <TextInput
-            style={styles.input}
-            placeholder="Facebook URL"
-            value={socialNetworks.facebook}
-            onChangeText={(text) => setSocialNetworks({ ...socialNetworks, facebook: text })}
-          />
-          {errors.facebook ? <Text style={styles.error}>{errors.facebook}</Text> : null}
+        <View style={styles.card}>
+          <TouchableOpacity style={styles.sectionHeader} onPress={() => setIsImageOpen(!isImageOpen)}>
+            <Text style={styles.sectionTitle}>Restaurant Image</Text>
+            <Text style={styles.sectionToggle}>{isImageOpen ? '-' : '+'}</Text>
+          </TouchableOpacity>
+          {isImageOpen && (
+            <View style={styles.sectionContent}>
+              <TouchableOpacity style={styles.imagePicker} onPress={selectImage}>
+                {franchiseImage ? (
+                  <Image source={{ uri: franchiseImage }} style={styles.image} />
+                ) : (
+                  <Text style={styles.imagePlaceholder}>Select Image</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
 
-        <View style={styles.socialContainer}>
-          <Image source={require('../assets/instagram.png')} style={styles.logo} />
-          <TextInput
-            style={styles.input}
-            placeholder="Instagram URL"
-            value={socialNetworks.instagram}
-            onChangeText={(text) => setSocialNetworks({ ...socialNetworks, instagram: text })}
-          />
-          {errors.instagram ? <Text style={styles.error}>{errors.instagram}</Text> : null}
+        <View style={styles.card}>
+          <TouchableOpacity style={styles.sectionHeader} onPress={() => setIsThemeColorOpen(!isThemeColorOpen)}>
+            <Text style={styles.sectionTitle}>Theme Color</Text>
+            <Text style={styles.sectionToggle}>{isThemeColorOpen ? '-' : '+'}</Text>
+          </TouchableOpacity>
+          {isThemeColorOpen && (
+            <View style={styles.sectionContent}>
+              <View style={styles.sliderContainer}>
+                <Slider
+                  value={themeColor}
+                  onValueChange={setThemeColor}
+                  minimumValue={0}
+                  maximumValue={1}
+                  step={0.01}
+                  style={[styles.slider, { backgroundColor: getColorFromSliderValue(themeColor) }]}
+                />
+              </View>
+            </View>
+          )}
         </View>
 
-        <View style={styles.socialContainer}>
-          <Image source={require('../assets/linkedin.png')} style={styles.logo} />
-          <TextInput
-            style={styles.input}
-            placeholder="LinkedIn URL"
-            value={socialNetworks.linkedin}
-            onChangeText={(text) => setSocialNetworks({ ...socialNetworks, linkedin: text })}
-          />
-          {errors.linkedin ? <Text style={styles.error}>{errors.linkedin}</Text> : null}
+        <View style={styles.card}>
+          <TouchableOpacity style={styles.sectionHeader} onPress={() => setIsSocialOpen(!isSocialOpen)}>
+            <Text style={styles.sectionTitle}>Social Networks</Text>
+            <Text style={styles.sectionToggle}>{isSocialOpen ? '-' : '+'}</Text>
+          </TouchableOpacity>
+          {isSocialOpen && (
+            <View style={styles.sectionContent}>
+              <View style={styles.socialContainer}>
+                <Image source={require('../assets/facebook.png')} style={styles.logo} />
+                <TextInput
+                  style={styles.socialInput} // Utilisez le style socialInput pour une largeur uniforme
+                  placeholder="Facebook URL"
+                  value={socialNetworks.facebook}
+                  onChangeText={(text) => setSocialNetworks({ ...socialNetworks, facebook: text })}
+                />
+                {errors.facebook ? <Text style={styles.error}>{errors.facebook}</Text> : null}
+              </View>
+
+              <View style={styles.socialContainer}>
+                <Image source={require('../assets/instagram.png')} style={styles.logo} />
+                <TextInput
+                  style={styles.socialInput} // Utilisez le style socialInput pour une largeur uniforme
+                  placeholder="Instagram URL"
+                  value={socialNetworks.instagram}
+                  onChangeText={(text) => setSocialNetworks({ ...socialNetworks, instagram: text })}
+                />
+                {errors.instagram ? <Text style={styles.error}>{errors.instagram}</Text> : null}
+              </View>
+
+              <View style={styles.socialContainer}>
+                <Image source={require('../assets/linkedin.png')} style={styles.logo} />
+                <TextInput
+                  style={styles.socialInput} // Utilisez le style socialInput pour une largeur uniforme
+                  placeholder="LinkedIn URL"
+                  value={socialNetworks.linkedin}
+                  onChangeText={(text) => setSocialNetworks({ ...socialNetworks, linkedin: text })}
+                />
+                {errors.linkedin ? <Text style={styles.error}>{errors.linkedin}</Text> : null}
+              </View>
+            </View>
+          )}
         </View>
 
         {/* Placeholder for the map component */}
@@ -223,16 +264,30 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#007bff',
   },
-  heading: {
-    fontSize: 24,
-    fontWeight: 'bold',
+  card: {
     marginBottom: 20,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    overflow: 'hidden',
   },
-  subheading: {
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 15,
+    backgroundColor: '#f0f0f0',
+  },
+  sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginTop: 20,
-    marginBottom: 10,
+  },
+  sectionToggle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  sectionContent: {
+    padding: 15,
   },
   input: {
     height: 50,
@@ -241,6 +296,15 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 10,
+  },
+  socialInput: { // Style pour les champs de réseaux sociaux
+    height: 50,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+    width: '100%', // Assurez-vous que ces champs utilisent la largeur totale disponible
   },
   sliderContainer: {
     marginBottom: 20,
