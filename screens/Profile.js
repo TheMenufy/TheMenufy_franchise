@@ -28,6 +28,10 @@ const ProfilePage = () => {
     navigation.push('EditProfile');
   };
 
+  const handleChangePassword = () => {
+    navigation.push('ChangePassword');
+  };
+
   const handleLogout = async () => {
     try {
       // Clear user data from AsyncStorage
@@ -43,14 +47,17 @@ const ProfilePage = () => {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity onPress={handleChangePassword} style={styles.changePasswordButton}>
+        <Ionicons name="key-outline" size={24} color="#fff" />
+      </TouchableOpacity>
+      
       <TouchableOpacity onPress={handleEditProfile} style={styles.editButton}>
         <Ionicons name="pencil" size={24} color="#fff" />
       </TouchableOpacity>
 
       <View style={styles.profileHeader}>
         <View style={styles.profileImageContainer}>
-        
-          <Image  source={{ uri: admin.image || '../assets/prof.png' }}style={styles.profileImage} />
+          <Image source={{ uri: admin.image || '../assets/prof.png' }} style={styles.profileImage} />
         </View>
         <Text style={styles.name}>{admin.firstName} {admin.name}</Text>
         <Text style={styles.role}>{admin.role}</Text>
@@ -63,6 +70,9 @@ const ProfilePage = () => {
         <Text style={styles.detailText}>Location: {admin.address}</Text>
         <Text style={styles.detailText}>Phone: {admin.phone}</Text>
         <Text style={styles.detailText}>Date of Birth: {admin.dateOfBirth}</Text>
+      </View>
+
+      <View style={styles.memberSinceSection}>
         <Text style={styles.detailTitle}>Member Since</Text>
         <Text style={styles.detailText}>{admin.joinDate}</Text>
       </View>
@@ -79,6 +89,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     padding: 10,
+  },
+  changePasswordButton: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    backgroundColor: '#007BFF',
+    borderRadius: 20,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
+    elevation: 3,
   },
   editButton: {
     position: 'absolute',
@@ -138,6 +161,22 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 5,
+    marginBottom: 20, // Added marginBottom to separate the sections
+  },
+  memberSinceSection: {
+    width: '100%',
+    backgroundColor: '#f9f9f9',
+    borderRadius: 10,
+    padding: 15,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+    marginBottom: 20,
   },
   detailTitle: {
     fontSize: 20,
