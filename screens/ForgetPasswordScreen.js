@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons'; // Importing Ionicons from react-native-vector-icons
 import axios from 'axios';
+
+
 export default function ForgetPassword({ navigation }) {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
-  
 
   const handleForgetPasswordVerification = async () => {
     let valid = true;
@@ -22,7 +20,7 @@ export default function ForgetPassword({ navigation }) {
   
     if (valid) {
       try {
-        const response = await axios.put('http://192.168.1.15:5555/auth/forgotPwd', { email });
+        const response = await axios.put('http://192.168.1.13:5555/auth/forgotPwd', { email });
   
         if (response.status === 200) {
           // Navigate to verification screen or show success message
@@ -42,18 +40,16 @@ export default function ForgetPassword({ navigation }) {
       }
     }
   };
-  
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Icon name="arrow-back" size={28} color="#000" style={styles.earth}  />
-        <Icon name="earth-outline" size={28} color="#000" style={styles.earth}/>
+        <Icon name="arrow-back" size={28} color="#000" style={styles.earth} />
+        <Icon name="earth-outline" size={28} color="#000" style={styles.earth} />
       </View>
       <View style={styles.overlay}>
-       
-        <Text style={styles.welcomeText}>What's your email address ?</Text>
-        <Text style={styles.subtitle}>Enter the email address associeted with your account </Text>
+        <Text style={styles.welcomeText}>What's your email address?</Text>
+        <Text style={styles.subtitle}>Enter the email address associated with your account</Text>
         <View style={styles.inputContainer}>
           <Icon name="mail-outline" size={20} color="#888" style={styles.icon} />
           <TextInput
@@ -65,18 +61,11 @@ export default function ForgetPassword({ navigation }) {
           />
         </View>
         {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
-        
-       
-       
-        <View style={styles.footerContainer}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleForgetPasswordVerification}
-    
-        >
+      </View>
+      <View style={styles.footerContainer}>
+        <TouchableOpacity style={styles.button} onPress={handleForgetPasswordVerification}>
           <Text style={styles.buttonText}>Continue</Text>
         </TouchableOpacity>
-        </View>
       </View>
     </View>
   );
@@ -85,11 +74,10 @@ export default function ForgetPassword({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  
     backgroundColor: 'white',
   },
-  earth:{
-    marginTop:25,
+  earth: {
+    marginTop: 25,
   },
   header: {
     flexDirection: 'row',
@@ -102,11 +90,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20,
-  },
-  image: {
-    width: 200,
-    height: 230,
-    marginBottom: 20,
+    paddingTop: 50, // Adjust this value to move the content down
   },
   welcomeText: {
     fontSize: 24,
@@ -118,7 +102,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     marginBottom: 25,
-    marginHorizontal:10
+    marginHorizontal: 10,
+    textAlign: 'center', // Center the subtitle text
   },
   inputContainer: {
     flexDirection: 'row',
@@ -129,7 +114,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderRadius: 15,
     width: '90%',
-    height:55,
+    height: 55,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -150,32 +135,6 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     marginBottom: 10,
   },
-  optionsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-    marginBottom: 70,
-    
-  },
-  rememberMeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal:30,
-  },
-  rememberMeSelected: {
-    backgroundColor: '#f28b82',
-    borderColor: '#f28b82',
-  },
-  rememberMeText: {
-    fontSize: 14,
-    color: '#888',
-  },
-  forgotPasswordText: {
-    fontSize: 14,
-    color: '#f28b82',
-    marginHorizontal:30,
-  },
   button: {
     backgroundColor: '#f28b82',
     paddingVertical: 15,
@@ -183,7 +142,6 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     alignItems: 'center',
     width: '90%',
- 
   },
   buttonText: {
     color: '#fff',
@@ -191,21 +149,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   footerContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
-marginTop:350
-    
-
- 
-  },
-  footerText: {
-    fontSize: 14,
-    color: '#888',
-  },
-  signUpText: {
-    fontSize: 16,
-    color: '#f28b82',
-    fontWeight: 'bold',
- 
+    marginBottom: 50, // Increased value to move the button higher
   },
 });

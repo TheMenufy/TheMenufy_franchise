@@ -3,21 +3,40 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+
+const API_BASE_URL = 'http://192.168.1.13:5555/user';
+
+// Function to get user data from the backend
+const getUser = async (token) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/getUser`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to get user data', error);
+    throw error;
+  }
+};
 
 const ProfilePage = () => {
   const [admin, setAdmin] = useState({});
   const navigation = useNavigation();
 
   useEffect(() => {
-    // Fetch user data from AsyncStorage
     const fetchUserData = async () => {
       try {
-        const userData = await AsyncStorage.getItem('userData');
-        if (userData) {
-          setAdmin(JSON.parse(userData));
+        const token = await AsyncStorage.getItem('userToken');
+        if (!token) throw new Error('No token found');
+
+        const userData = await getUser(token);
+        if (userData.length > 0) {
+          setAdmin(userData[0]);
         }
       } catch (error) {
-        console.error('Failed to load user data:', error);
+        console.error('Failed to load user data', error);
       }
     };
 
@@ -26,6 +45,10 @@ const ProfilePage = () => {
 
   const handleEditProfile = () => {
     navigation.push('EditProfile');
+  };
+
+  const handleChangePassword = () => {
+    navigation.push('ChangePassword');
   };
 
   const handleLogout = async () => {
@@ -43,16 +66,19 @@ const ProfilePage = () => {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity onPress={handleChangePassword} style={styles.changePasswordButton}>
+        <Ionicons name="key-outline" size={24} color="#fff" />
+      </TouchableOpacity>
+      
       <TouchableOpacity onPress={handleEditProfile} style={styles.editButton}>
         <Ionicons name="pencil" size={24} color="#fff" />
       </TouchableOpacity>
 
       <View style={styles.profileHeader}>
         <View style={styles.profileImageContainer}>
-        
-          <Image  source={{ uri: admin.image || '../assets/prof.png' }}style={styles.profileImage} />
+          <Image source={{ uri: admin.image || 'https://example.com/default_profile.jpg' }} style={styles.profileImage} />
         </View>
-        <Text style={styles.name}>{admin.firstName} {admin.name}</Text>
+        <Text style={styles.name}>{admin.userName}</Text>
         <Text style={styles.role}>{admin.role}</Text>
         <Text style={styles.phoneNumber}>{admin.phone}</Text>
       </View>
@@ -62,9 +88,12 @@ const ProfilePage = () => {
         <Text style={styles.detailText}>Email: {admin.email}</Text>
         <Text style={styles.detailText}>Location: {admin.address}</Text>
         <Text style={styles.detailText}>Phone: {admin.phone}</Text>
-        <Text style={styles.detailText}>Date of Birth: {admin.dateOfBirth}</Text>
+        <Text style={styles.detailText}>Date of Birth: {admin.birthday}</Text>
+      </View>
+
+      <View style={styles.memberSinceSection}>
         <Text style={styles.detailTitle}>Member Since</Text>
-        <Text style={styles.detailText}>{admin.joinDate}</Text>
+        <Text style={styles.detailText}>{admin.createdAt}</Text>
       </View>
 
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
@@ -79,6 +108,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     padding: 10,
+  },
+  changePasswordButton: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    backgroundColor: '#007BFF',
+    borderRadius: 20,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
+    elevation: 3,
   },
   editButton: {
     position: 'absolute',
@@ -138,6 +180,22 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 5,
+    marginBottom: 20,
+  },
+  memberSinceSection: {
+    width: '100%',
+    backgroundColor: '#f9f9f9',
+    borderRadius: 10,
+    padding: 15,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+    marginBottom: 20,
   },
   detailTitle: {
     fontSize: 20,

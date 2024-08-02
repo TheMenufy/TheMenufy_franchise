@@ -1,123 +1,152 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Modal, TextInput, ScrollView } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import React, { useState ,useEffect} from 'react';
+import { View, Text, StyleSheet, Image, TextInput, ScrollView, TouchableOpacity ,Alert } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { useNavigation } from '@react-navigation/native';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+const API_BASE_URL = 'http://192.168.1.13:5555/user';
 const EditProfile = () => {
-  const admin = {
-    firstName: 'John',
-    lastName: 'Doe',
-    role: 'Administrator',
-    phoneNumber: '+1234567890',
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = await AsyncStorage.getItem('userToken');
+        if (!token) throw new Error('No token found');
+
+        const userData = await getUser(token);
+        if (userData.length > 0) {
+          setAdmin(userData[0]);
+        }
+      } catch (error) {
+        console.error('Failed to load use data', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+  
+  const [admin, setAdmin] = useState({
+    firstName: 'Adem',
+    lastName: 'Seddik',
+    role: 'resFranchise',
+    phoneNumber: '+21625443666',
     imageUrl: 'prof.png',
-    email: 'john.doe@example.com',
+    email: 'ademseddikadem@gmail.com',
     location: 'Tunis, Tunisia',
     DateofBirth: 'August 11, 2000',
     joinDate: 'January 1, 2020',
-  };
+  });
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [firstName, setFirstName] = useState(admin.firstName);
+  const [lastName, setLastName] = useState(admin.lastName);
+  const [email, setEmail] = useState(admin.email);
+  const [location, setLocation] = useState(admin.location);
   const [dateOfBirth, setDateOfBirth] = useState(admin.DateofBirth);
 
   const navigation = useNavigation();
 
-  const toggleModal = () => {
-    setIsModalVisible(!isModalVisible);
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      alert('Sorry, we need camera roll permissions to make this work!');
+      return;
+    }
+
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const { uri } = result.assets[0];
+      setProfileImage(uri);
+      await AsyncStorage.setItem('profileImage', uri);
+      try {
+        const token = await AsyncStorage.getItem('userToken');
+        if (!token) throw new Error('No token found');
+
+        const formData = new FormData();
+        formData.append('image', {
+          uri,
+          type: 'image/jpeg',
+          name: 'profile.jpg',
+        });
+        await updateImage(formData, token);
+      } catch (error) {
+        console.error('Failed to upload image', error);
+      }
+    }
   };
 
+  const getUser = async (token) => {
+    try {
+      console.log("im here")
+      const response = await axios.get(`${API_BASE_URL}/getUser`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to get user data', error);
+      throw error;
+    }
+  };
   const handleSaveProfile = () => {
-    toggleModal();
+    setAdmin({
+      ...admin,
+      firstName,
+      lastName,
+      email,
+      location,
+      DateofBirth: dateOfBirth,
+    });
     navigation.navigate('Profile'); // Navigate to ProfilePage after saving
-  };
-
-  const handleEditProfile = () => {
-    toggleModal();
-  };
-
-  const showDatePicker = () => {
-    setDatePickerVisibility(true);
-  };
-
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
-
-  const handleConfirm = (date) => {
-    setDateOfBirth(date.toDateString());
-    hideDatePicker();
   };
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
-        <TouchableOpacity onPress={handleEditProfile} style={styles.editButton}>
-          <Ionicons name="pencil" size={24} color="#fff" />
-        </TouchableOpacity>
-
         <View style={styles.profileHeader}>
+        <TouchableOpacity onPress={pickImage}>
           <View style={styles.profileImageContainer}>
-            <Image style={styles.profileImage} source={require('../assets/prof.png')} />
+            
+          <Image source={{ uri: admin.image || 'https://example.com/default_profile.jpg' }} style={styles.profileImage} />
+          
           </View>
-          <Text style={styles.name}>{admin.firstName} {admin.lastName}</Text>
+          </TouchableOpacity>
+          <Text style={styles.name}>{firstName} {lastName}</Text>
           <Text style={styles.role}>{admin.role}</Text>
           <Text style={styles.phoneNumber}>{admin.phoneNumber}</Text>
         </View>
 
         <View style={styles.detailsSection}>
           <Text style={styles.detailTitle}>Contact Information</Text>
-          <Text style={styles.detailText}>Email: {admin.email}</Text>
-          <Text style={styles.detailText}>Location: {admin.location}</Text>
-          <Text style={styles.detailText}>Phone: {admin.phoneNumber}</Text>
-          <Text style={styles.detailText}>Date of Birth: {admin.DateofBirth}</Text>
+          <LabeledInput label="First Name" value={firstName} onChangeText={setFirstName} />
+          <LabeledInput label="Last Name" value={lastName} onChangeText={setLastName} />
+          <LabeledInput label="Email" value={admin.email} onChangeText={setEmail} />
+          <LabeledInput label="Address" value={admin.address} onChangeText={setLocation} />
+          <LabeledInput label="Date of Birth" value={dateOfBirth} onChangeText={setDateOfBirth} />
 
           <Text style={styles.detailTitle}>Member Since</Text>
           <Text style={styles.detailText}>{admin.joinDate}</Text>
+
+          <TouchableOpacity style={styles.saveButton} onPress={handleSaveProfile}>
+            <Text style={styles.saveButtonText}>Save</Text>
+          </TouchableOpacity>
         </View>
-
-        <Modal visible={isModalVisible} onRequestClose={toggleModal}>
-          <ScrollView contentContainerStyle={styles.modalScrollContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Edit Profile</Text>
-
-              <View style={styles.profileImageContainer}>
-                <Image style={styles.profileImage} source={{ uri: admin.imageUrl }} />
-              </View>
-              <LabeledInput label="First Name" defaultValue={admin.firstName} />
-              <LabeledInput label="Last Name" defaultValue={admin.lastName} />
-              <LabeledInput label="Email" defaultValue={admin.email} />
-              <LabeledInput label="Address" defaultValue={admin.location} />
-              <View style={styles.inputContainer}>
-                <Text style={styles.label}>Date of Birth</Text>
-                <TouchableOpacity onPress={showDatePicker} style={styles.input}>
-                  <Text>{dateOfBirth || 'Select Date of Birth'}</Text>
-                </TouchableOpacity>
-                <DateTimePickerModal
-                  isVisible={isDatePickerVisible}
-                  mode="date"
-                  onConfirm={handleConfirm}
-                  onCancel={hideDatePicker}
-                />
-              </View>
-              <TouchableOpacity style={styles.saveButton} onPress={handleSaveProfile}>
-                <Text style={styles.saveButtonText}>Save</Text>
-              </TouchableOpacity>
-            </View>
-          </ScrollView>
-        </Modal>
       </View>
     </ScrollView>
   );
 };
 
-const LabeledInput = ({ label, defaultValue, ...props }) => (
+const LabeledInput = ({ label, value, onChangeText }) => (
   <View style={styles.inputContainer}>
     <Text style={styles.label}>{label}</Text>
     <TextInput
       style={styles.input}
-      defaultValue={defaultValue}
-      {...props}
+      value={value}
+      onChangeText={onChangeText}
     />
   </View>
 );
@@ -133,35 +162,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    padding: 10,
+    padding: 20, // Increased padding
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  editButton: {
-    position: 'absolute',
-    top: 20,
-    right: 20,
-    backgroundColor: 'tomato',
-    borderRadius: 20,
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1,
-    elevation: 3, // For Android elevation
   },
   profileHeader: {
     alignItems: 'center',
-    marginTop: 60, // Adjust as needed to avoid overlapping with edit button
-    marginBottom: 20,
+    marginBottom: 30, // Increased margin
   },
   profileImageContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 120, // Increased width
+    height: 120, // Increased height
+    borderRadius: 60, // Increased radius
     overflow: 'hidden',
-    marginBottom: 10,
-    borderWidth: 2,
+    marginBottom: 15, // Increased margin
+    borderWidth: 3, // Increased border width
     borderColor: '#f28b82',
     justifyContent: 'center',
     alignItems: 'center',
@@ -171,98 +186,79 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   name: {
-    fontSize: 24,
+    fontSize: 28, // Increased font size
     fontWeight: 'bold',
-    marginBottom: 5,
+    marginBottom: 10, // Increased margin
   },
   role: {
-    fontSize: 18,
-    marginBottom: 5,
+    fontSize: 22, // Increased font size
+    marginBottom: 10, // Increased margin
     color: '#555',
   },
   phoneNumber: {
-    fontSize: 16,
+    fontSize: 18, // Increased font size
     color: '#888',
   },
   detailsSection: {
-    width: '90%',
+    width: '95%', // Increased width
     backgroundColor: '#f9f9f9',
-    borderRadius: 10,
-    padding: 15,
+    borderRadius: 15, // Increased border radius
+    padding: 20, // Increased padding
     shadowColor: '#000',
     shadowOffset: {
-      width: 0, height: 2,
+      width: 0, height: 3, // Increased shadow offset
     },
     shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
-    marginBottom: 20,
+    shadowRadius: 5, // Increased shadow radius
+    elevation: 6, // Increased elevation
+    marginBottom: 30, // Increased margin
   },
   detailTitle: {
-    fontSize: 20,
+    fontSize: 22, // Increased font size
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 15, // Increased margin
     color: '#333',
   },
   detailText: {
-    fontSize: 16,
-    marginBottom: 5,
+    fontSize: 18, // Increased font size
+    marginBottom: 10, // Increased margin
     color: '#666',
-  },
-  modalScrollContainer: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 10,
-    width: '90%',
-    alignItems: 'center',
-  },
-  modalTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
   },
   inputContainer: {
     width: '100%',
-    marginBottom: 15,
+    marginBottom: 20, // Increased margin
   },
   label: {
-    fontSize: 16,
+    fontSize: 18, // Increased font size
     color: '#333',
-    marginBottom: 5,
+    marginBottom: 10, // Increased margin
   },
   input: {
     backgroundColor: '#f1f1f1',
-    paddingVertical: 10,
-    paddingHorizontal: 15,
+    paddingVertical: 15, // Increased padding
+    paddingHorizontal: 20, // Increased padding
     borderRadius: 15,
     width: '100%',
-    height: 55,
+    height: 60, // Increased height
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 2 }, // Increased shadow offset
+    shadowOpacity: 0.2,
+    shadowRadius: 3, // Increased shadow radius
+    elevation: 3, // Increased elevation
     justifyContent: 'center',
   },
   saveButton: {
     backgroundColor: '#f28b82',
-    paddingVertical: 15,
-    paddingHorizontal: 25,
-    borderRadius: 15,
+    paddingVertical: 20, // Increased padding
+    paddingHorizontal: 30, // Increased padding
+    borderRadius: 20, // Increased border radius
     alignItems: 'center',
     width: '100%',
-    marginBottom: 20,
   },
   saveButtonText: {
     color: '#fff',
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 18, // Increased font size
   },
 });
 
