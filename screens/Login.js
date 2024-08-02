@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'reac
 import Icon from 'react-native-vector-icons/Ionicons'; // Importing Ionicons from react-native-vector-icons
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -16,15 +17,31 @@ export default function Login({ navigation }) {
   };
 
   const submit = async () => {
+    let valid = true;
+
+    if (!email) {
+      setEmailError('Email is required');
+      valid = false;
+    } else {
+      setEmailError('');
+    }
+
+    if (!password) {
+      setPasswordError('Password is required');
+      valid = false;
+    } else {
+      setPasswordError('');
+    }
+
+    if (!valid) return;
+
     setSubmitting(true);
-    setEmailError('');
-    setPasswordError('');
-    
+
     try {
       const response = await axios.post('http://192.168.1.17:5555/auth/login', {
         email,
         password,
-        rememberMe
+        rememberMe,
       });
       const { tokenLogin, user } = response.data;
       console.log(user);
@@ -38,9 +55,9 @@ export default function Login({ navigation }) {
       if (error.response && error.response.data) {
         const errorMessage = error.response.data.message;
 
-        if (errorMessage.includes("email")) {
+        if (errorMessage.includes('email')) {
           setEmailError(errorMessage);
-        } else if (errorMessage.includes("credentials")) {
+        } else if (errorMessage.includes('credentials')) {
           setPasswordError(errorMessage);
         } else {
           console.error('Error:', errorMessage);
