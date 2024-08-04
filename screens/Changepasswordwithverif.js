@@ -20,7 +20,7 @@ export default function Changepasswordwithverif({ navigation }) {
     }
 
     try {
-      const response = await axios.put('http://192.168.1.17:5555/auth/resetPwd', {
+      const response = await axios.put('http://192.168.1.13:5555/auth/resetPwd', {
         password,
         confirmPassword,
       });

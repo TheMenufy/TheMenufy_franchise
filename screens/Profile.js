@@ -1,44 +1,63 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+
+const API_BASE_URL = 'http://192.168.1.13:5555/user';
+
+// Function to get user data from the backend
+const getUser = async (token) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/getUser`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Failed to get user data', error);
+    throw error;
+  }
+};
 
 const ProfilePage = () => {
   const [admin, setAdmin] = useState({});
   const navigation = useNavigation();
 
-  useEffect(() => {
-    // Fetch user data from AsyncStorage
-    const fetchUserData = async () => {
-      try {
-        const userData = await AsyncStorage.getItem('userData');
-        if (userData) {
-          setAdmin(JSON.parse(userData));
-        }
-      } catch (error) {
-        console.error('Failed to load user data:', error);
-      }
-    };
+  const fetchUserData = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
 
+      const userData = await getUser(token);
+      if (userData.length > 0) {
+        setAdmin(userData[0]);
+      }
+    } catch (error) {
+      console.error('Failed to load user data', error);
+    }
+  };
+
+  useEffect(() => {
     fetchUserData();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserData();
+    }, [])
+  );
 
   const handleEditProfile = () => {
     navigation.push('EditProfile');
   };
 
-  const handleChangePassword = () => {
-    navigation.push('ChangePassword');
-  };
-
   const handleLogout = async () => {
     try {
-      // Clear user data from AsyncStorage
+      await axios.post('http://192.168.1.13:5555/auth/logout');
       await AsyncStorage.removeItem('userToken');
       await AsyncStorage.removeItem('userData');
-      // Navigate to login screen
-      navigation.navigate('Login');
+      navigation.navigate('login');
     } catch (error) {
       console.error('Logout failed:', error);
       alert('An error occurred while logging out. Please try again.');
@@ -47,19 +66,19 @@ const ProfilePage = () => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={handleChangePassword} style={styles.changePasswordButton}>
-        <Ionicons name="key-outline" size={24} color="#fff" />
+      <TouchableOpacity onPress={handleLogout} style={styles.changePasswordButton}>
+        <Ionicons name="log-out-outline" size={24} color="#fff" />
       </TouchableOpacity>
-      
+
       <TouchableOpacity onPress={handleEditProfile} style={styles.editButton}>
         <Ionicons name="pencil" size={24} color="#fff" />
       </TouchableOpacity>
 
       <View style={styles.profileHeader}>
         <View style={styles.profileImageContainer}>
-          <Image source={{ uri: admin.image || '../assets/prof.png' }} style={styles.profileImage} />
+          <Image source={{ uri: admin.image || 'https://example.com/default_profile.jpg' }} style={styles.profileImage} />
         </View>
-        <Text style={styles.name}>{admin.firstName} {admin.name}</Text>
+        <Text style={styles.name}>{admin.userName}</Text>
         <Text style={styles.role}>{admin.role}</Text>
         <Text style={styles.phoneNumber}>{admin.phone}</Text>
       </View>
@@ -68,18 +87,14 @@ const ProfilePage = () => {
         <Text style={styles.detailTitle}>Contact Information</Text>
         <Text style={styles.detailText}>Email: {admin.email}</Text>
         <Text style={styles.detailText}>Location: {admin.address}</Text>
-        <Text style={styles.detailText}>Phone: {admin.phone}</Text>
-        <Text style={styles.detailText}>Date of Birth: {admin.dateOfBirth}</Text>
+        <Text style={styles.detailText}>Phone number: {admin.phone}</Text>
+        <Text style={styles.detailText}>Date of Birth: {admin.birthday}</Text>
       </View>
 
       <View style={styles.memberSinceSection}>
         <Text style={styles.detailTitle}>Member Since</Text>
-        <Text style={styles.detailText}>{admin.joinDate}</Text>
+        <Text style={styles.detailText}>{admin.createdAt}</Text>
       </View>
-
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <Text style={styles.logoutButtonText}>Logout</Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -94,7 +109,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 20,
     left: 20,
-    backgroundColor: '#007BFF',
+    backgroundColor: 'tomato',
     borderRadius: 20,
     width: 40,
     height: 40,
@@ -107,7 +122,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 20,
     right: 20,
-    backgroundColor: 'tomato',
+    backgroundColor: '#007BFF',
     borderRadius: 20,
     width: 40,
     height: 40,
@@ -161,7 +176,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 5,
-    marginBottom: 20, // Added marginBottom to separate the sections
+    marginBottom: 20,
   },
   memberSinceSection: {
     width: '100%',

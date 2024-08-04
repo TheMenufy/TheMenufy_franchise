@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-nativ
 import Icon from 'react-native-vector-icons/Ionicons'; // Importing Ionicons from react-native-vector-icons
 import axios from 'axios';
 
+
 export default function ForgetPassword({ navigation }) {
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -19,7 +20,7 @@ export default function ForgetPassword({ navigation }) {
   
     if (valid) {
       try {
-        const response = await axios.put('http://192.168.1.17:5555/auth/forgotPwd', { email });
+        const response = await axios.put('http://192.168.1.13:5555/auth/forgotPwd', { email });
   
         if (response.status === 200) {
           // Navigate to verification screen or show success message

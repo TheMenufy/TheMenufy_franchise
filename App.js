@@ -8,7 +8,7 @@ import ForgetPassword from './screens/ForgetPasswordScreen';
 import RestaurantScreen from './screens/Restaurants';
 import DetailRestaurant from './screens/DetailRestaurant'; 
 import Forgetpasswordverificarion from './screens/Forgetpasswordverificarion';
-
+import Changepasswordscrean from './screens/ChangePasswordScreen';
 import Changepasswordwithverif from './screens/Changepasswordwithverif';
 import EditProfilePage from './screens/EditProfile';
 import ProfilePage from './screens/Profile';
@@ -29,7 +29,8 @@ export default function App() {
         <Stack.Screen name="Restaurants" component={RestaurantScreen} options={{ title: 'Restaurants' }} />
         <Stack.Screen name="DetailRestaurant" component={DetailRestaurant} options={{ title: 'Restaurant Details' }} />
         <Stack.Screen name="Changepasswordwithverif" component={Changepasswordwithverif} options={{ headerShown: false }}/>
-        <Stack.Screen name="EditProfile" component={EditProfilePage} options={{ headerShown: true }}/>
+        <Stack.Screen name="Changepasswordscrean" component={Changepasswordscrean} options={{ headerShown: true ,title:"change password"}}/>
+        <Stack.Screen name="EditProfile" component={EditProfilePage} options={{ headerShown: true  }} />
         <Stack.Screen name="ProfilePage" component={ProfilePage} options={{ headerShown: false }}/>
         <Stack.Screen name="SetupSystem" component={SetupSystem} options={{ headerShown: false }}/>
         <Stack.Screen name="MenuScreen" component={MenuScreen} options={{ headerShown: false }}/>
