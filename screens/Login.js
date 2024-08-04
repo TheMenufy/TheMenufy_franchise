@@ -27,8 +27,12 @@ export default function Login({ navigation }) {
         rememberMe
       });
       const { tokenLogin, user } = response.data;
-      console.log(user);
+      console.log("user id"+user.id);
+      console.log("user"+user);
+
       await AsyncStorage.setItem('userToken', tokenLogin);
+      
+      await AsyncStorage.setItem('id', user.id);
       await AsyncStorage.setItem('userData', JSON.stringify(user));
 
       if (response.data.tokenLogin) {
