@@ -123,8 +123,8 @@ const HomeScreen = ({ navigation }) => {
         
         <View style={styles.profileSummary}>
           <Text style={styles.profileSummaryTitle}>Profile Summary</Text>
-          <Text style={styles.profileSummaryText}>Admin: John Doe</Text>
-          <Text style={styles.profileSummaryText}>Role: Administrator</Text>
+          <Text style={styles.profileSummaryText}>Admin: Adem Seddik</Text>
+          <Text style={styles.profileSummaryText}>Role: resFranchise</Text>
           <Text style={styles.profileSummaryText}>Location: Tunis, Tunisia</Text>
         </View>
 
