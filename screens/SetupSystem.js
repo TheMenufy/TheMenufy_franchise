@@ -3,6 +3,7 @@ import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity, Image,
 import { useNavigation } from '@react-navigation/native';
 import Slider from '@react-native-community/slider'; // Assurez-vous d'installer cette bibliothèque
 import { launchImageLibrary } from 'react-native-image-picker';
+import { TriangleColorPicker } from 'react-native-color-picker'; // Assurez-vous d'installer cette bibliothèque
 
 const SetupSystem = () => {
   const navigation = useNavigation(); // Utilisez le hook useNavigation pour obtenir l'objet de navigation
@@ -12,6 +13,7 @@ const SetupSystem = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
   const [themeColor, setThemeColor] = useState(0.5); // Valeur initiale du slider
+  const [selectedColor, setSelectedColor] = useState('#ffffff'); // Valeur initiale de la couleur
   const [socialNetworks, setSocialNetworks] = useState({
     facebook: '',
     instagram: '',
@@ -95,12 +97,6 @@ const SetupSystem = () => {
     });
   };
 
-  // Function to determine the color based on the slider value
-  const getColorFromSliderValue = (value) => {
-    const hue = value * 360;
-    return `hsl(${hue}, 100%, 50%)`;
-  };
-
   return (
     <SafeAreaView style={styles.safeContainer}>
       <ScrollView contentContainerStyle={styles.container}>
@@ -177,15 +173,12 @@ const SetupSystem = () => {
           </TouchableOpacity>
           {isThemeColorOpen && (
             <View style={styles.sectionContent}>
-              <View style={styles.sliderContainer}>
-                <Slider
-                  value={themeColor}
-                  onValueChange={setThemeColor}
-                  minimumValue={0}
-                  maximumValue={1}
-                  step={0.01}
-                  style={[styles.slider, { backgroundColor: getColorFromSliderValue(themeColor) }]}
-                />
+              <TriangleColorPicker
+                onColorSelected={color => setSelectedColor(color)}
+                style={{ flex: 1, height: 200 }}
+              />
+              <View style={{ marginTop: 20 }}>
+                <Text>Selected Color: {selectedColor}</Text>
               </View>
             </View>
           )}
@@ -255,28 +248,24 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 20,
-    paddingBottom: 40, // Add extra padding at the bottom
   },
   backButton: {
     marginBottom: 20,
   },
   backButtonText: {
+    color: 'blue',
     fontSize: 16,
-    color: '#007bff',
   },
   card: {
+    backgroundColor: '#f9f9f9',
+    borderRadius: 10,
     marginBottom: 20,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    overflow: 'hidden',
+    padding: 10,
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 15,
-    backgroundColor: '#f0f0f0',
   },
   sectionTitle: {
     fontSize: 18,
@@ -285,87 +274,82 @@ const styles = StyleSheet.create({
   sectionToggle: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: 'blue',
   },
   sectionContent: {
-    padding: 15,
+    marginTop: 10,
   },
   input: {
-    height: 50,
-    borderColor: '#ccc',
+    height: 40,
+    borderColor: 'gray',
     borderWidth: 1,
     borderRadius: 5,
+    marginBottom: 10,
     paddingHorizontal: 10,
-    marginBottom: 10,
-  },
-  socialInput: { // Style pour les champs de réseaux sociaux
-    height: 50,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    marginBottom: 10,
-    width: '100%', // Assurez-vous que ces champs utilisent la largeur totale disponible
-  },
-  sliderContainer: {
-    marginBottom: 20,
-  },
-  slider: {
-    width: '100%',
-    height: 40,
-  },
-  socialContainer: {
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  logo: {
-    width: 40,
-    height: 40,
-    marginBottom: 10,
-  },
-  mapContainer: {
-    height: 200,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 30,
-  },
-  mapPlaceholder: {
-    color: '#aaa',
-    fontSize: 16,
-  },
-  saveButton: {
-    backgroundColor: '#f28b82',
-    padding: 15,
-    borderRadius: 5,
-    alignItems: 'center',
-  },
-  saveButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
   imagePicker: {
-    height: 100,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
-    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
+    justifyContent: 'center',
+    height: 200,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 10,
+    marginBottom: 10,
   },
   image: {
     width: '100%',
     height: '100%',
-    borderRadius: 5,
+    borderRadius: 10,
   },
   imagePlaceholder: {
-    color: '#aaa',
-    fontSize: 16,
+    color: 'gray',
+  },
+  slider: {
+    height: 40,
+  },
+  mapContainer: {
+    height: 200,
+    backgroundColor: '#e0e0e0',
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  mapPlaceholder: {
+    color: 'gray',
+  },
+  saveButton: {
+    backgroundColor: '#f28b82',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  saveButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  socialContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  socialInput: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    flex: 1,
+  },
+  logo: {
+    width: 30,
+    height: 30,
+    marginRight: 10,
   },
   error: {
     color: 'red',
-    marginBottom: 10,
+    fontSize: 12,
   },
 });
 

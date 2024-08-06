@@ -5,7 +5,7 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-const API_BASE_URL = 'http://192.168.1.13:5555/user';
+const API_BASE_URL = 'http://192.168.1.17:5555/user';
 
 // Function to get user data from the backend
 const getUser = async (token) => {
@@ -54,7 +54,7 @@ const ProfilePage = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://192.168.1.13:5555/auth/logout');
+      await axios.post('http://192.168.1.17:5555/auth/logout');
       await AsyncStorage.removeItem('userToken');
       await AsyncStorage.removeItem('userData');
       navigation.navigate('login');

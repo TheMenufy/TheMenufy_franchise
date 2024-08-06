@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Import the icon library
 
-const API_BASE_URL = 'http://192.168.1.13:5555/user';
+const API_BASE_URL = 'http://192.168.1.17:5555/user';
 
 const EditProfile = () => {
   const navigation = useNavigation();
