@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity, Image, SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Slider from '@react-native-community/slider'; // Assurez-vous d'installer cette bibliothèque
-import { launchImageLibrary } from 'react-native-image-picker';
-import { TriangleColorPicker } from 'react-native-color-picker'; // Assurez-vous d'installer cette bibliothèque
+import * as ImagePicker from 'expo-image-picker'; // Utilisation d'expo-image-picker
+import { TriangleColorPicker } from 'react-native-color-picker';
+import MapView, { Marker } from 'react-native-maps';
 
 const SetupSystem = () => {
-  const navigation = useNavigation(); // Utilisez le hook useNavigation pour obtenir l'objet de navigation
+  const navigation = useNavigation();
 
   const [establishmentName, setEstablishmentName] = useState('');
   const [address, setAddress] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [email, setEmail] = useState('');
-  const [themeColor, setThemeColor] = useState(0.5); // Valeur initiale du slider
-  const [selectedColor, setSelectedColor] = useState('#ffffff'); // Valeur initiale de la couleur
+  const [themeColor, setThemeColor] = useState(0.5);
+  const [selectedColor, setSelectedColor] = useState('#ffffff');
   const [socialNetworks, setSocialNetworks] = useState({
     facebook: '',
     instagram: '',
@@ -31,14 +31,14 @@ const SetupSystem = () => {
     linkedin: '',
   });
 
-  // États pour gérer l'affichage des rubriques
   const [isEstablishmentOpen, setIsEstablishmentOpen] = useState(true);
   const [isImageOpen, setIsImageOpen] = useState(false);
   const [isThemeColorOpen, setIsThemeColorOpen] = useState(false);
   const [isSocialOpen, setIsSocialOpen] = useState(false);
 
+  const [selectedLocation, setSelectedLocation] = useState(null);
+
   const handleSave = () => {
-    // Reset errors
     let validationErrors = {
       establishmentName: '',
       address: '',
@@ -51,7 +51,6 @@ const SetupSystem = () => {
 
     let isValid = true;
 
-    // Validation logic
     if (!establishmentName) {
       validationErrors.establishmentName = 'Establishment Name is required';
       isValid = false;
@@ -84,17 +83,30 @@ const SetupSystem = () => {
     setErrors(validationErrors);
 
     if (isValid) {
-      // Logic to save the data
       console.log('Data saved');
     }
   };
 
-  const selectImage = () => {
-    launchImageLibrary({ mediaType: 'photo', quality: 1 }, (response) => {
-      if (response.assets && response.assets.length > 0) {
-        setFranchiseImage(response.assets[0].uri);
-      }
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      console.log('Sorry, we need camera roll permissions to make this work!');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 1,
     });
+
+    if (!result.canceled) {
+      setFranchiseImage(result.uri); // Met à jour l'état avec l'URI de l'image sélectionnée
+    }
+  };
+
+  const handleLongPress = (event) => {
+    const { coordinate } = event.nativeEvent;
+    setSelectedLocation(coordinate);
   };
 
   return (
@@ -150,12 +162,12 @@ const SetupSystem = () => {
 
         <View style={styles.card}>
           <TouchableOpacity style={styles.sectionHeader} onPress={() => setIsImageOpen(!isImageOpen)}>
-            <Text style={styles.sectionTitle}>Restaurant Image</Text>
+            <Text style={styles.sectionTitle}>Franchise Image</Text>
             <Text style={styles.sectionToggle}>{isImageOpen ? '-' : '+'}</Text>
           </TouchableOpacity>
           {isImageOpen && (
             <View style={styles.sectionContent}>
-              <TouchableOpacity style={styles.imagePicker} onPress={selectImage}>
+              <TouchableOpacity style={styles.imagePicker} onPress={pickImage}>
                 {franchiseImage ? (
                   <Image source={{ uri: franchiseImage }} style={styles.image} />
                 ) : (
@@ -177,8 +189,8 @@ const SetupSystem = () => {
                 onColorSelected={color => setSelectedColor(color)}
                 style={{ flex: 1, height: 200 }}
               />
-              <View style={{ marginTop: 20 }}>
-                <Text>Selected Color: {selectedColor}</Text>
+              <View style={[styles.colorDisplay, { backgroundColor: selectedColor }]}>
+                <Text style={styles.colorText}>Selected Color: {selectedColor}</Text>
               </View>
             </View>
           )}
@@ -194,7 +206,7 @@ const SetupSystem = () => {
               <View style={styles.socialContainer}>
                 <Image source={require('../assets/facebook.png')} style={styles.logo} />
                 <TextInput
-                  style={styles.socialInput} // Utilisez le style socialInput pour une largeur uniforme
+                  style={styles.socialInput}
                   placeholder="Facebook URL"
                   value={socialNetworks.facebook}
                   onChangeText={(text) => setSocialNetworks({ ...socialNetworks, facebook: text })}
@@ -205,7 +217,7 @@ const SetupSystem = () => {
               <View style={styles.socialContainer}>
                 <Image source={require('../assets/instagram.png')} style={styles.logo} />
                 <TextInput
-                  style={styles.socialInput} // Utilisez le style socialInput pour une largeur uniforme
+                  style={styles.socialInput}
                   placeholder="Instagram URL"
                   value={socialNetworks.instagram}
                   onChangeText={(text) => setSocialNetworks({ ...socialNetworks, instagram: text })}
@@ -216,7 +228,7 @@ const SetupSystem = () => {
               <View style={styles.socialContainer}>
                 <Image source={require('../assets/linkedin.png')} style={styles.logo} />
                 <TextInput
-                  style={styles.socialInput} // Utilisez le style socialInput pour une largeur uniforme
+                  style={styles.socialInput}
                   placeholder="LinkedIn URL"
                   value={socialNetworks.linkedin}
                   onChangeText={(text) => setSocialNetworks({ ...socialNetworks, linkedin: text })}
@@ -227,9 +239,24 @@ const SetupSystem = () => {
           )}
         </View>
 
-        {/* Placeholder for the map component */}
         <View style={styles.mapContainer}>
-          <Text style={styles.mapPlaceholder}>Map Placeholder</Text>
+          <MapView
+            style={styles.map}
+            initialRegion={{
+              latitude: 37.78825,
+              longitude: -122.4324,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+            onLongPress={handleLongPress}
+          >
+            {selectedLocation && (
+              <Marker coordinate={selectedLocation} />
+            )}
+          </MapView>
+          <Text style={styles.mapPlaceholder}>
+            {selectedLocation ? `Selected Location: ${selectedLocation.latitude}, ${selectedLocation.longitude}` : 'Select Location on Map'}
+          </Text>
         </View>
 
         <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
@@ -246,7 +273,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   container: {
-    flexGrow: 1,
     padding: 20,
   },
   backButton: {
@@ -308,15 +334,19 @@ const styles = StyleSheet.create({
     height: 40,
   },
   mapContainer: {
-    height: 200,
+    height: 300,
     backgroundColor: '#e0e0e0',
     borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
     marginBottom: 20,
+  },
+  map: {
+    flex: 1,
+    borderRadius: 10,
   },
   mapPlaceholder: {
     color: 'gray',
+    textAlign: 'center',
+    marginTop: 10,
   },
   saveButton: {
     backgroundColor: '#f28b82',
@@ -350,6 +380,14 @@ const styles = StyleSheet.create({
   error: {
     color: 'red',
     fontSize: 12,
+  },
+  colorDisplay: {
+    marginTop: 10,
+    padding: 10,
+    borderRadius: 5,
+  },
+  colorText: {
+    color: '#000',
   },
 });
 
