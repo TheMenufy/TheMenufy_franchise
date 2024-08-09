@@ -4,6 +4,9 @@ import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker'; // Utilisation d'expo-image-picker
 import { TriangleColorPicker } from 'react-native-color-picker';
 import MapView, { Marker } from 'react-native-maps';
+import axios from 'axios';
+
+const API_BASE_URL = 'http://192.168.1.17:5555/franchise';
 
 const SetupSystem = () => {
   const navigation = useNavigation();
