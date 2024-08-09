@@ -15,6 +15,7 @@ import ProfilePage from './screens/Profile';
 import SetupSystem from './screens/SetupSystem';
 import MenuScreen from './screens/MenuScreen';
 import RestaurantCategoriesScreen from './screens/RestaurantCategoriesScreen';
+import ChatPage from './screens/ChatPage';
 
 const Stack = createNativeStackNavigator();
 
@@ -35,6 +36,7 @@ export default function App() {
         <Stack.Screen name="SetupSystem" component={SetupSystem} options={{ headerShown: false }}/>
         <Stack.Screen name="MenuScreen" component={MenuScreen} options={{ headerShown: false }}/>
         <Stack.Screen name="RestaurantCategoriesScreen" component={RestaurantCategoriesScreen} options={{ headerShown: false }}/>
+        <Stack.Screen name="ChatPage" component={ChatPage} options={{ title: 'Chat' }} />
 
       </Stack.Navigator>
     </NavigationContainer>
