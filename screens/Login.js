@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons'; // Importing Ionicons from react-native-vector-icons
+import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -11,6 +11,27 @@ export default function Login({ navigation }) {
   const [passwordError, setPasswordError] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [isSubmitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const rememberMePref = await AsyncStorage.getItem('rememberMe');
+        const token = await AsyncStorage.getItem('userToken');
+        
+        if (rememberMePref === 'true' && token) {
+          navigation.navigate('home');
+        } else {
+          if (rememberMePref !== null) {
+            setRememberMe(JSON.parse(rememberMePref));
+          }
+        }
+      } catch (error) {
+        console.error('Error checking login status:', error.message);
+      }
+    };
+
+    checkLoginStatus();
+  }, [navigation]);
 
   const handleForgetPassword = () => {
     navigation.navigate('forgetpassword');
@@ -43,10 +64,11 @@ export default function Login({ navigation }) {
         password,
         rememberMe,
       });
+
       const { tokenLogin, user } = response.data;
-      console.log(user);
       await AsyncStorage.setItem('userToken', tokenLogin);
       await AsyncStorage.setItem('userData', JSON.stringify(user));
+      await AsyncStorage.setItem('rememberMe', JSON.stringify(rememberMe)); // Store rememberMe preference
 
       if (response.data.tokenLogin) {
         navigation.navigate('home');

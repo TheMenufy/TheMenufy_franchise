@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons'; 
 import axios from 'axios';
 
@@ -7,6 +7,8 @@ export default function ForgetPasswordVerification({ navigation }) {
   const [code, setCode] = useState(['', '', '', '']);
   const [timeLeft, setTimeLeft] = useState(120);
   const [isCodeIncorrect, setIsCodeIncorrect] = useState(false);
+
+  const inputs = useRef([]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -21,32 +23,36 @@ export default function ForgetPasswordVerification({ navigation }) {
     newCode[index] = value;
     setCode(newCode);
 
-    if (newCode.join('').length === 4) {
-      validateCode(newCode.join(''));
+    if (value !== '') {
+      if (index < 3) {
+        // Move focus to the next input if it exists
+        inputs.current[index + 1].focus();
+      } else {
+        // Validate code when the last digit is entered
+        validateCode(newCode.join(''));
+      }
+    } else if (index > 0) {
+      // Move focus to the previous input if the current input is cleared
+      inputs.current[index - 1].focus();
     }
   };
 
   const validateCode = async (code) => {
- 
     try {
-      // Send the code with the correct key as per the server's expectations
       const response = await axios.post('http://192.168.1.17:5555/auth/verifCode', { activationCodeForgotPass: code });
      
-      if (response.status==201) {
-       
+      if (response.status === 201) {
         navigation.navigate('Changepasswordwithverif');
         setIsCodeIncorrect(false);
       } else {
-        // Code is incorrect or another error occurred
         setIsCodeIncorrect(true);
       }
     } catch (error) {
       setIsCodeIncorrect(true);
-      console.error('Error verifying code:', error.message);
+      // Removed console.error line
     }
   };
-  
-  
+
   const handleResendCode = () => {
     if (timeLeft === 0) {
       setTimeLeft(120);
@@ -69,6 +75,7 @@ export default function ForgetPasswordVerification({ navigation }) {
           {code.map((digit, index) => (
             <TextInput
               key={index}
+              ref={ref => inputs.current[index] = ref}
               style={[styles.codeInput, isCodeIncorrect && styles.incorrectCode]}
               keyboardType="numeric"
               maxLength={1}
