@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -66,19 +66,22 @@ const ProfilePage = () => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={handleLogout} style={styles.changePasswordButton}>
+      <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
         <Ionicons name="log-out-outline" size={24} color="#fff" />
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={handleEditProfile} style={styles.editButton}>
-        <Ionicons name="pencil" size={24} color="#fff" />
       </TouchableOpacity>
 
       <View style={styles.profileHeader}>
         <View style={styles.profileImageContainer}>
           <Image source={{ uri: admin.image || 'https://example.com/default_profile.jpg' }} style={styles.profileImage} />
         </View>
-        <Text style={styles.name}>{admin.userName}</Text>
+
+        <View style={styles.nameAndEditContainer}>
+          <Text style={styles.name}>{admin.userName}</Text>
+          <TouchableOpacity onPress={handleEditProfile} style={styles.editButton}>
+            <Ionicons name="pencil" size={20} color="#fff" />
+          </TouchableOpacity>
+        </View>
+
         <Text style={styles.role}>{admin.role}</Text>
         <Text style={styles.phoneNumber}>{admin.phone}</Text>
       </View>
@@ -105,24 +108,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 10,
   },
-  changePasswordButton: {
+  logoutButton: {
     position: 'absolute',
     top: 20,
     left: 20,
     backgroundColor: 'tomato',
-    borderRadius: 20,
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1,
-    elevation: 3,
-  },
-  editButton: {
-    position: 'absolute',
-    top: 20,
-    right: 20,
-    backgroundColor: '#007BFF',
     borderRadius: 20,
     width: 40,
     height: 40,
@@ -149,10 +139,22 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  nameAndEditContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   name: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 5,
+    marginRight: 10,
+  },
+  editButton: {
+    backgroundColor: '#007BFF',
+    borderRadius: 20,
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   role: {
     fontSize: 18,
@@ -203,19 +205,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 5,
     color: '#666',
-  },
-  logoutButton: {
-    marginTop: 20,
-    backgroundColor: 'tomato',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  logoutButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
 });
 

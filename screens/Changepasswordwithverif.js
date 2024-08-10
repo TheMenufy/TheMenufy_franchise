@@ -42,7 +42,13 @@ export default function Changepasswordwithverif({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Icon name="arrow-back" size={28} color="#000" style={styles.earth} />
+        <Icon 
+          name="arrow-back" 
+          size={28} 
+          color="#000" 
+          style={styles.earth} 
+          onPress={() => navigation.goBack()} // Go back to the previous screen
+        />
         <Icon name="earth-outline" size={28} color="#000" style={styles.earth} />
       </View>
       <View style={styles.overlay}>
