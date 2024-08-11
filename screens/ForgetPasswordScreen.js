@@ -46,16 +46,16 @@ export default function ForgetPassword({ navigation }) {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
         style={styles.innerContainer}
       >
-        <View style={styles.headerContainer}>
-          <View style={styles.header}>
-            <Icon name="arrow-back" size={28} color="#000" onPress={() => navigation.goBack()} />
-            <Icon name="earth-outline" size={28} color="#000" />
-          </View>
-        </View>
         <ScrollView 
           contentContainerStyle={styles.scrollViewContent} 
           keyboardShouldPersistTaps='handled'
         >
+          <View style={styles.headerContainer}>
+            <View style={styles.header}>
+              <Icon name="arrow-back" size={28} color="#000" onPress={() => navigation.goBack()} />
+              <Icon name="earth-outline" size={28} color="#000" />
+            </View>
+          </View>
           <View style={styles.content}>
             <Text style={styles.welcomeText}>What's your email address?</Text>
             <Text style={styles.subtitle}>Enter the email address associated with your account</Text>
@@ -105,14 +105,16 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginBottom: 20, // Adds space below the header
   },
   scrollViewContent: {
     flexGrow: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start', // Aligns content to the top
+    paddingTop: 60, // Add space at the top to ensure header isn't covered
   },
   content: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start', // Align content to the top
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingBottom: 20, // Space from the bottom of the screen to make room for the button
