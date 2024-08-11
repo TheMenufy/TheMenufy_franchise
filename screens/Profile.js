@@ -69,13 +69,24 @@ const ProfilePage = () => {
     }
   };
 
-  const renderPersonalProfile = () => (
-    <View>
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+        <Ionicons name="log-out-outline" size={24} color="#fff" />
+      </TouchableOpacity>
+
       <View style={styles.profileHeader}>
         <View style={styles.profileImageContainer}>
           <Image source={{ uri: admin.image || 'https://example.com/default_profile.jpg' }} style={styles.profileImage} />
         </View>
-        <Text style={styles.name}>{admin.userName}</Text>
+
+        <View style={styles.nameAndEditContainer}>
+          <Text style={styles.name}>{admin.userName}</Text>
+          <TouchableOpacity onPress={handleEditProfile} style={styles.editButton}>
+            <Ionicons name="pencil" size={20} color="#fff" />
+          </TouchableOpacity>
+        </View>
+
         <Text style={styles.role}>{admin.role}</Text>
         <Text style={styles.phoneNumber}>{admin.phone}</Text>
       </View>
@@ -131,39 +142,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 10,
   },
-  topBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    backgroundColor: '#FFFFFF',
-  },
-  topBarButton1: {
-    marginRight:90,
-    backgroundColor: 'transparent',
-  },
-  topBarButton2: {
-    marginLeft:90,
-    backgroundColor: 'transparent',
-  },
-  switcherContainer: {
-    flexDirection: 'row',
+  logoutButton: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    backgroundColor: 'tomato',
+    borderRadius: 20,
+    width: 40,
+    height: 40,
     justifyContent: 'center',
     marginVertical: 20,
-  },
-  switcherButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-    marginHorizontal: 5,
-    backgroundColor: '#e0e0e0',
-  },
-  activeSwitcherButton: {
-    backgroundColor: '#007BFF',
-  },
-  switcherText: {
-    color: '#fff',
-    fontWeight: 'bold',
   },
   profileHeader: {
     alignItems: 'center',
@@ -183,10 +171,22 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  nameAndEditContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   name: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 5,
+    marginRight: 10,
+  },
+  editButton: {
+    backgroundColor: '#007BFF',
+    borderRadius: 20,
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   role: {
     fontSize: 18,
@@ -237,12 +237,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 5,
     color: '#666',
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    textAlign: 'center',
   },
 });
 

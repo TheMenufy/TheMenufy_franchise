@@ -8,36 +8,46 @@ export default function Changepasswordwithverif({ navigation }) {
   const [oldPassword, setOldPassword] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [passwordError, setPasswordError] = useState('');
+  const [errors, setErrors] = useState({
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
 
   const handleCancel = () => {
     navigation.push('EditProfile');
   };
 
   const handleChangePassword = async () => {
-    // Reset the error message before validation
-    setPasswordError('');
+    setErrors({
+      oldPassword: '',
+      newPassword: '',
+      confirmPassword: '',
+    });
 
-    // Basic validation
-    if (!oldPassword || !password || !confirmPassword) {
-      setPasswordError('All fields are required.');
-      return;
+    let valid = true;
+    if (!oldPassword) {
+      setErrors(prev => ({ ...prev, oldPassword: 'Current password is required.' }));
+      valid = false;
     }
-
-    if (password.length < 6) {
-      setPasswordError('Password must be at least 6 characters long.');
-      return;
+    if (!password) {
+      setErrors(prev => ({ ...prev, newPassword: 'New password is required.' }));
+      valid = false;
+    } else if (password.length < 6) {
+      setErrors(prev => ({ ...prev, newPassword: 'Password must be at least 6 characters long.' }));
+      valid = false;
     }
-
     if (password !== confirmPassword) {
-      setPasswordError('Passwords do not match.');
-      return;
+      setErrors(prev => ({ ...prev, confirmPassword: 'Passwords do not match.' }));
+      valid = false;
     }
+
+    if (!valid) return;
 
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) {
-        setPasswordError('User not authenticated.');
+        Alert.alert('Error', 'User not authenticated.');
         return;
       }
 
@@ -57,11 +67,12 @@ export default function Changepasswordwithverif({ navigation }) {
           { text: 'OK', onPress: () => navigation.goBack() }
         ]);
       } else {
-        setPasswordError('An error occurred. Please try again.');
+        Alert.alert('Error', 'An error occurred. Please try again.');
       }
     } catch (error) {
-      setPasswordError('An error occurred. Please try again.');
-      console.error('Error resetting password:', error.message);
+      // Extract the error message and display it without logging to the console
+      const errorMessage = error.response?.data?.message || 'An error occurred. Please try again.';
+      Alert.alert('Error', errorMessage);
     }
   };
 
@@ -80,7 +91,10 @@ export default function Changepasswordwithverif({ navigation }) {
             secureTextEntry
           />
         </View>
-    
+        {errors.oldPassword ? (
+          <Text style={styles.errorText}>{errors.oldPassword}</Text>
+        ) : null}
+
         <View style={styles.inputContainer}>
           <Icon name="lock-closed-outline" size={20} color="#888" style={styles.icon} />
           <TextInput
@@ -92,6 +106,10 @@ export default function Changepasswordwithverif({ navigation }) {
             secureTextEntry
           />
         </View>
+        {errors.newPassword ? (
+          <Text style={styles.errorText}>{errors.newPassword}</Text>
+        ) : null}
+
         <View style={styles.inputContainer}>
           <Icon name="lock-closed-outline" size={20} color="#888" style={styles.icon} />
           <TextInput
@@ -103,9 +121,10 @@ export default function Changepasswordwithverif({ navigation }) {
             secureTextEntry
           />
         </View>
-        {passwordError ? (
-          <Text style={styles.errorText}>{passwordError}</Text>
+        {errors.confirmPassword ? (
+          <Text style={styles.errorText}>{errors.confirmPassword}</Text>
         ) : null}
+
         <View style={styles.footerContainer}>
           <TouchableOpacity style={styles.button} onPress={handleChangePassword}>
             <Text style={styles.buttonText}>Save</Text>

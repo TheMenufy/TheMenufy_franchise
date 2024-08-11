@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, SafeAreaView, Keyboard } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons'; // Importing Ionicons from react-native-vector-icons
 import axios from 'axios';
-
 
 export default function ForgetPassword({ navigation }) {
   const [email, setEmail] = useState('');
@@ -10,14 +9,14 @@ export default function ForgetPassword({ navigation }) {
 
   const handleForgetPasswordVerification = async () => {
     let valid = true;
-  
+
     if (email === '') {
       setEmailError('Email is required');
       valid = false;
     } else {
       setEmailError('');
     }
-  
+
     if (valid) {
       try {
         const response = await axios.put('http://192.168.1.15:5555/auth/forgotPwd', { email });
@@ -42,32 +41,46 @@ export default function ForgetPassword({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Icon name="arrow-back" size={28} color="#000" style={styles.earth} />
-        <Icon name="earth-outline" size={28} color="#000" style={styles.earth} />
-      </View>
-      <View style={styles.overlay}>
-        <Text style={styles.welcomeText}>What's your email address?</Text>
-        <Text style={styles.subtitle}>Enter the email address associated with your account</Text>
-        <View style={styles.inputContainer}>
-          <Icon name="mail-outline" size={20} color="#888" style={styles.icon} />
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            placeholderTextColor="#888"
-            value={email}
-            onChangeText={setEmail}
-          />
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'} 
+        style={styles.innerContainer}
+      >
+        <ScrollView 
+          contentContainerStyle={styles.scrollViewContent} 
+          keyboardShouldPersistTaps='handled'
+        >
+          <View style={styles.headerContainer}>
+            <View style={styles.header}>
+              <Icon name="arrow-back" size={28} color="#000" onPress={() => navigation.goBack()} />
+              <Icon name="earth-outline" size={28} color="#000" />
+            </View>
+          </View>
+          <View style={styles.content}>
+            <Text style={styles.welcomeText}>What's your email address?</Text>
+            <Text style={styles.subtitle}>Enter the email address associated with your account</Text>
+            <View style={styles.inputContainer}>
+              <Icon name="mail-outline" size={20} color="#888" style={styles.icon} />
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                placeholderTextColor="#888"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType='email-address'
+                autoCapitalize='none'
+              />
+            </View>
+            {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
+          </View>
+        </ScrollView>
+        <View style={styles.footerContainer}>
+          <TouchableOpacity style={styles.button} onPress={handleForgetPasswordVerification}>
+            <Text style={styles.buttonText}>Continue</Text>
+          </TouchableOpacity>
         </View>
-        {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
-      </View>
-      <View style={styles.footerContainer}>
-        <TouchableOpacity style={styles.button} onPress={handleForgetPasswordVerification}>
-          <Text style={styles.buttonText}>Continue</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
@@ -76,21 +89,35 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
   },
-  earth: {
-    marginTop: 25,
+  innerContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  headerContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 20,
+    paddingTop: Platform.OS === 'ios' ? 10 : 0, // Adjust for iOS safe area
+    zIndex: 1,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 20,
+    marginBottom: 20, // Adds space below the header
   },
-  overlay: {
+  scrollViewContent: {
+    flexGrow: 1,
+    justifyContent: 'flex-start', // Aligns content to the top
+    paddingTop: 60, // Add space at the top to ensure header isn't covered
+  },
+  content: {
     flex: 1,
-    backgroundColor: 'white',
+    justifyContent: 'flex-start', // Align content to the top
     alignItems: 'center',
-    justifyContent: 'center',
     paddingHorizontal: 20,
-    paddingTop: 50, // Adjust this value to move the content down
+    paddingBottom: 20, // Space from the bottom of the screen to make room for the button
   },
   welcomeText: {
     fontSize: 24,
@@ -103,7 +130,7 @@ const styles = StyleSheet.create({
     color: '#666',
     marginBottom: 25,
     marginHorizontal: 10,
-    textAlign: 'center', // Center the subtitle text
+    textAlign: 'center',
   },
   inputContainer: {
     flexDirection: 'row',
@@ -113,7 +140,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginBottom: 15,
     borderRadius: 15,
-    width: '90%',
+    width: '100%',
     height: 55,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
@@ -141,7 +168,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     borderRadius: 15,
     alignItems: 'center',
-    width: '90%',
+    width: '100%', // Set width to 100% to make the button fill the container
+    maxWidth: 400, // Optionally, set a max width for larger screens
   },
   buttonText: {
     color: '#fff',
@@ -149,7 +177,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   footerContainer: {
-    alignItems: 'center',
-    marginBottom: 50, // Increased value to move the button higher
+    padding: 20,
+    alignItems: 'center', // Center align the button
+    width: '100%', // Ensure the container takes full width
   },
 });
