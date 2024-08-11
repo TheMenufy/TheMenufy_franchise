@@ -51,7 +51,7 @@ export default function Changepasswordwithverif({ navigation }) {
         return;
       }
 
-      const response = await axios.put('http://192.168.1.17:5555/user/updatePassword', 
+      const response = await axios.put('http://192.168.1.15:5555/user/updatePassword', 
         { 
           password,
           confirmPassword, 

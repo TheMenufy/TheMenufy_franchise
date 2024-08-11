@@ -5,9 +5,8 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-const API_BASE_URL = 'http://192.168.1.17:5555/user';
+const API_BASE_URL = 'http://192.168.1.15:5555/user';
 
-// Function to get user data from the backend
 const getUser = async (token) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/getUser`, {
@@ -22,15 +21,20 @@ const getUser = async (token) => {
 
 const ProfilePage = () => {
   const [admin, setAdmin] = useState({});
+  const [currentProfile, setCurrentProfile] = useState('personal'); // state to manage profile switch
   const navigation = useNavigation();
 
   const fetchUserData = async () => {
+    var i =0;
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) throw new Error('No token found');
 
       const userData = await getUser(token);
       if (userData.length > 0) {
+
+          console.log("the franchise id is: "+userData[0].franchiseFK)
+        
         setAdmin(userData[0]);
       }
     } catch (error) {
@@ -40,6 +44,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     fetchUserData();
+    
   }, []);
 
   useFocusEffect(
@@ -54,7 +59,7 @@ const ProfilePage = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://192.168.1.17:5555/auth/logout');
+      await axios.post('http://192.168.1.15:5555/auth/logout');
       await AsyncStorage.removeItem('userToken');
       await AsyncStorage.removeItem('userData');
       navigation.navigate('login');
@@ -100,6 +105,35 @@ const ProfilePage = () => {
       </View>
     </View>
   );
+
+  const renderFranchiseProfile = () => (
+    <View>
+      <Text style={styles.sectionTitle}>Franchise Profile</Text>
+      {/* Add franchise profile details here */}
+      <Text style={styles.detailText}>Franchise Name: Example Franchise</Text>
+      <Text style={styles.detailText}>Location: Example Location</Text>
+      <Text style={styles.detailText}>Contact: Example Contact</Text>
+    </View>
+  );
+
+  return (
+    <View style={styles.container}>
+     
+
+      <View style={styles.switcherContainer}>
+      <TouchableOpacity onPress={handleLogout} style={styles.topBarButton1}>
+          <Ionicons name="log-out-outline" size={24} color="#fc0303" />
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={handleEditProfile} style={styles.topBarButton2}>
+          <Ionicons name="pencil" size={24} color="#3235fa" />
+        </TouchableOpacity>
+        
+      </View>
+
+      {currentProfile === 'personal' ? renderPersonalProfile() : renderFranchiseProfile()}
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -117,9 +151,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1,
-    elevation: 3,
+    marginVertical: 20,
   },
   profileHeader: {
     alignItems: 'center',

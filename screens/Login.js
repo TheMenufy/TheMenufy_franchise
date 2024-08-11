@@ -3,7 +3,6 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'reac
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -38,35 +37,21 @@ export default function Login({ navigation }) {
   };
 
   const submit = async () => {
-    let valid = true;
-
-    if (!email) {
-      setEmailError('Email is required');
-      valid = false;
-    } else {
-      setEmailError('');
-    }
-
-    if (!password) {
-      setPasswordError('Password is required');
-      valid = false;
-    } else {
-      setPasswordError('');
-    }
-
-    if (!valid) return;
-
     setSubmitting(true);
-
+    setEmailError('');
+    setPasswordError('');
+    
     try {
-      const response = await axios.post('http://192.168.1.17:5555/auth/login', {
+      const response = await axios.post('http://192.168.1.15:5555/auth/login', {
         email,
         password,
-        rememberMe,
+        rememberMe
       });
 
       const { tokenLogin, user } = response.data;
       await AsyncStorage.setItem('userToken', tokenLogin);
+      
+      await AsyncStorage.setItem('id', user.id);
       await AsyncStorage.setItem('userData', JSON.stringify(user));
       await AsyncStorage.setItem('rememberMe', JSON.stringify(rememberMe)); // Store rememberMe preference
 
@@ -77,9 +62,9 @@ export default function Login({ navigation }) {
       if (error.response && error.response.data) {
         const errorMessage = error.response.data.message;
 
-        if (errorMessage.includes('email')) {
+        if (errorMessage.includes("email")) {
           setEmailError(errorMessage);
-        } else if (errorMessage.includes('credentials')) {
+        } else if (errorMessage.includes("credentials")) {
           setPasswordError(errorMessage);
         } else {
           console.error('Error:', errorMessage);
@@ -95,10 +80,12 @@ export default function Login({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
+       
         <Icon name="arrow-back" size={24} color="#FFFFFF" />
         <Icon name="earth-outline" size={28} color="#000" style={styles.earth} />
       </View>
       <View style={styles.overlay}>
+       
         <Image source={require('../assets/cadenas_cut.png')} style={styles.image} />
         <Text style={styles.welcomeText}>Welcome Back!</Text>
         <Text style={styles.subtitle}>Make your day full of productivity!</Text>
@@ -133,13 +120,16 @@ export default function Login({ navigation }) {
           >
             <Text style={styles.rememberMeText}>{rememberMe ? '✓ ' : ''}Remember Me</Text>
           </TouchableOpacity>
+      
           <TouchableOpacity onPress={handleForgetPassword}>
             <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
           </TouchableOpacity>
         </View>
+     
         <TouchableOpacity style={styles.button} onPress={submit} disabled={isSubmitting}>
           <Text style={styles.buttonText}>Sign In</Text>
         </TouchableOpacity>
+        <View style={styles.footerContainer}></View>
         <View style={styles.footerContainer}></View>
       </View>
     </View>
@@ -151,6 +141,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
   },
+
   earth: {
     marginTop: 25,
   },
@@ -192,6 +183,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     width: '90%',
     height: 55,
+    height: 55,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -223,6 +215,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginHorizontal: 30,
+    marginHorizontal: 30,
   },
   rememberMeSelected: {
     backgroundColor: '#f28b82',
@@ -235,6 +228,7 @@ const styles = StyleSheet.create({
   forgotPasswordText: {
     fontSize: 14,
     color: '#f28b82',
+    marginHorizontal: 30,
     marginHorizontal: 30,
   },
   button: {
@@ -254,6 +248,7 @@ const styles = StyleSheet.create({
   footerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 40,
     marginBottom: 40,
   },
   footerText: {

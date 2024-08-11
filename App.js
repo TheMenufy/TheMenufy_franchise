@@ -31,9 +31,9 @@ export default function App() {
         <Stack.Screen name="DetailRestaurant" component={DetailRestaurant} options={{ title: 'Restaurant Details' }} />
         <Stack.Screen name="Changepasswordwithverif" component={Changepasswordwithverif} options={{ headerShown: false }}/>
         <Stack.Screen name="Changepasswordscrean" component={Changepasswordscrean} options={{ headerShown: true ,title:"change password"}}/>
-        <Stack.Screen name="EditProfile" component={EditProfilePage} options={{ headerShown: true  }} />
+        <Stack.Screen name="EditProfile" component={EditProfilePage} options={{ headerShown: true ,title:"Edit profile" , headerTitleAlign: 'center'}} />
         <Stack.Screen name="ProfilePage" component={ProfilePage} options={{ headerShown: false }}/>
-        <Stack.Screen name="SetupSystem" component={SetupSystem} options={{ headerShown: false }}/>
+        <Stack.Screen name="SetupSystem" component={SetupSystem} options={{ headerShown: true ,title:"Setup System" , headerTitleAlign: 'center'}}/>
         <Stack.Screen name="MenuScreen" component={MenuScreen} options={{ headerShown: false }}/>
         <Stack.Screen name="RestaurantCategoriesScreen" component={RestaurantCategoriesScreen} options={{ headerShown: false }}/>
         <Stack.Screen name="ChatPage" component={ChatPage} options={{ title: 'Chat' }} />

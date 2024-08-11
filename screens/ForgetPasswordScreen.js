@@ -19,8 +19,8 @@ export default function ForgetPassword({ navigation }) {
 
     if (valid) {
       try {
-        const response = await axios.put('http://192.168.1.17:5555/auth/forgotPwd', { email });
-
+        const response = await axios.put('http://192.168.1.15:5555/auth/forgotPwd', { email });
+  
         if (response.status === 200) {
           // Navigate to verification screen or show success message
           navigation.navigate('Forgetpasswordverificarion');
