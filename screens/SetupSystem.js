@@ -11,6 +11,7 @@ import * as Location from 'expo-location';
 const API_BASE_URL_USER = 'http://192.168.1.15:5555/user';
 const API_BASE_URL_FRANCHISE = 'http://192.168.1.15:5555/franchise';
 
+
 const SetupSystem = () => {
   const navigation = useNavigation();
   const [establishmentName, setEstablishmentName] = useState('');
@@ -115,13 +116,13 @@ const SetupSystem = () => {
 
   const fetchFranchiseData = async () => {
     try {
+      
       const token = await AsyncStorage.getItem('userToken');
       if (!token) throw new Error('No token found');
 
       const userData = await getUser(token);
       if (userData.length > 0) {
         const franchiseId = userData[0].franchiseFK;
-
         const franchiseData = await getFranchise(franchiseId);
         if (franchiseData) {
           setEstablishmentName(franchiseData.data.nameFr);
@@ -563,11 +564,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   saveButton: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#f28b82',
     paddingVertical: 15,
-    borderRadius: 10,
+    paddingHorizontal: 25,
+    borderRadius: 15,
     alignItems: 'center',
-    marginTop: 20,
+    alignSelf:'center',
+    width: '90%',
+   
   },
   saveButtonText: {
     color: '#ffffff',

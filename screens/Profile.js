@@ -143,19 +143,21 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   logoutButton: {
-    position: 'absolute',
-    top: 20,
-    left: 20,
+ 
+    
+  
     backgroundColor: 'tomato',
     borderRadius: 20,
     width: 40,
     height: 40,
-    justifyContent: 'center',
-    marginVertical: 20,
+    padding:8,
+    
+    alignSelf:'flex-end',
+ 
   },
   profileHeader: {
     alignItems: 'center',
-    marginTop: 60,
+    marginTop: 10,
     marginBottom: 20,
   },
   profileImageContainer: {
