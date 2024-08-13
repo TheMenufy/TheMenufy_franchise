@@ -8,8 +8,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 
-const API_BASE_URL_USER = 'http://192.168.1.15:5555/user';
-const API_BASE_URL_FRANCHISE = 'http://192.168.1.15:5555/franchise';
+const API_BASE_URL_USER = 'http://192.168.1.17:5555/user';
+const API_BASE_URL_FRANCHISE = 'http://192.168.1.17:5555/franchise';
 
 const SetupSystem = () => {
   const navigation = useNavigation();
@@ -563,7 +563,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   saveButton: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#f28b82',
     paddingVertical: 15,
     borderRadius: 10,
     alignItems: 'center',
