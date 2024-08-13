@@ -53,7 +53,7 @@ export default function ForgetPassword({ navigation }) {
           <View style={styles.headerContainer}>
             <View style={styles.header}>
               <Icon name="arrow-back" size={28} color="#000" onPress={() => navigation.goBack()} />
-              <Icon name="earth-outline" size={28} color="#000" />
+
             </View>
           </View>
           <View style={styles.content}>
@@ -105,6 +105,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop:40,
     marginBottom: 20, // Adds space below the header
   },
   scrollViewContent: {
@@ -116,6 +117,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start', // Align content to the top
     alignItems: 'center',
+    marginTop:20,
     paddingHorizontal: 20,
     paddingBottom: 20, // Space from the bottom of the screen to make room for the button
   },
