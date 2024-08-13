@@ -93,11 +93,36 @@ function CustomTabBar({ state, descriptors, navigation }) {
 const Home = () => {
   return (
     <Tab.Navigator tabBar={(props) => <CustomTabBar {...props} />} initialRouteName="Home">
-      <Tab.Screen name="Profile" component={ProfileScreen}options={{ headerTitleAlign: 'center'}} />
-      <Tab.Screen name="Menu" component={FranchisesScreen}options={{ headerTitleAlign: 'center'}} />
-      <Tab.Screen name="Home" component={HomeScreen}options={{ headerTitleAlign: 'center'}} />
-      <Tab.Screen name="Restaurants" component={RestaurantsScreen} options={{ headerTitleAlign: 'center'}}/>
-      <Tab.Screen name="Chat" component={ConversationsScreen} options={{ headerTitleAlign: 'center'}}/>
+      <Tab.Screen name="Profile" component={ProfileScreen}options={{ headerTitleAlign: 'center', headerStyle: {
+      backgroundColor: '#f28b82',
+
+    }, headerTitleStyle: {
+      color: '#FFFFFF', // Set the title color to white
+    },}} />
+      <Tab.Screen name="Menu" component={FranchisesScreen}options={{ headerTitleAlign: 'center',title:"Menu" , headerTitleAlign: 'center', Titlecolor :'#FFFFFF',headerStyle: {
+      backgroundColor: '#f28b82',
+
+    }, headerTitleStyle: {
+      color: '#FFFFFF', // Set the title color to white
+    },}} />
+      <Tab.Screen name="Home" component={HomeScreen}options={{ headerTitleAlign: 'center', headerStyle: {
+      backgroundColor: '#f28b82',
+
+    }, headerTitleStyle: {
+      color: '#FFFFFF', // Set the title color to white
+    },}} />
+      <Tab.Screen name="Restaurants" component={RestaurantsScreen} options={{ headerTitleAlign: 'center', headerStyle: {
+      backgroundColor: '#f28b82',
+
+    }, headerTitleStyle: {
+      color: '#FFFFFF', // Set the title color to white
+    },}}/>
+      <Tab.Screen name="Chat" component={ConversationsScreen} options={{ headerTitleAlign: 'center', headerStyle: {
+      backgroundColor: '#f28b82',
+
+    }, headerTitleStyle: {
+      color: '#FFFFFF', // Set the title color to white
+    },}}/>
     </Tab.Navigator>
   );
 };
