@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState, useCallback, useRef }  from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -6,10 +6,15 @@ import FranchiseScreen from '../screens/Franchise';
 import RestaurantScreen from '../screens/Restaurants';
 import ProfilePage from '../screens/Profile';
 import ConversationsPage from '../screens/Chat';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
+const API_BASE_URL_USER = 'http://192.168.1.15:5555/user';
+const API_BASE_URL_FRANCHISE = 'http://192.168.1.15:5555/franchise';
 
-function CustomTabBar({ state, descriptors, navigation }) {
+function CustomTabBar({ state, descriptors, navigation, selectedColor }) {
   return (
     <View style={styles.tabBar}>
       {state.routes.map((route, index) => {
@@ -47,22 +52,30 @@ function CustomTabBar({ state, descriptors, navigation }) {
           iconName = 'chatbubbles';
         }
 
-        if (route.name === 'Home') {
-          return (
-            <TouchableOpacity
-              key={route.key}
-              accessibilityRole="button"
-              accessibilityStates={isFocused ? ['selected'] : []}
-              accessibilityLabel={options.tabBarAccessibilityLabel}
-              testID={options.tabBarTestID}
-              onPress={onPress}
-              onLongPress={onLongPress}
-              style={styles.homeButton}
-            >
-              <Ionicons name={iconName} size={30} color="white" />
-            </TouchableOpacity>
-          );
-        } else {
+        // Determine the button color based on the active route
+        const buttonColor = 
+        route.name === 'Home' && state.routes[state.index].name === 'Menu'
+          ? selectedColor
+          : route.name === 'Menu' && isFocused
+          ? selectedColor
+          : 'tomato';
+      
+      if (route.name === 'Home') {
+        return (
+          <TouchableOpacity
+            key={route.key}
+            accessibilityRole="button"
+            accessibilityStates={isFocused ? ['selected'] : []}
+            accessibilityLabel={options.tabBarAccessibilityLabel}
+            testID={options.tabBarTestID}
+            onPress={onPress}
+            onLongPress={onLongPress}
+            style={[styles.homeButton, { backgroundColor: buttonColor }]}
+          >
+            <Ionicons name={iconName} size={30} color="white" />
+          </TouchableOpacity>
+        );
+      }else {
           return (
             <TouchableOpacity
               key={route.key}
@@ -77,9 +90,9 @@ function CustomTabBar({ state, descriptors, navigation }) {
               <Ionicons
                 name={iconName}
                 size={25}
-                color={isFocused ? 'tomato' : 'gray'}
+                color={isFocused ? buttonColor : 'gray'}
               />
-              <Text style={{ color: isFocused ? 'tomato' : 'gray' }}>
+              <Text style={{ color: isFocused ? buttonColor : 'gray' }}>
                 {route.name}
               </Text>
             </TouchableOpacity>
@@ -91,38 +104,129 @@ function CustomTabBar({ state, descriptors, navigation }) {
 }
 
 const Home = () => {
+  const [selectedColor, setSelectedColor] = useState('#ffffff');
+
+  const getUser = async (token) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL_USER}/getUser`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Failed to get user data', error);
+      throw error;
+    }
+  };
+
+  const getFranchise = async (id) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL_FRANCHISE}/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to get franchise data', error);
+      throw error;
+    }
+  };
+
+  const fetchFranchiseData = useCallback(async () => {
+    
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+
+      const userData = await getUser(token);
+      if (userData.length > 0) {
+        const franchiseId = userData[0].franchiseFK;
+        const franchiseData = await getFranchise(franchiseId);
+        if (franchiseData) {
+          setSelectedColor(franchiseData.data.color);
+          await AsyncStorage.setItem('color', franchiseData.data.color);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load franchise data', error);
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchFranchiseData();
+    }, [fetchFranchiseData])
+  );
+
   return (
-    <Tab.Navigator tabBar={(props) => <CustomTabBar {...props} />} initialRouteName="Home">
-      <Tab.Screen name="Profile" component={ProfileScreen}options={{ headerTitleAlign: 'center', headerStyle: {
-      backgroundColor: '#f28b82',
-
-    }, headerTitleStyle: {
-      color: '#FFFFFF', // Set the title color to white
-    },}} />
-      <Tab.Screen name="Menu" component={FranchisesScreen}options={{ headerTitleAlign: 'center',title:"Menu" , headerTitleAlign: 'center', Titlecolor :'#FFFFFF',headerStyle: {
-      backgroundColor: '#f28b82',
-
-    }, headerTitleStyle: {
-      color: '#FFFFFF', // Set the title color to white
-    },}} />
-      <Tab.Screen name="Home" component={HomeScreen}options={{ headerTitleAlign: 'center', headerStyle: {
-      backgroundColor: '#f28b82',
-
-    }, headerTitleStyle: {
-      color: '#FFFFFF', // Set the title color to white
-    },}} />
-      <Tab.Screen name="Restaurants" component={RestaurantsScreen} options={{ headerTitleAlign: 'center', headerStyle: {
-      backgroundColor: '#f28b82',
-
-    }, headerTitleStyle: {
-      color: '#FFFFFF', // Set the title color to white
-    },}}/>
-      <Tab.Screen name="Chat" component={ConversationsScreen} options={{ headerTitleAlign: 'center', headerStyle: {
-      backgroundColor: '#f28b82',
-
-    }, headerTitleStyle: {
-      color: '#FFFFFF', // Set the title color to white
-    },}}/>
+    <Tab.Navigator
+      tabBar={(props) => <CustomTabBar {...props} selectedColor={selectedColor} />}
+      initialRouteName="Home"
+    >
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          headerTitleAlign: 'center',
+          headerStyle: {
+            backgroundColor: '#f28b82',
+          },
+          headerTitleStyle: {
+            color: '#FFFFFF', // Set the title color to white
+          },
+        }}
+      />
+      <Tab.Screen
+        name="Menu"
+        component={FranchisesScreen}
+        options={{
+          headerTitleAlign: 'center',
+          title: 'Menu',
+          headerTitleAlign: 'center',
+          Titlecolor: '#FFFFFF',
+          headerStyle: {
+            backgroundColor: selectedColor,
+          },
+          headerTitleStyle: {
+            color: '#FFFFFF', // Set the title color to white
+          },
+        }}
+      />
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
+          headerTitleAlign: 'center',
+          headerStyle: {
+            backgroundColor: '#f28b82',
+          },
+          headerTitleStyle: {
+            color: '#FFFFFF', // Set the title color to white
+          },
+        }}
+      />
+      <Tab.Screen
+        name="Restaurants"
+        component={RestaurantsScreen}
+        options={{
+          headerTitleAlign: 'center',
+          headerStyle: {
+            backgroundColor: '#f28b82',
+          },
+          headerTitleStyle: {
+            color: '#FFFFFF', // Set the title color to white
+          },
+        }}
+      />
+      <Tab.Screen
+        name="Chat"
+        component={ConversationsScreen}
+        options={{
+          headerTitleAlign: 'center',
+          headerStyle: {
+            backgroundColor: '#f28b82',
+          },
+          headerTitleStyle: {
+            color: '#FFFFFF', // Set the title color to white
+          },
+        }}
+      />
     </Tab.Navigator>
   );
 };
