@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 
   View,
@@ -14,10 +14,13 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Addcategories from './Addcategories';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 export default function AddMenuScreen({ navigation }) {
   const [menuName, setMenuName] = useState('');
   const [menuNameError, setMenuNameError] = useState('');
+  const [selectedColor, setSelectedColor] = useState('#ffffff');
 
   const handleAddMenu = () => {
     let valid = true;
@@ -35,7 +38,23 @@ export default function AddMenuScreen({ navigation }) {
       navigation.navigate(Addcategories); // Navigate back after successful addition
     }
   };
+  useEffect(() => {
+    const getColor = async () => {
+      try {
+        const color = await AsyncStorage.getItem('color');
+        if (color !== null) {
+          console.log('Retrieved color:', color);
+          setSelectedColor(color);
+        } else {
+          console.log('No color found, using default.');
+        }
+      } catch (error) {
+        console.error('Failed to retrieve color from AsyncStorage', error);
+      }
+    };
 
+    getColor();
+  }, []);
   return (
     <ImageBackground
     source={require('../assets/backroundMenu2.jpeg')}// Replace this with your image URL or require a local image
@@ -75,7 +94,7 @@ export default function AddMenuScreen({ navigation }) {
             <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
               <Text style={styles.buttonText}>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.button, styles.primaryButton]} onPress={handleAddMenu}>
+            <TouchableOpacity style={[styles.button, styles.primaryButton,{ backgroundColor: selectedColor }]} onPress={handleAddMenu}>
               <Text style={[styles.buttonText, styles.primaryButtonText]}>Next</Text>
             </TouchableOpacity>
           </View>

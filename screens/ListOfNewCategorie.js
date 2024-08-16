@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 
   View,
@@ -15,10 +15,33 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Addcategories from './Addcategories';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function ListOfNewCategorie({ navigation }) {
-  
+  const [selectedColor, setSelectedColor] = useState('#ffffff');
 
+
+  const handlenext = async () => {
+    const AddProductScreen = () => import('./AddProductScreen');
+    navigation.navigate(AddProductScreen)
+  };
+  useEffect(() => {
+    const getColor = async () => {
+      try {
+        const color = await AsyncStorage.getItem('color');
+        if (color !== null) {
+          console.log('Retrieved color:', color);
+          setSelectedColor(color);
+        } else {
+          console.log('No color found, using default.');
+        }
+      } catch (error) {
+        console.error('Failed to retrieve color from AsyncStorage', error);
+      }
+    };
+
+    getColor();
+  }, []);
   return (
     <ImageBackground
     source={require('../assets/backroundMenu2.jpeg')}// Replace this with your image URL or require a local image
@@ -51,7 +74,7 @@ export default function ListOfNewCategorie({ navigation }) {
         <View style={styles.footerContainer}>
           <View style={styles.buttonContainer}>
   
-            <TouchableOpacity style={[styles.button, styles.primaryButton]} onPress={{}}>
+            <TouchableOpacity style={[styles.button, styles.primaryButton,{ backgroundColor: selectedColor }]} onPress={()=>handlenext()}>
               <Text style={[styles.buttonText, styles.primaryButtonText]}>Next</Text>
             </TouchableOpacity>
           </View>
@@ -86,7 +109,7 @@ const styles = StyleSheet.create({
     width: 250, // Adjust the width and height as needed
     height: 250,
     marginTop: 100,
-    transform: [{ rotate: '180deg' }],
+   // transform: [{ rotate: '180deg' }],
   },
   headerContainer: {
     position: 'absolute',
@@ -154,6 +177,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
     maxWidth: 400,
+    elevation:20,
+
   },
   button: {
     backgroundColor: '#f1f1f1',
@@ -162,6 +187,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     alignItems: 'center',
     flex: 1,
+    
     marginHorizontal: 5,
   },
   primaryButton: {

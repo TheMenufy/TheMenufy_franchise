@@ -1,21 +1,73 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ImageBackground } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import AddMenuScreen from './AddmenuScreen';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Ionicons';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const FranchiseScreen = () => {
   const navigation = useNavigation();
+  const API_BASE_URL_USER = 'http://192.168.1.15:5555/user';
+  const API_BASE_URL_FRANCHISE = 'http://192.168.1.15:5555/franchise';
+  const [selectedColor, setSelectedColor] = useState('#ffffff');
+
+  const getUser = async (token) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL_USER}/getUser`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Failed to get user data', error);
+      throw error;
+    }
+  };
+
+  const getFranchise = async (id) => {
+    try {
+
+      const response = await axios.get(`${API_BASE_URL_FRANCHISE}/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to get franchise data', error);
+      throw error;
+    }
+  };
+
+  const fetchFranchiseData = useCallback(async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+
+      const userData = await getUser(token);
+      if (userData.length > 0) {
+        const franchiseId = userData[0].franchiseFK;
+        const franchiseData = await getFranchise(franchiseId);
+        if (franchiseData) {
+          setSelectedColor(franchiseData.data.color);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load franchise data', error);
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchFranchiseData();
+    }, [fetchFranchiseData])
+  );
 
   return (
     <ImageBackground
-    source={require('../assets/backroundMenu2.jpeg')}// Replace this with your image URL or require a local image
+      source={require('../assets/backroundMenu2.jpeg')}
       style={styles.backgroundImage}
     >
       <ScrollView contentContainerStyle={styles.scrollView}>
+
         <View style={styles.container}>
-          
           <TouchableOpacity
-            style={styles.card}
+            style={[styles.card, { backgroundColor: selectedColor }]}  // Apply selected color
             onPress={() => navigation.navigate('RestaurantCategoriesScreen', {
               restaurantName: 'Torino',
               initialCategories: [
@@ -39,7 +91,7 @@ const FranchiseScreen = () => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.card}
+            style={[styles.card, { backgroundColor: selectedColor }]}  // Apply selected color
             onPress={() => navigation.navigate('RestaurantCategoriesScreen', {
               restaurantName: 'Torino',
               initialCategories: [
@@ -63,9 +115,9 @@ const FranchiseScreen = () => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.addMenuButton}
+            style={[styles.addMenuButton, { backgroundColor: selectedColor }]}
             onPress={() => {
-              navigation.navigate(AddMenuScreen)
+              navigation.navigate('AddMenuScreen')
             }}
           >
             <Text style={styles.addMenuButtonText}>Add Menu</Text>
@@ -89,6 +141,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 20,
   },
+  headerContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 20,
+   // paddingTop: Platform.OS === 'ios' ? 10 : 0, // Adjust for iOS safe area
+    zIndex: 1,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 40,
+    marginBottom: 20, // Adds space below the header
+  },
   container: {
     flex: 1,
     alignItems: 'center',
@@ -103,9 +170,13 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: '#fff',
     elevation: 10,
+     shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.8,
+  shadowRadius: 2,
   },
   cardTop: {
-    backgroundColor: '#f28b82',
+  
     padding: 10,
     justifyContent: 'center',
     alignItems: 'center',
@@ -147,9 +218,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#f28b82',
     paddingVertical: 15,
     paddingHorizontal: 30,
-    borderRadius: 10,
-    marginTop: 20,
+    borderRadius: 15,
+    width: 330,
     alignItems: 'center',
+    elevation: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
   },
   addMenuButtonText: {
     color: '#fff',
