@@ -19,8 +19,17 @@ const RestaurantScreen = () => {
       });
   }, []);
 
-  const navigateToDetail = (restaurantName, restaurantImage) => {
-    navigation.navigate('DetailRestaurant', { name: restaurantName, image: restaurantImage });
+  const navigateToDetail = (restaurant) => {
+    navigation.navigate('DetailRestaurant', {
+      name: restaurant.nameRes,
+      image: restaurant.images,
+      address: restaurant.address,
+      cuisineType: restaurant.cuisineType
+    });
+  };
+
+  const navigateToAddRestaurant = () => {
+    navigation.navigate('AddRestaurant'); // Naviguer vers la page d'ajout de restaurant
   };
 
   return (
@@ -30,7 +39,7 @@ const RestaurantScreen = () => {
           <TouchableOpacity
             key={restaurant._id}
             style={styles.card}
-            onPress={() => navigateToDetail(restaurant.nameRes, restaurant.images)}
+            onPress={() => navigateToDetail(restaurant)}
           >
             <ImageBackground
               source={{ uri: restaurant.images }}
@@ -40,6 +49,14 @@ const RestaurantScreen = () => {
             </ImageBackground>
           </TouchableOpacity>
         ))}
+
+        {/* Bouton "Add Restaurant" */}
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={navigateToAddRestaurant}
+        >
+          <Text style={styles.addButtonText}>Add Restaurant</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -78,7 +95,21 @@ const styles = StyleSheet.create({
     color: '#fff',
     backgroundColor: 'rgba(0,0,0,0.5)',
     padding: 10,
-    textAlign: 'center', // Pour centrer le texte
+    textAlign: 'center',
+  },
+  addButton: {
+    marginTop: 20,
+    backgroundColor: '#007BFF',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '80%',
+  },
+  addButtonText: {
+    fontSize: 18,
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
 
