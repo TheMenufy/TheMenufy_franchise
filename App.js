@@ -19,6 +19,7 @@ import ChatPage from './screens/ChatPage';
 import AddMenuScreen from './screens/AddmenuScreen';
 import Addcategories from './screens/Addcategories';
 import ListOfNewCategorie from './screens/ListOfNewCategorie';
+import AddProductScreen from './screens/AddProductScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -58,6 +59,8 @@ export default function App() {
         <Stack.Screen name="AddMenuScreen" component={AddMenuScreen} options={{ headerShown: false  }} />
         <Stack.Screen name="Addcategories" component={Addcategories} options={{ headerShown: false  }} />
         <Stack.Screen name="ListOfNewCategorie" component={ListOfNewCategorie} options={{ headerShown: false  }} />
+        <Stack.Screen name="AddProductScreen" component={AddProductScreen} options={{ headerShown: false  }} />
+
 
 
 

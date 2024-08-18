@@ -356,7 +356,6 @@ const SetupSystem = () => {
   onColorChange={(color) => {
     const selectedColor = { h: color.h, s: color.s, v: color.v };
 
-    console.log("Selected color object:", selectedColor);
     const hexColor = colorObjectToHex(selectedColor);
   
     setSelectedColor(hexColor);
