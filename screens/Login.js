@@ -139,11 +139,12 @@ export default function Login({ navigation }) {
         {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
         <View style={styles.optionsContainer}>
           <TouchableOpacity
-            style={[styles.rememberMeContainer, rememberMe && styles.rememberMeSelected]}
+            style={[styles.toggleButton, rememberMe && styles.toggleButtonActive]}
             onPress={() => setRememberMe(!rememberMe)}
           >
-            <Text style={styles.rememberMeText}>{rememberMe ? '✓ ' : ''}Remember Me</Text>
+            <Text style={styles.toggleButtonText}>{rememberMe ? '✔️' : ''}</Text>
           </TouchableOpacity>
+          <Text style={styles.rememberMeText}>Remember Me</Text>
           <TouchableOpacity onPress={handleForgetPassword}>
             <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
           </TouchableOpacity>
@@ -230,18 +231,28 @@ const styles = StyleSheet.create({
     width: '100%',
     marginBottom: 70,
   },
-  rememberMeContainer: {
-    flexDirection: 'row',
+  toggleButton: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#888',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 30,
+    marginRight: 5, // Réduire la marge droite pour rapprocher du texte
   },
-  rememberMeSelected: {
+  toggleButtonActive: {
     backgroundColor: '#f28b82',
     borderColor: '#f28b82',
+  },
+  toggleButtonText: {
+    fontSize: 16,
+    color: '#fff',
   },
   rememberMeText: {
     fontSize: 14,
     color: '#888',
+    marginRight: 15, // Ajuster la marge si nécessaire
   },
   forgotPasswordText: {
     fontSize: 14,

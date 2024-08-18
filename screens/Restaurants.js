@@ -1,9 +1,23 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ImageBackground, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+
+const API_BASE_URL_RESTAURANTS = 'http://192.168.1.17:5555/restaurant';
 
 const RestaurantScreen = () => {
+  const [restaurants, setRestaurants] = useState([]);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    axios.get(`${API_BASE_URL_RESTAURANTS}/retrieveall`)
+      .then(response => {
+        setRestaurants(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching restaurants:', error);
+      });
+  }, []);
 
   const navigateToDetail = (restaurantName, restaurantImage) => {
     navigation.navigate('DetailRestaurant', { name: restaurantName, image: restaurantImage });
@@ -12,70 +26,20 @@ const RestaurantScreen = () => {
   return (
     <ScrollView contentContainerStyle={styles.scrollView}>
       <View style={styles.container}>
-        {/* CardView pour Torino Tunis */}
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => navigateToDetail('Torino Tunis', require('../assets/TorinoTunis.jpg'))}
-        >
-          <ImageBackground
-            source={require('../assets/TorinoTunis.jpg')}
-            style={styles.cardBackground}
+        {restaurants.map((restaurant) => (
+          <TouchableOpacity
+            key={restaurant._id}
+            style={styles.card}
+            onPress={() => navigateToDetail(restaurant.nameRes, restaurant.images)}
           >
-            <Text style={styles.cardText}>Torino Tunis</Text>
-          </ImageBackground>
-        </TouchableOpacity>
-        
-        {/* CardView pour Baguette&Baguette La Marsa */}
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => navigateToDetail('Baguette&Baguette La Marsa', require('../assets/bgmarsa.jpg'))}
-        >
-          <ImageBackground
-            source={require('../assets/bgmarsa.jpg')}
-            style={styles.cardBackground}
-          >
-            <Text style={styles.cardText}>Baguette&Baguette La Marsa</Text>
-          </ImageBackground>
-        </TouchableOpacity>
-        
-        {/* CardView pour KFC Géant */}
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => navigateToDetail('KFC Géant', require('../assets/KFCgéant.jpg'))}
-        >
-          <ImageBackground
-            source={require('../assets/KFCgéant.jpg')}
-            style={styles.cardBackground}
-          >
-            <Text style={styles.cardText}>KFC Géant</Text>
-          </ImageBackground>
-        </TouchableOpacity>
-        
-        {/* CardView pour Foret Noire Hammam Lif */}
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => navigateToDetail('Foret Noire Hammam Lif', require('../assets/HammamLif.jpg'))}
-        >
-          <ImageBackground
-            source={require('../assets/HammamLif.jpg')}
-            style={styles.cardBackground}
-          >
-            <Text style={styles.cardText}>Foret Noire Hammam Lif</Text>
-          </ImageBackground>
-        </TouchableOpacity>
-        
-        {/* CardView pour Street 19 Hammam Lif */}
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => navigateToDetail('Street 19 Hammam Lif', require('../assets/Street19.jpg'))}
-        >
-          <ImageBackground
-            source={require('../assets/Street19.jpg')}
-            style={styles.cardBackground}
-          >
-            <Text style={styles.cardText}>Street 19 Hammam Lif</Text>
-          </ImageBackground>
-        </TouchableOpacity>
+            <ImageBackground
+              source={{ uri: restaurant.images }}
+              style={styles.cardBackground}
+            >
+              <Text style={styles.cardText}>{restaurant.nameRes}</Text>
+            </ImageBackground>
+          </TouchableOpacity>
+        ))}
       </View>
     </ScrollView>
   );
@@ -114,6 +78,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     backgroundColor: 'rgba(0,0,0,0.5)',
     padding: 10,
+    textAlign: 'center', // Pour centrer le texte
   },
 });
 
