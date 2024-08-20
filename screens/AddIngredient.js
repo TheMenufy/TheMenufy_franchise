@@ -14,45 +14,35 @@ import {
   ToastAndroid
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import * as ImagePicker from 'expo-image-picker'; // Make sure to install expo-image-picker
+import * as ImagePicker from 'expo-image-picker';
 import RNPickerSelect from 'react-native-picker-select';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-
-export default function AddProductScreen({ navigation }) {
-
-  //category input and error 
-  const [selectedCategory, setSelectedCategory] = useState(''); // State for selected category
-  const [CategoryError, setCategoryError] = useState('');
- //product name input and error 
-  const [Productname, setProductname] = useState('');
+export default function AddIngredient({ navigation }) {
+  const [Productid, setProductid] = useState('');
   const [ProductnameError, setProductnameError] = useState('');
- //description input and error 
+
   const [description, setDescription] = useState('');
-  const [descriptionError, setdescriptionError] = useState('');
- //disponibility input and error
-  const [selecteddisponibility, setSelecteddisponibility] = useState('');
-  const [disponibilityError, setdisponibilityError] = useState('');
-   //disponibility duration input
-  const [disponibilityduration, setdisponibilityduration] = useState('');
-   //promotion input 
-  const [promotion, setpromotion] = useState('');
-   //price input and error 
-  const [price, setprice] = useState('');
-  const [priceError, setpriceError] = useState('');
- //image input
+  const [price, setPrice] = useState('');
   const [image, setImage] = useState(null);
-  const [disponibilitydurationError, setdisponibilitydurationError] = useState('');
+  const [descriptionError, setDescriptionError] = useState('');
+  const [priceError, setPriceError] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedDisponibility, setSelectedDisponibility] = useState('');
 
 
-
-  //for dispalay ... 
+  //for display
   const [selectedColor, setSelectedColor] = useState('#ffffff');
   const [animatedText, setAnimatedText] = useState('');
 
+  const products = [
+    { label: 'product 1', value: 'product1' },
+    { label: 'product 2', value: 'product2' },
+    { label: 'product 3', value: 'product3' },
+  ];
   useEffect(() => {
-    let text = "Now you can add your products and link it to a categorie that you'v created ";
+    let text = "It's time to add your ingredients!";
     let index = 0;
 
     const interval = setInterval(() => {
@@ -61,121 +51,70 @@ export default function AddProductScreen({ navigation }) {
       if (index === text.length) {
         clearInterval(interval);
       }
-    },0.5);
+    }, 0.5); // Adjust the speed by changing the interval time
 
     return () => clearInterval(interval);
   }, []);
-  const categories = [
-    { label: 'Category 1', value: 'category1' },
-    { label: 'Category 2', value: 'category2' },
-    { label: 'Category 3', value: 'category3' },
-  ];
   const disponibility = [
-    { label: 'yes', value: 'no' },
-    { label: 'no', value: 'yes' },
-    
+    { label: 'yes', value: 'yes' },
+    { label: 'no', value: 'no' },
   ];
 
   const handleAddMenu = () => {
     let valid = true;
 
-    if (Productname === '') {
+    if (Productid === '') {
       setProductnameError('Name is required');
       valid = false;
     } else {
       setProductnameError('');
     }
+
     if (description === '') {
-        setdescriptionError('Description is required');
-        valid = false;
-      } else {
-        setdescriptionError('');
-      }
-      if (disponibility === '') {
-        setdisponibilityError('disponibility is required');
-        valid = false;
-      } else {
-        setdisponibilityError('');
-      }
-      if (disponibilityduration === '') {
-        setdisponibilitydurationError('disponibility duration is required');
-        valid = false;
-      } else {
-        setdisponibilitydurationError('');
-      }
-      if (price === '') {
-        setpriceError('price is required');
-        valid = false;
-      } else {
-        setpriceError('');
-      }
-      
+      setDescriptionError('Description is required');
+      valid = false;
+    } else {
+      setDescriptionError('');
+    }
 
     if (valid) {
       // Perform add menu logic here
-     
-     // navigation.goBack(); // Navigate back after successful addition
+      // navigation.goBack(); // Navigate back after successful addition
     }
   };
-const gottolist = () =>{
-  // In Addcategories.js
-const ListOfNewCategorie = () => import('./ListOfNewCategorie');
-navigation.navigate(ListOfNewCategorie)
+  const handleNext =()=>{
+    const AddItem = () => import('./AddItem');
+    navigation.navigate(AddItem)
 }
-const handleGoNext =()=>{
-  const AddIngredient = () => import('./AddIngredient');
-  navigation.navigate(AddIngredient)
-}
-const handleaddone =() =>{
-  let valid = true;
+  const gottolist = () => {
+    navigation.navigate('ListOfNewCategorie');
+  };
 
-  if (Productname === '') {
-    setProductnameError('Name is required');
-    valid = false;
-  } else {
-    setProductnameError('');
-  }
-  if (description === '') {
-      setdescriptionError('Description is required');
-      valid = false;
-    } else {
-      setdescriptionError('');
-    }
-    if (disponibility === '') {
-      setdisponibilityError('disponibility is required');
-      valid = false;
-    } else {
-      setdisponibilityError('');
-    }
-    if (selectedCategory === '') {
-      setCategoryError('you should choose a categorie');
-      valid = false;
-    } else {
-      setCategoryError('');
-    }
-   
-    if (price === '') {
-      setpriceError('price is required');
-      valid = false;
-    } else {
-      setpriceError('');
-    }
-    
+  const handleAddOne = () => {
+    let valid = true;
 
-  if (valid) {
+    if (Productid === '') {
+      setProductnameError('Libelle is required');
+      valid = false;
+    } else {
+      setProductnameError('');
+    }
 
-  setProductname(''); // Correctly set the state to an empty string
-  setDescription(''); // Correctly set the state to an empty string
-  setSelecteddisponibility(''); // Correctly set the state to an empty string
-  setdisponibilityduration(''); // Correctly set the state to an empty string
-  setpromotion(''); // Correctly set the state to an empty string
-  setprice(''); // Correctly set the state to an empty string
-  setSelectedCategory('');
-  selectedCategory
-  setImage(null);
-  ToastAndroid.show('Added successfully !', ToastAndroid.LONG);
-  }
-}
+    if (description === '') {
+      setDescriptionError('Description is required');
+      valid = false;
+    } else {
+      setDescriptionError('');
+    }
+
+    if (valid) {
+      setProductid('');
+      setDescription('');
+      setImage(null);
+      ToastAndroid.show('Added successfully!', ToastAndroid.LONG);
+    }
+  };
+
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -188,15 +127,13 @@ const handleaddone =() =>{
       setImage(result.assets[0].uri);
     }
   };
+
   useEffect(() => {
     const getColor = async () => {
       try {
         const color = await AsyncStorage.getItem('color');
         if (color !== null) {
-          console.log('Retrieved color:', color);
           setSelectedColor(color);
-        } else {
-          console.log('No color found, using default.');
         }
       } catch (error) {
         console.error('Failed to retrieve color from AsyncStorage', error);
@@ -205,9 +142,10 @@ const handleaddone =() =>{
 
     getColor();
   }, []);
+
   return (
     <ImageBackground
-      source={require('../assets/backroundMenu2.jpeg')} // Replace this with your image URL or require a local image
+      source={require('../assets/backroundMenu2.jpeg')}
       style={styles.backgroundImage}
     >
       <SafeAreaView style={styles.container}>
@@ -222,95 +160,96 @@ const handleaddone =() =>{
             <View style={styles.headerContainer}>
               <View style={styles.header}>
                 <Icon name="arrow-back" size={28} color="#000" onPress={() => navigation.goBack()} />
-                  
-                <Icon name="list-outline" size={28} color="#000" onPress={() => gottolist()} />
-
+                <Icon name="list-outline" size={28} color="#000" onPress={gottolist} />
               </View>
             </View>
             <View style={styles.content}>
-              <Text style={styles.welcomeText}>{animatedText}</Text>
-              <View style={styles.pickerWrapper}>
-  <RNPickerSelect
-    onValueChange={(value) => setSelectedCategory(value)}
-    items={categories}
-    placeholder={{
-      label: 'Select a category...',
-      value: null,
-      color: '#888',
-    }}
-    style={pickerSelectStyles}
-    value={selectedCategory}
-    useNativeAndroidPickerStyle={false} // This is important for Android
-  />
-
-</View>
-{CategoryError ? <Text style={styles.errorText}>{CategoryError}</Text> : null}
-
+            <Text style={styles.welcomeText}>{animatedText}</Text>
+                          <View style={styles.pickerWrapper}>
+                <RNPickerSelect
+                  onValueChange={(value) => setProductid(value)}
+                  items={products}
+                  placeholder={{
+                    label: 'Select a product...',
+                    value: null,
+                    color: '#888',
+                  }}
+                  style={pickerSelectStyles}
+                  value={Productid}
+                  useNativeAndroidPickerStyle={false}
+                />
+              </View>
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
-                  placeholder="Product name"
+                  placeholder="Libelle"
                   placeholderTextColor="#888"
-                  value={Productname}
-                  onChangeText={setProductname}
+                  value={Productid}
+                  onChangeText={setProductid}
                 />
               </View>
               {ProductnameError ? <Text style={styles.errorText}>{ProductnameError}</Text> : null}
-              <View style={styles.inputContainerdisc}>
+              <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
-                  placeholder="Description"
+                  placeholder="Type"
                   placeholderTextColor="#888"
                   value={description}
                   onChangeText={setDescription}
                 />
               </View>
               {descriptionError ? <Text style={styles.errorText}>{descriptionError}</Text> : null}
-              <View style={styles.row}>
-  <View style={styles.pickerWrapperdisponibility}>
-    <RNPickerSelect
-      onValueChange={(value) => setSelecteddisponibility(value)}
-      items={disponibility}
-      placeholder={{
-        label: 'Disponibility',
-        value: null,
-        color: '#888',
-      }}
-      style={pickerSelectStylesdisponibility}
-      value={selecteddisponibility}
-      useNativeAndroidPickerStyle={false} // This is important for Android
-    />
-  </View>
-  {disponibilityError ? <Text style={styles.errorText}>{disponibilityError}</Text> : null}
-
-  <TextInput
-  style={[styles.inputContainerSmall, { fontSize: 14 }]} // Adjust the fontSize as needed
-  placeholder="Duration"
-  placeholderTextColor="#888"
-  value={disponibilityduration}
-  
-/>
-<TextInput
-  style={[styles.inputContainerSmall, { fontSize: 14 }]} // Adjust the fontSize as needed
-  placeholder="Promotion"
-  placeholderTextColor="#888"
-  value={promotion}
-  onChangeText={setpromotion}
-/>
- 
-</View>
-              <View style={styles.inputContainerprice}>
+              <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
-                  placeholder="price"
+                  placeholder="Min"
+                  placeholderTextColor="#888"
+                  value={description}
+                  onChangeText={setDescription}
+                />
+              </View>
+              {descriptionError ? <Text style={styles.errorText}>{descriptionError}</Text> : null}
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Max"
+                  placeholderTextColor="#888"
+                  value={description}
+                  onChangeText={setDescription}
+                />
+              </View>
+              {descriptionError ? <Text style={styles.errorText}>{descriptionError}</Text> : null}
+              <View style={styles.pickerWrapper}>
+                <RNPickerSelect
+                  onValueChange={(value) => setSelectedDisponibility(value)}
+                  items={disponibility}
+                  placeholder={{
+                    label: 'Is extra?',
+                    value: null,
+                    color: '#888',
+                  }}
+                  style={pickerSelectStyles}
+                  value={selectedDisponibility}
+                  useNativeAndroidPickerStyle={false}
+                />
+              </View>
+              <TextInput
+                style={[styles.inputContainer, { fontSize: 14 }]}
+                placeholder="Quantity"
+                placeholderTextColor="#888"
+                value={Productid}
+                onChangeText={setProductid}
+              />
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Price"
                   placeholderTextColor="#888"
                   value={price}
-                  onChangeText={setprice}
+                  onChangeText={setPrice}
                 />
               </View>
               {priceError ? <Text style={styles.errorText}>{priceError}</Text> : null}
-             
-
               <TouchableOpacity style={styles.imagePicker} onPress={pickImage}>
                 <Text style={styles.imagePickerText}>
                   {image ? "Change Image" : "Pick an Image"}
@@ -327,7 +266,7 @@ const handleaddone =() =>{
               <TouchableOpacity style={[styles.button, styles.plusButton,{ backgroundColor: selectedColor }]} onPress={() =>handleaddone()}>
                 <Text style={[styles.buttonText, styles.plusButtonText]}>Add</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.button, styles.primaryButton,{ backgroundColor: selectedColor }]} onPress={()=>handleGoNext()}>
+              <TouchableOpacity style={[styles.button, styles.primaryButton,{ backgroundColor: selectedColor }]} onPress={() =>handleNext()}>
                 <Text style={[styles.buttonText, styles.primaryButtonText]}>Next</Text>
               </TouchableOpacity>
 

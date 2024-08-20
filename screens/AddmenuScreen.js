@@ -80,8 +80,15 @@ export default function AddMenuScreen({ navigation }) {
           `${API_BASE_URL_MENU}/add/fr/${franchiseFK}`,
           { name: menuName }
         );
-        console.log('Menu added successfully:', response.data);
-        navigation.navigate('Addcategories'); // Navigate back after successful addition
+      
+        const menuId = response.data.data._id; // Access the menu ID
+        console.log('Menu added successfully:', menuId);
+      
+        // Optionally, store the menu ID in AsyncStorage
+        // await AsyncStorage.setItem('MENUID', menuId);
+      
+        // Navigate to the next screen with the menu ID
+        navigation.navigate('Addcategories', { menuId }); 
       } catch (error) {
         console.error('Error adding menu:', error);
         setMenuNameError('Failed to add menu. Please try again.');

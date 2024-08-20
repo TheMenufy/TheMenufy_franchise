@@ -20,6 +20,8 @@ import AddMenuScreen from './screens/AddmenuScreen';
 import Addcategories from './screens/Addcategories';
 import ListOfNewCategorie from './screens/ListOfNewCategorie';
 import AddProductScreen from './screens/AddProductScreen';
+import AddIngredient from './screens/AddIngredient';
+import AddItem from './screens/AddItem';
 
 const Stack = createNativeStackNavigator();
 
@@ -60,6 +62,8 @@ export default function App() {
         <Stack.Screen name="Addcategories" component={Addcategories} options={{ headerShown: false  }} />
         <Stack.Screen name="ListOfNewCategorie" component={ListOfNewCategorie} options={{ headerShown: false  }} />
         <Stack.Screen name="AddProductScreen" component={AddProductScreen} options={{ headerShown: false  }} />
+        <Stack.Screen name="AddIngredient" component={AddIngredient} options={{ headerShown: false  }} />
+        <Stack.Screen name="AddItem" component={AddItem} options={{ headerShown: false  }} />
 
 
 
