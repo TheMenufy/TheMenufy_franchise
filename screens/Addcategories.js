@@ -19,14 +19,32 @@ import * as ImagePicker from 'expo-image-picker'; // Make sure to install expo-i
 
 
 export default function Addcategories({ navigation }) {
+  
+  //the fields 
   const [categorieLiblle, setcategorieLiblle] = useState('');
   const [description, setDescription] = useState('');
   const [image, setImage] = useState(null);
   const [categorieLiblleError, setcategorieLiblleError] = useState('');
   const [descriptionError, setdescriptionError] = useState('');
+
+  // extra for better displaying 
   const [selectedColor, setSelectedColor] = useState('#ffffff');
+  const [animatedText, setAnimatedText] = useState('');
 
+  useEffect(() => {
+    let text = "You can add a new categorie to this menu";
+    let index = 0;
 
+    const interval = setInterval(() => {
+        setAnimatedText((prev) => prev + text[index]);
+      index++;
+      if (index === text.length) {
+        clearInterval(interval);
+      }
+    },0.5); // Adjust the speed by changing the interval time
+
+    return () => clearInterval(interval);
+  }, []);
   const handlenext = () => {
     
     const AddProductScreen = () => import('./AddProductScreen');
@@ -120,7 +138,7 @@ const handleaddone =() =>{
               </View>
             </View>
             <View style={styles.content}>
-              <Text style={styles.welcomeText}>You can add a new categorie to this menu</Text>
+              <Text style={styles.welcomeText}>{animatedText}</Text>
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}

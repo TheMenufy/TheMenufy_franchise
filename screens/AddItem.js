@@ -20,51 +20,23 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
-export default function AddProductScreen({ navigation }) {
-
-  //category input and error 
-  const [selectedCategory, setSelectedCategory] = useState(''); // State for selected category
-  const [CategoryError, setCategoryError] = useState('');
- //product name input and error 
+export default function AddItem({ navigation }) {
   const [Productname, setProductname] = useState('');
-  const [ProductnameError, setProductnameError] = useState('');
- //description input and error 
   const [description, setDescription] = useState('');
-  const [descriptionError, setdescriptionError] = useState('');
- //disponibility input and error
-  const [selecteddisponibility, setSelecteddisponibility] = useState('');
-  const [disponibilityError, setdisponibilityError] = useState('');
-   //disponibility duration input
-  const [disponibilityduration, setdisponibilityduration] = useState('');
-   //promotion input 
-  const [promotion, setpromotion] = useState('');
-   //price input and error 
   const [price, setprice] = useState('');
-  const [priceError, setpriceError] = useState('');
- //image input
+  const [disponibilityduration, setdisponibilityduration] = useState('');
+  const [promotion, setpromotion] = useState('');
   const [image, setImage] = useState(null);
+  const [ProductnameError, setProductnameError] = useState('');
+  const [descriptionError, setdescriptionError] = useState('');
+  const [priceError, setpriceError] = useState('');
   const [disponibilitydurationError, setdisponibilitydurationError] = useState('');
-
-
-
-  //for dispalay ... 
+  const [promotionError, setpromotionError] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState(''); // State for selected category
   const [selectedColor, setSelectedColor] = useState('#ffffff');
+  const [selectedDisponibility, setSelectedDisponibility] = useState('');
   const [animatedText, setAnimatedText] = useState('');
 
-  useEffect(() => {
-    let text = "Now you can add your products and link it to a categorie that you'v created ";
-    let index = 0;
-
-    const interval = setInterval(() => {
-        setAnimatedText((prev) => prev + text[index]);
-      index++;
-      if (index === text.length) {
-        clearInterval(interval);
-      }
-    },0.5);
-
-    return () => clearInterval(interval);
-  }, []);
   const categories = [
     { label: 'Category 1', value: 'category1' },
     { label: 'Category 2', value: 'category2' },
@@ -75,7 +47,20 @@ export default function AddProductScreen({ navigation }) {
     { label: 'no', value: 'yes' },
     
   ];
+  useEffect(() => {
+    let text = "If you have specific items in your Ingredient add them ";
+    let index = 0;
 
+    const interval = setInterval(() => {
+        setAnimatedText((prev) => prev + text[index]);
+      index++;
+      if (index === text.length) {
+        clearInterval(interval);
+      }
+    },0.5); // Adjust the speed by changing the interval time
+
+    return () => clearInterval(interval);
+  }, []);
   const handleAddMenu = () => {
     let valid = true;
 
@@ -91,25 +76,6 @@ export default function AddProductScreen({ navigation }) {
       } else {
         setdescriptionError('');
       }
-      if (disponibility === '') {
-        setdisponibilityError('disponibility is required');
-        valid = false;
-      } else {
-        setdisponibilityError('');
-      }
-      if (disponibilityduration === '') {
-        setdisponibilitydurationError('disponibility duration is required');
-        valid = false;
-      } else {
-        setdisponibilitydurationError('');
-      }
-      if (price === '') {
-        setpriceError('price is required');
-        valid = false;
-      } else {
-        setpriceError('');
-      }
-      
 
     if (valid) {
       // Perform add menu logic here
@@ -122,15 +88,11 @@ const gottolist = () =>{
 const ListOfNewCategorie = () => import('./ListOfNewCategorie');
 navigation.navigate(ListOfNewCategorie)
 }
-const handleGoNext =()=>{
-  const AddIngredient = () => import('./AddIngredient');
-  navigation.navigate(AddIngredient)
-}
 const handleaddone =() =>{
   let valid = true;
 
   if (Productname === '') {
-    setProductnameError('Name is required');
+    setProductnameError('libelle is required');
     valid = false;
   } else {
     setProductnameError('');
@@ -141,37 +103,11 @@ const handleaddone =() =>{
     } else {
       setdescriptionError('');
     }
-    if (disponibility === '') {
-      setdisponibilityError('disponibility is required');
-      valid = false;
-    } else {
-      setdisponibilityError('');
-    }
-    if (selectedCategory === '') {
-      setCategoryError('you should choose a categorie');
-      valid = false;
-    } else {
-      setCategoryError('');
-    }
-   
-    if (price === '') {
-      setpriceError('price is required');
-      valid = false;
-    } else {
-      setpriceError('');
-    }
-    
 
   if (valid) {
 
   setProductname(''); // Correctly set the state to an empty string
   setDescription(''); // Correctly set the state to an empty string
-  setSelecteddisponibility(''); // Correctly set the state to an empty string
-  setdisponibilityduration(''); // Correctly set the state to an empty string
-  setpromotion(''); // Correctly set the state to an empty string
-  setprice(''); // Correctly set the state to an empty string
-  setSelectedCategory('');
-  selectedCategory
   setImage(null);
   ToastAndroid.show('Added successfully !', ToastAndroid.LONG);
   }
@@ -234,7 +170,7 @@ const handleaddone =() =>{
     onValueChange={(value) => setSelectedCategory(value)}
     items={categories}
     placeholder={{
-      label: 'Select a category...',
+      label: 'Select an ingrediant...',
       value: null,
       color: '#888',
     }}
@@ -242,75 +178,60 @@ const handleaddone =() =>{
     value={selectedCategory}
     useNativeAndroidPickerStyle={false} // This is important for Android
   />
-
 </View>
-{CategoryError ? <Text style={styles.errorText}>{CategoryError}</Text> : null}
-
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
-                  placeholder="Product name"
+                  placeholder="Title"
                   placeholderTextColor="#888"
                   value={Productname}
                   onChangeText={setProductname}
                 />
               </View>
               {ProductnameError ? <Text style={styles.errorText}>{ProductnameError}</Text> : null}
-              <View style={styles.inputContainerdisc}>
+              <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
-                  placeholder="Description"
+                  placeholder="State"
                   placeholderTextColor="#888"
                   value={description}
                   onChangeText={setDescription}
                 />
               </View>
               {descriptionError ? <Text style={styles.errorText}>{descriptionError}</Text> : null}
-              <View style={styles.row}>
-  <View style={styles.pickerWrapperdisponibility}>
-    <RNPickerSelect
-      onValueChange={(value) => setSelecteddisponibility(value)}
-      items={disponibility}
-      placeholder={{
-        label: 'Disponibility',
-        value: null,
-        color: '#888',
-      }}
-      style={pickerSelectStylesdisponibility}
-      value={selecteddisponibility}
-      useNativeAndroidPickerStyle={false} // This is important for Android
-    />
-  </View>
-  {disponibilityError ? <Text style={styles.errorText}>{disponibilityError}</Text> : null}
-
-  <TextInput
-  style={[styles.inputContainerSmall, { fontSize: 14 }]} // Adjust the fontSize as needed
-  placeholder="Duration"
-  placeholderTextColor="#888"
-  value={disponibilityduration}
-  
-/>
-<TextInput
-  style={[styles.inputContainerSmall, { fontSize: 14 }]} // Adjust the fontSize as needed
-  placeholder="Promotion"
-  placeholderTextColor="#888"
-  value={promotion}
-  onChangeText={setpromotion}
-/>
- 
-</View>
-              <View style={styles.inputContainerprice}>
+              <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
                   placeholder="price"
                   placeholderTextColor="#888"
-                  value={price}
-                  onChangeText={setprice}
+                  value={description}
+                  onChangeText={setDescription}
                 />
               </View>
-              {priceError ? <Text style={styles.errorText}>{priceError}</Text> : null}
-             
+          
+              {descriptionError ? <Text style={styles.errorText}>{descriptionError}</Text> : null}
+            
+              <View style={styles.pickerWrapper}>
+                <RNPickerSelect
+                  onValueChange={(value) => setSelectedDisponibility(value)}
+                  items={disponibility}
+                  placeholder={{
+                    label: 'Visibility',
+                    value: null,
+                    color: '#888',
+                  }}
+                  style={pickerSelectStyles}
+                  value={selectedDisponibility}
+                  useNativeAndroidPickerStyle={false}
+                />
+              </View>
 
+
+
+
+ 
+
+           
               <TouchableOpacity style={styles.imagePicker} onPress={pickImage}>
                 <Text style={styles.imagePickerText}>
                   {image ? "Change Image" : "Pick an Image"}
@@ -327,7 +248,7 @@ const handleaddone =() =>{
               <TouchableOpacity style={[styles.button, styles.plusButton,{ backgroundColor: selectedColor }]} onPress={() =>handleaddone()}>
                 <Text style={[styles.buttonText, styles.plusButtonText]}>Add</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.button, styles.primaryButton,{ backgroundColor: selectedColor }]} onPress={()=>handleGoNext()}>
+              <TouchableOpacity style={[styles.button, styles.primaryButton,{ backgroundColor: selectedColor }]} onPress={handleAddMenu}>
                 <Text style={[styles.buttonText, styles.primaryButtonText]}>Next</Text>
               </TouchableOpacity>
 

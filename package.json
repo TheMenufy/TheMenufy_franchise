@@ -30,6 +30,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.74.2",
+    "react-native-animatable": "^1.4.0",
     "react-native-color-picker": "^0.6.0",
     "react-native-cookies": "^3.3.0",
     "react-native-gesture-handler": "^2.17.1",
