@@ -3,6 +3,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+import axios from 'axios';
+
+const API_BASE_URL_MESSAGES = 'http://192.168.1.17:5555/messages';
 
 const imageMap = {
   "Torino.jpg": require('../assets/Torino.jpg'),

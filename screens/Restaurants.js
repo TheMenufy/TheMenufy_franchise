@@ -24,7 +24,13 @@ const RestaurantScreen = () => {
       name: restaurant.nameRes,
       image: restaurant.images,
       address: restaurant.address,
-      cuisineType: restaurant.cuisineType
+      cuisineType: restaurant.cuisineType,
+      facebookLink: restaurant.facebookLink,
+      twitterLink: restaurant.twitterLink,
+      instagramLink: restaurant.instagramLink,
+      tiktokLink: restaurant.tiktokLink,
+      phone: restaurant.phone,
+      email: restaurant.email
     });
   };
 

@@ -1,16 +1,16 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, Dimensions, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import axios from 'axios';
-
-const API_BASE_URL_RESTAURANTS = 'http://192.168.1.17:5555/restaurant';
 
 const DetailRestaurant = ({ route }) => {
-  const { name, image, address, cuisineType } = route.params;
+  const { name, image, address, cuisineType, facebookLink, twitterLink, instagramLink, tiktokLink, phone, email } = route.params;
   const navigation = useNavigation();
 
   // Get the width of the screen
   const { width } = Dimensions.get('window');
+
+  // Convert cuisineType to hashtag and uppercase
+  const cuisineHashtag = `#${cuisineType.toUpperCase()}`;
 
   // Handle the button press
   const handleClickHere = () => {
@@ -18,12 +18,10 @@ const DetailRestaurant = ({ route }) => {
   };
 
   const handleUpdate = () => {
-    navigation.navigate('UpdateRestaurant', { name, image, address, cuisineType }); // Navigate to UpdateRestaurant screen with parameters
+    navigation.navigate('UpdateRestaurant', { name, image, address, cuisineType, facebookLink, twitterLink, instagramLink, tiktokLink, phone, email }); // Navigate to UpdateRestaurant screen with parameters
   };
 
   const handleDelete = () => {
-    // Add your delete logic here
-    // For example, make a DELETE request to the API and then navigate back or show a confirmation
     console.log('Delete button pressed');
   };
 
@@ -32,8 +30,17 @@ const DetailRestaurant = ({ route }) => {
       <View style={styles.container}>
         {/* Display the image using URI */}
         <Image source={{ uri: image }} style={[styles.image, { width }]} />
-        <Text style={styles.name}>{name}</Text>
-        <Text style={styles.description}>{cuisineType}</Text>
+
+        {/* Restaurant name and View Menu link in a row */}
+        <View style={styles.nameMenuContainer}>
+          <Text style={styles.name}>{name}</Text>
+          <TouchableOpacity onPress={handleClickHere}>
+            <Text style={styles.viewMenu}>View Menu</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Cuisine type displayed as a hashtag */}
+        <Text style={styles.description}>{cuisineHashtag}</Text>
 
         <View style={styles.infoSection}>
           <Text style={styles.heading}>Address:</Text>
@@ -41,13 +48,19 @@ const DetailRestaurant = ({ route }) => {
         </View>
 
         <View style={styles.infoSection}>
-          <Text style={styles.heading}>Menu:</Text>
-          <TouchableOpacity style={styles.button} onPress={handleClickHere}>
-            <Text style={styles.buttonText}>View Menu</Text>
-          </TouchableOpacity>
+          <Text style={styles.heading}>Contact:</Text>
+          <Text style={styles.phone}>{phone}</Text>
+          <Text style={styles.email}>{email}</Text>
         </View>
 
-        {/* Update and Delete buttons */}
+        <View style={styles.infoSection}>
+          <Text style={styles.heading}>Follow us:</Text>
+          <Text style={styles.link}>{facebookLink}</Text>
+          <Text style={styles.link}>{twitterLink}</Text>
+          <Text style={styles.link}>{instagramLink}</Text>
+          <Text style={styles.link}>{tiktokLink}</Text>
+        </View>
+
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.updateButton} onPress={handleUpdate}>
             <Text style={styles.buttonText}>Update</Text>
@@ -64,23 +77,35 @@ const DetailRestaurant = ({ route }) => {
 const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
-    padding: 20,
     backgroundColor: '#f5f5f5',
   },
   container: {
     flex: 1,
     alignItems: 'center',
+    marginTop: 0,
   },
   image: {
-    height: 250, // Adjust the height of the image as needed
+    height: 250,
     resizeMode: 'cover',
     borderRadius: 10,
     marginBottom: 20,
   },
+  nameMenuContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    paddingHorizontal: 20,
+    marginBottom: 10,
+  },
   name: {
     fontSize: 26,
     fontWeight: 'bold',
-    marginBottom: 10,
+  },
+  viewMenu: {
+    fontSize: 18,
+    color: '#007BFF',
+    textDecorationLine: 'underline',
   },
   description: {
     fontSize: 18,
@@ -99,17 +124,23 @@ const styles = StyleSheet.create({
     color: '#333',
     marginBottom: 20,
   },
-  button: {
-    backgroundColor: '#f28b82', // Button color
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 5,
-    marginBottom: 20,
-  },
-  buttonText: {
-    color: '#fff',
+  phone: {
     fontSize: 18,
-    fontWeight: 'bold',
+    color: '#007BFF',
+    marginBottom: 20,
+    textDecorationLine: 'underline',
+  },
+  email: {
+    fontSize: 18,
+    color: '#007BFF',
+    marginBottom: 20,
+    textDecorationLine: 'underline',
+  },
+  link: {
+    fontSize: 18,
+    color: '#007BFF',
+    marginBottom: 10,
+    textDecorationLine: 'underline',
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -119,7 +150,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   updateButton: {
-    backgroundColor: '#4CAF50', // Green for Update button
+    backgroundColor: '#4CAF50',
     paddingVertical: 15,
     paddingHorizontal: 30,
     borderRadius: 5,
@@ -127,7 +158,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   deleteButton: {
-    backgroundColor: '#f44336', // Red for Delete button
+    backgroundColor: '#f44336',
     paddingVertical: 15,
     paddingHorizontal: 30,
     borderRadius: 5,
