@@ -82,10 +82,9 @@ export default function AddMenuScreen({ navigation }) {
         );
       
         const menuId = response.data.data._id; // Access the menu ID
-        console.log('Menu added successfully:', menuId);
-      
-        // Optionally, store the menu ID in AsyncStorage
-        // await AsyncStorage.setItem('MENUID', menuId);
+        console.log(menuId);
+
+        await AsyncStorage.setItem('MENUID', menuId);
       
         // Navigate to the next screen with the menu ID
         navigation.navigate('Addcategories', { menuId }); 

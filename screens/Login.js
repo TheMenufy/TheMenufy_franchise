@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'reac
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import jwtDecode from 'jwt-decode';
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
@@ -12,6 +13,11 @@ export default function Login({ navigation }) {
   const [rememberMe, setRememberMe] = useState(false);
   const [isSubmitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+
+
+
+
 
   useEffect(() => {
     const checkLoginStatus = async () => {
@@ -74,7 +80,8 @@ export default function Login({ navigation }) {
 
       const { tokenLogin, user } = response.data;
       await AsyncStorage.setItem('userToken', tokenLogin);
-      await AsyncStorage.setItem('id', user.id);
+      console.log('zebneb id '+user.id)
+      await AsyncStorage.setItem('USERID',user.id);
       await AsyncStorage.setItem('userData', JSON.stringify(user));
       await AsyncStorage.setItem('rememberMe', JSON.stringify(rememberMe));
 
