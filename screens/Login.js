@@ -42,7 +42,7 @@ export default function Login({ navigation }) {
     setPasswordError('');
     
     try {
-      const response = await axios.post('http://192.168.1.15:5555/auth/login', {
+      const response = await axios.post('http://192.168.1.17:5555/auth/login', {
         email,
         password,
         rememberMe

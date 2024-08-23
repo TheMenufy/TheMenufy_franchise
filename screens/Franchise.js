@@ -7,8 +7,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const FranchiseScreen = () => {
   const navigation = useNavigation();
-  const API_BASE_URL_USER = 'http://192.168.1.15:5555/user';
-  const API_BASE_URL_FRANCHISE = 'http://192.168.1.15:5555/franchise';
+  const API_BASE_URL_USER = 'http://192.168.1.17:5555/user';
+  const API_BASE_URL_FRANCHISE = 'http://192.168.1.17:5555/franchise';
   const [selectedColor, setSelectedColor] = useState('#ffffff');
 
   const getUser = async (token) => {

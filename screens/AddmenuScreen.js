@@ -15,8 +15,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-const API_BASE_URL_MENU = 'http://192.168.1.15:5555/menu';
-const API_BASE_URL_USER = 'http://192.168.1.15:5555/user';
+const API_BASE_URL_MENU = 'http://192.168.1.17:5555/menu';
+const API_BASE_URL_USER = 'http://192.168.1.17:5555/user';
 
 export default function AddMenuScreen({ navigation }) {
   const [menuName, setMenuName] = useState('');
@@ -82,10 +82,9 @@ export default function AddMenuScreen({ navigation }) {
         );
       
         const menuId = response.data.data._id; // Access the menu ID
-        console.log('Menu added successfully:', menuId);
-      
-        // Optionally, store the menu ID in AsyncStorage
-        // await AsyncStorage.setItem('MENUID', menuId);
+        console.log(menuId);
+
+        await AsyncStorage.setItem('MENUID', menuId);
       
         // Navigate to the next screen with the menu ID
         navigation.navigate('Addcategories', { menuId }); 
