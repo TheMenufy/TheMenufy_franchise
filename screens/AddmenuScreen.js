@@ -15,8 +15,22 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
+// API URLs
 const API_BASE_URL_MENU = 'http://192.168.1.17:5555/menu';
 const API_BASE_URL_USER = 'http://192.168.1.17:5555/user';
+
+// Fetch user data
+const getUser = async (token) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL_USER}/getUser`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data; // Return user data
+  } catch (error) {
+    console.error('Failed to get user data', error);
+    throw error;
+  }
+};
 
 export default function AddMenuScreen({ navigation }) {
   const [menuName, setMenuName] = useState('');
@@ -24,19 +38,19 @@ export default function AddMenuScreen({ navigation }) {
   const [selectedColor, setSelectedColor] = useState('#ffffff');
   const [franchiseFK, setFranchiseFK] = useState(null);
 
-  // Fetch user data directly
+  // Fetch user data and set franchiseFK
   const fetchUserData = async () => {
     try {
-      // Assuming you get user data from local storage or other methods
-      const userData = await AsyncStorage.getItem('userData');
-      if (userData) {
-        const user = JSON.parse(userData);
-        setFranchiseFK(user.franchiseFK); // Get franchiseFK from user data
-      } else {
-        console.error('No user data found');
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+
+      const userData = await getUser(token); // Fetch user data
+      if (userData && userData.length > 0) {
+        console.log('The franchise ID is:', userData[0].franchiseFK);
+        setFranchiseFK(userData[0].franchiseFK); // Set franchiseFK from user data
       }
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      console.error('Failed to load user data', error);
     }
   };
 
@@ -74,27 +88,28 @@ export default function AddMenuScreen({ navigation }) {
       setMenuNameError('');
     }
 
+    console.log('Franchise FK before API call:', franchiseFK); // Check franchiseFK
+
     if (valid && franchiseFK) { // Check if franchiseFK is available
       try {
         const response = await axios.post(
-          `${API_BASE_URL_MENU}/add/fr/${franchiseFK}`,
+          `${API_BASE_URL_MENU}/add/fr/${franchiseFK}`, // Use franchiseFK in API route
           { name: menuName }
         );
-      
+
         const menuId = response.data.data._id; // Access the menu ID
-        console.log('Menu added successfully:', menuId);
-      
-        // Optionally, store the menu ID in AsyncStorage
-        // await AsyncStorage.setItem('MENUID', menuId);
-      
+        console.log('Menu ID:', menuId);
+
+        await AsyncStorage.setItem('MENUID', menuId); // Store the menu ID
+
         // Navigate to the next screen with the menu ID
-        navigation.navigate('Addcategories', { menuId }); 
+        navigation.navigate('Addcategories', { menuId });
       } catch (error) {
         console.error('Error adding menu:', error);
         setMenuNameError('Failed to add menu. Please try again.');
       }
     } else {
-      setMenuNameError('Franchise not found. Please try again.');
+      setMenuNameError('Menu name is required');
     }
   };
 
