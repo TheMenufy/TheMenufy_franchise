@@ -13,6 +13,8 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 const API_BASE_URL_FRANCHISE = 'http://192.168.1.17:5555/franchise';
+const API_BASE_URL = 'http://192.168.1.17:5555/user';
+
 
 function CustomTabBar({ state, descriptors, navigation, selectedColor }) {
   return (
@@ -118,22 +120,38 @@ const Home = () => {
     }
   };
 
+  const getUser = async (token) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/getUser`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Failed to get user data', error);
+      throw error;
+    }
+  };
+
   const fetchFranchiseData = useCallback(async () => {
     
     try {
+      const token = await AsyncStorage.getItem('userToken');
+      const userData = await getUser(token);
+  
+      await AsyncStorage.setItem('FRANCHISEID',userData[0].franchiseFK);
       const FRANCHISEID = await AsyncStorage.getItem('FRANCHISEID');
+
       const franchiseData = await getFranchise(FRANCHISEID);
         if (franchiseData) {
           setSelectedColor(franchiseData.data.color);
           await AsyncStorage.setItem('color', franchiseData.data.color);
-          await AsyncStorage.setItem('FRANCHISEID',franchiseData.data._id);
+  
         }
       
     } catch (error) {
       console.error('Failed to load franchise data', error);
     }
   }, []);
-
   useFocusEffect(
     useCallback(() => {
       fetchFranchiseData();
