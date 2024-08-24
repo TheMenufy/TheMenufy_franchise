@@ -4,18 +4,24 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import jwtDecode from 'jwt-decode';
 
 const FranchiseScreen = () => {
   const navigation = useNavigation();
   const API_BASE_URL_USER = 'http://192.168.1.17:5555/user';
   const API_BASE_URL_FRANCHISE = 'http://192.168.1.17:5555/franchise';
   const [selectedColor, setSelectedColor] = useState('#ffffff');
-  
-  //functions 
 
-
-  
+  const getUser = async (token) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL_USER}/getUser`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Failed to get user data', error);
+      throw error;
+    }
+  };
 
   const getFranchise = async (id) => {
     try {
@@ -30,16 +36,17 @@ const FranchiseScreen = () => {
 
   const fetchFranchiseData = useCallback(async () => {
     try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
 
-      
-      const FRANCHISEID = await AsyncStorage.getItem('FRANCHISEID');
-
-        
-        const franchiseData = await getFranchise(FRANCHISEID);
+      const userData = await getUser(token);
+      if (userData.length > 0) {
+        const franchiseId = userData[0].franchiseFK;
+        const franchiseData = await getFranchise(franchiseId);
         if (franchiseData) {
           setSelectedColor(franchiseData.data.color);
         }
-      
+      }
     } catch (error) {
       console.error('Failed to load franchise data', error);
     }

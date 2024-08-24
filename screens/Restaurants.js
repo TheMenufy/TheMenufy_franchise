@@ -2,22 +2,58 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ImageBackground, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_BASE_URL_RESTAURANTS = 'http://192.168.1.17:5555/restaurant';
+const API_BASE_URL = 'http://192.168.1.17:5555/user';
+
+const getUser = async (token) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/getUser`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Failed to get user data', error);
+    throw error;
+  }
+};
 
 const RestaurantScreen = () => {
   const [restaurants, setRestaurants] = useState([]);
+  const [franchiseFK, setFranchiseFK] = useState(null);
   const navigation = useNavigation();
 
+  const fetchUserData = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (!token) throw new Error('No token found');
+
+      const userData = await getUser(token);
+      if (userData.length > 0) {
+        setFranchiseFK(userData[0].franchiseFK); // Stocke franchiseFK
+      }
+    } catch (error) {
+      console.error('Failed to load user data', error);
+    }
+  };
+
   useEffect(() => {
-    axios.get(`${API_BASE_URL_RESTAURANTS}/retrieveall`)
-      .then(response => {
-        setRestaurants(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching restaurants:', error);
-      });
+    fetchUserData();
   }, []);
+
+  useEffect(() => {
+    if (franchiseFK) { // Assure que franchiseFK est chargé avant de récupérer les restaurants
+      axios.get(`${API_BASE_URL_RESTAURANTS}/retrieveall`)
+        .then(response => {
+          const filteredRestaurants = response.data.filter(restaurant => restaurant.franchiseFK === franchiseFK);
+          setRestaurants(filteredRestaurants); // Filtre les restaurants par franchiseFK
+        })
+        .catch(error => {
+          console.error('Error fetching restaurants:', error);
+        });
+    }
+  }, [franchiseFK]);
 
   const navigateToDetail = (restaurant) => {
     navigation.navigate('DetailRestaurant', {
