@@ -133,25 +133,46 @@ const Home = () => {
   };
 
   const fetchFranchiseData = useCallback(async () => {
-    
     try {
       const token = await AsyncStorage.getItem('userToken');
       const userData = await getUser(token);
   
-      await AsyncStorage.setItem('FRANCHISEID',userData[0].franchiseFK);
-      const FRANCHISEID = await AsyncStorage.getItem('FRANCHISEID');
-
-      const franchiseData = await getFranchise(FRANCHISEID);
-        if (franchiseData) {
-          setSelectedColor(franchiseData.data.color);
-          await AsyncStorage.setItem('color', franchiseData.data.color);
+      // Check if userData and its properties are defined
+      if (userData && userData[0]) {
+        const { userName, role, address, franchiseFK } = userData[0];
   
+        if (userName) {
+          await AsyncStorage.setItem('userName', userName);
         }
-      
+  
+        if (role) {
+          await AsyncStorage.setItem('userRole', role);
+        }
+  
+        if (address) {
+          await AsyncStorage.setItem('userAddress', address);
+        }
+  
+        if (franchiseFK) {
+          await AsyncStorage.setItem('FRANCHISEID', franchiseFK);
+          const FRANCHISEID = await AsyncStorage.getItem('FRANCHISEID');
+  
+          const franchiseData = await getFranchise(FRANCHISEID);
+          if (franchiseData) {
+            setSelectedColor(franchiseData.data.color);
+            await AsyncStorage.setItem('color', franchiseData.data.color);
+          }
+        }
+      } else {
+        console.error('User data is not available');
+      }
+  
     } catch (error) {
       console.error('Failed to load franchise data', error);
     }
   }, []);
+  
+  
   useFocusEffect(
     useCallback(() => {
       fetchFranchiseData();
@@ -236,11 +257,27 @@ const Home = () => {
 };
 
 const HomeScreen = ({ navigation }) => {
-  const latestNews = [
-    { id: 1, title: "New Franchise Opened: Pizza Palace", description: "Pizza Palace has opened a new branch in downtown." },
-    { id: 2, title: "Special Offer at Burger Town", description: "Burger Town is offering a 20% discount on all items this weekend." },
-    { id: 3, title: "KFC Launches New Menu", description: "KFC has introduced new spicy wings to their menu." },
-  ];
+  const [firstName, setFirstName] = useState('');
+  const [role, setRole] = useState('');
+  const [address, setAddress] = useState('');
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const storedFirstName = await AsyncStorage.getItem('userName');
+        const storedRole = await AsyncStorage.getItem('userRole');
+        const storedAddress = await AsyncStorage.getItem('userAddress');
+
+        if (storedFirstName) setFirstName(storedFirstName);
+        if (storedRole) setRole(storedRole);
+        if (storedAddress) setAddress(storedAddress);
+      } catch (error) {
+        console.error('Failed to load stored data', error);
+      }
+    };
+
+    loadData();
+  }, []);
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -251,29 +288,26 @@ const HomeScreen = ({ navigation }) => {
         >
           <Text style={styles.setupButtonText}>Setup System</Text>
         </TouchableOpacity>
-        
-        <Text style={styles.welcomeText}>Welcome!</Text>
-        
+
+        <Text style={styles.welcomeText}>Welcome, {firstName}!</Text>
+
         <View style={styles.profileSummary}>
           <Text style={styles.profileSummaryTitle}>Profile Summary</Text>
-          <Text style={styles.profileSummaryText}>Admin: Adem Seddik</Text>
-          <Text style={styles.profileSummaryText}>Role: resFranchise</Text>
-          <Text style={styles.profileSummaryText}>Location: Tunis, Tunisia</Text>
+          <Text style={styles.profileSummaryText}>Role: {role}</Text>
+          <Text style={styles.profileSummaryText}>Location: {address}</Text>
         </View>
 
+        {/* Placeholder for future news section */}
         <View style={styles.newsSection}>
           <Text style={styles.newsHeading}>Latest News</Text>
-          {latestNews.map(news => (
-            <View key={news.id} style={styles.newsCard}>
-              <Text style={styles.newsTitle}>{news.title}</Text>
-              <Text style={styles.newsDescription}>{news.description}</Text>
-            </View>
-          ))}
+          <Text style={styles.newsPlaceholder}>Coming soon...</Text>
         </View>
       </View>
     </ScrollView>
   );
 };
+
+
 
 const ProfileScreen = () => {
   return <ProfilePage />;

@@ -117,10 +117,10 @@ const FranchiseScreen = () => {
           <TouchableOpacity
             style={[styles.addMenuButton, { backgroundColor: selectedColor }]}
             onPress={() => {
-              navigation.navigate('AddMenuScreen')
+              navigation.navigate('Addcategories')
             }}
           >
-            <Text style={styles.addMenuButtonText}>Add Menu</Text>
+            <Text style={styles.addMenuButtonText}>Add Category</Text>
           </TouchableOpacity>
           
         </View>
