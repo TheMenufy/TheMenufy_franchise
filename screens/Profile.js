@@ -1,5 +1,6 @@
+//ProfilePage
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -25,16 +26,14 @@ const ProfilePage = () => {
   const navigation = useNavigation();
 
   const fetchUserData = async () => {
-    var i =0;
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (!token) throw new Error('No token found');
 
       const userData = await getUser(token);
       if (userData.length > 0) {
-
-          console.log("the franchise id is: "+userData[0].franchiseFK)
-        
+        console.log("the franchise id is: " + userData[0].franchiseFK);
+        AsyncStorage.setItem('IMAGE_KEY', userData[0].image);
         setAdmin(userData[0]);
       }
     } catch (error) {
@@ -44,7 +43,6 @@ const ProfilePage = () => {
 
   useEffect(() => {
     fetchUserData();
-    
   }, []);
 
   useFocusEffect(
@@ -54,7 +52,7 @@ const ProfilePage = () => {
   );
 
   const handleEditProfile = () => {
-    navigation.push('EditProfile');
+    navigation.push('EditPorfileScreen');
   };
 
   const handleLogout = async () => {
@@ -70,68 +68,47 @@ const ProfilePage = () => {
   };
 
   return (
+    
     <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
       <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
         <Ionicons name="log-out-outline" size={24} color="#fff" />
       </TouchableOpacity>
 
-      <View style={styles.profileHeader}>
-        <View style={styles.profileImageContainer}>
-          <Image source={{ uri: admin.image || 'https://example.com/default_profile.jpg' }} style={styles.profileImage} />
+      
+        <View style={styles.profileHeader}>
+          <View style={styles.profileImageContainer}>
+            {admin.image === 'client.png' ? (
+              <Image source={userimage} style={styles.profileImage} />
+            ) : (
+              <Image source={{ uri: 'http://192.168.1.17:5555/uploads/user/' + `${admin.image}` }} style={styles.profileImage} />
+            )}
+          </View>
+
+          <View style={styles.nameAndEditContainer}>
+            <Text style={styles.name}>{admin.userName}</Text>
+            <TouchableOpacity onPress={handleEditProfile} style={styles.editButton}>
+              <Ionicons name="pencil" size={20} color="#fff" />
+            </TouchableOpacity>
+          </View>
+
+          <Text style={styles.role}>{admin.role}</Text>
+          <Text style={styles.phoneNumber}>{admin.phone}</Text>
         </View>
 
-        <View style={styles.nameAndEditContainer}>
-          <Text style={styles.name}>{admin.userName}</Text>
-          <TouchableOpacity onPress={handleEditProfile} style={styles.editButton}>
-            <Ionicons name="pencil" size={20} color="#fff" />
-          </TouchableOpacity>
+        <View style={styles.detailsSection}>
+          <Text style={styles.detailTitle}>Contact Information</Text>
+          <Text style={styles.detailText}>Email: {admin.email}</Text>
+          <Text style={styles.detailText}>Location: {admin.address}</Text>
+          <Text style={styles.detailText}>Phone number: {admin.phone}</Text>
+          <Text style={styles.detailText}>Date of Birth: {admin.birthday}</Text>
         </View>
 
-        <Text style={styles.role}>{admin.role}</Text>
-        <Text style={styles.phoneNumber}>{admin.phone}</Text>
-      </View>
-
-      <View style={styles.detailsSection}>
-        <Text style={styles.detailTitle}>Contact Information</Text>
-        <Text style={styles.detailText}>Email: {admin.email}</Text>
-        <Text style={styles.detailText}>Location: {admin.address}</Text>
-        <Text style={styles.detailText}>Phone number: {admin.phone}</Text>
-        <Text style={styles.detailText}>Date of Birth: {admin.birthday}</Text>
-      </View>
-
-      <View style={styles.memberSinceSection}>
-        <Text style={styles.detailTitle}>Member Since</Text>
-        <Text style={styles.detailText}>{admin.createdAt}</Text>
-      </View>
-    </View>
-  );
-
-  const renderFranchiseProfile = () => (
-    <View>
-      <Text style={styles.sectionTitle}>Franchise Profile</Text>
-      {/* Add franchise profile details here */}
-      <Text style={styles.detailText}>Franchise Name: Example Franchise</Text>
-      <Text style={styles.detailText}>Location: Example Location</Text>
-      <Text style={styles.detailText}>Contact: Example Contact</Text>
-    </View>
-  );
-
-  return (
-    <View style={styles.container}>
-     
-
-      <View style={styles.switcherContainer}>
-      <TouchableOpacity onPress={handleLogout} style={styles.topBarButton1}>
-          <Ionicons name="log-out-outline" size={24} color="#fc0303" />
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={handleEditProfile} style={styles.topBarButton2}>
-          <Ionicons name="pencil" size={24} color="#3235fa" />
-        </TouchableOpacity>
-        
-      </View>
-
-      {currentProfile === 'personal' ? renderPersonalProfile() : renderFranchiseProfile()}
+        <View style={styles.memberSinceSection}>
+          <Text style={styles.detailTitle}>Member Since</Text>
+          <Text style={styles.detailText}>{admin.createdAt}</Text>
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -140,20 +117,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    padding: 10,
+    paddingLeft: 10,
+    paddingRight: 10,
   },
   logoutButton: {
- 
-    
-  
     backgroundColor: 'tomato',
     borderRadius: 20,
     width: 40,
     height: 40,
-    padding:8,
-    
-    alignSelf:'flex-end',
- 
+    padding: 8,
+    marginTop:10,
+    alignSelf: 'flex-end',
+  },
+  scrollViewContent: {
+    paddingBottom: 20, // Ensure there’s enough space at the bottom
   },
   profileHeader: {
     alignItems: 'center',
@@ -161,9 +138,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   profileImageContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 150,
+    height: 150,
+    borderRadius: 100,
     overflow: 'hidden',
     marginBottom: 10,
     borderWidth: 2,

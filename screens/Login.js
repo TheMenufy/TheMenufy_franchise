@@ -3,7 +3,6 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'reac
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import jwtDecode from 'jwt-decode';
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
@@ -45,6 +44,7 @@ export default function Login({ navigation }) {
   };
 
   const validateInputs = () => {
+    
     let isValid = true;
 
     if (!email) {
@@ -66,12 +66,14 @@ export default function Login({ navigation }) {
 
   const submit = async () => {
     if (!validateInputs()) {
+   
       return;
     }
 
     setSubmitting(true);
 
     try {
+      
       const response = await axios.post('http://192.168.1.17:5555/auth/login', {
         email,
         password,
