@@ -15,7 +15,6 @@ const Tab = createBottomTabNavigator();
 const API_BASE_URL_FRANCHISE = 'http://192.168.1.17:5555/franchise';
 const API_BASE_URL = 'http://192.168.1.17:5555/user';
 
-
 function CustomTabBar({ state, descriptors, navigation, selectedColor }) {
   return (
     <View style={styles.tabBar}>
@@ -106,10 +105,8 @@ function CustomTabBar({ state, descriptors, navigation, selectedColor }) {
 }
 
 const Home = () => {
+  
   const [selectedColor, setSelectedColor] = useState('#ffffff');
-
-
-
   const getFranchise = async (id) => {
     try {
       const response = await axios.get(`${API_BASE_URL_FRANCHISE}/${id}`);
@@ -119,7 +116,6 @@ const Home = () => {
       throw error;
     }
   };
-
   const getUser = async (token) => {
     try {
       const response = await axios.get(`${API_BASE_URL}/getUser`, {
