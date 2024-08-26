@@ -14,7 +14,7 @@ const DetailRestaurant = ({ route }) => {
 
   // Handle the button press
   const handleClickHere = () => {
-    navigation.navigate('MenuScreen'); // Navigate to MenuScreen
+    navigation.navigate('ListOfNewCategorie'); // Navigate to MenuScreen
   };
 
   const handleUpdate = () => {

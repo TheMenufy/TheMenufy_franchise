@@ -276,7 +276,7 @@ const EditPorfileScreen = ({ navigation }) => {
                   <Icon name='arrow-left' size={22} color='#F3F3F3' style={{ alignSelf: 'flex-start', marginTop: 20, marginLeft: 15 }}  />
 
                     <TouchableOpacity onPress={() => setShowConfirmModal(true)} >
-                        <Text style={styles.iconLng} >{('save')} </Text>
+                        <Text style={styles.iconLng} >{('Save')} </Text>
                     </TouchableOpacity>
 
                     <View style={{ flexDirection: 'column', justifyContent: 'center' }}>
