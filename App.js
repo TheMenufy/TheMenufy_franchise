@@ -22,6 +22,7 @@ import ListOfNewCategorie from './screens/ListOfNewCategorie';
 import AddProductScreen from './screens/AddProductScreen';
 import AddIngredient from './screens/AddIngredient';
 import AddItem from './screens/AddItem';
+import EditPorfileScreen from './screens/EditPorfileScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -48,6 +49,12 @@ export default function App() {
       color: '#FFFFFF', // Set the title color to white
     },}}/>
         <Stack.Screen name="EditProfile" component={EditProfilePage} options={{ headerShown: true ,title:"Edit profile" , headerTitleAlign: 'center', headerStyle: {
+      backgroundColor: '#f28b82',
+
+    }, headerTitleStyle: {
+      color: '#FFFFFF', // Set the title color to white
+    },}} />
+            <Stack.Screen name="EditPorfileScreen" component={EditPorfileScreen} options={{ headerShown: true ,title:"Edit profile" , headerTitleAlign: 'center', headerStyle: {
       backgroundColor: '#f28b82',
 
     }, headerTitleStyle: {
