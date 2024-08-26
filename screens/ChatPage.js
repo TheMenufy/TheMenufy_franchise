@@ -87,7 +87,7 @@ const ChatPage = ({ route }) => {
           <Text style={styles.sendButtonText}>Send</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={sendImage} style={styles.imageButton}>
-          <Text style={styles.sendButtonText}>📷</Text>
+          <Text style={styles.sendButtonText}>Photo</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
