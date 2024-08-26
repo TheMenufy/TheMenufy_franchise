@@ -148,7 +148,6 @@ const Home = () => {
       console.error('Failed to load franchise data', error);
     }
   }, []);
-
   useFocusEffect(
     useCallback(() => {
       fetchFranchiseData();
