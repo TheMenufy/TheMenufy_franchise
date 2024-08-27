@@ -22,8 +22,13 @@ import ListOfNewCategorie from './screens/ListOfNewCategorie';
 import AddProductScreen from './screens/AddProductScreen';
 import AddIngredient from './screens/AddIngredient';
 import AddItem from './screens/AddItem';
+<<<<<<< HEAD
 import AddRestaurant from './screens/AddRestaurant';
 import EditPorfileScreen from './screens/EditPorfileScreen';
+=======
+import EditPorfileScreen from './screens/EditPorfileScreen';
+import AddRestaurant from './screens/AddRestaurant';
+>>>>>>> 3f2149de5de9408c461ebbba865153afc5f4e47a
 
 const Stack = createNativeStackNavigator();
 
