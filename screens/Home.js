@@ -121,6 +121,8 @@ const Home = () => {
       const response = await axios.get(`${API_BASE_URL}/getUser`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      console.log(response.data[0].role)
+      console.log(response.data[0].address)
       return response.data;
     } catch (error) {
       console.error('Failed to get user data', error);
@@ -138,11 +140,13 @@ const Home = () => {
         const { userName, role, address, franchiseFK } = userData[0];
   
         if (userName) {
+        
           await AsyncStorage.setItem('userName', userName);
         }
   
         if (role) {
           await AsyncStorage.setItem('userRole', role);
+          console.log('userName', role)
         }
   
         if (address) {
