@@ -29,7 +29,9 @@ export default function ListOfNewCategorie({ navigation }) {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL_CATEGORIES}/retrieveall`);
+        const menuId = await AsyncStorage.getItem('MENUID');
+
+        const response = await axios.get(`${API_BASE_URL_CATEGORIES}/find/item/by/menu/${menuId}`);
         setCategories(response.data);
       } catch (error) {
         console.error('Error fetching categories:', error);

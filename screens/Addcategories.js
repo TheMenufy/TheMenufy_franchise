@@ -78,7 +78,8 @@ const handleaddone =async()  =>{
       try {
         // Fetch the menuId from AsyncStorage
         const menuId = await AsyncStorage.getItem('MENUID');
-  console.log(menuId);
+        
+      //console.log(menuId);
         // Prepare the form data
         const formData = new FormData();
         formData.append('libelle', categorieLiblle);
