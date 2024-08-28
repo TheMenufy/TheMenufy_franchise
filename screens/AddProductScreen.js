@@ -20,137 +20,98 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import ListOfNewProducts from './ListOfNewProducts';
 
-
-
 export default function AddProductScreen({ navigation }) {
-
 
   const API_BASE_URL_CATEGORIES = 'http://192.168.1.17:5555/category';
   const API_BASE_URL_PRODUCT = 'http://192.168.1.17:5555/product';
 
-  //category input and error 
-  const [selectedCategory, setSelectedCategory] = useState(''); // State for selected category
-  const [CategoryError, setCategoryError] = useState('');
- //product name input and error 
-  const [Productname, setProductname] = useState('');
-  const [ProductnameError, setProductnameError] = useState('');
- //description input and error 
+  // Input fields and errors
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [categoryError, setCategoryError] = useState('');
+  const [productName, setProductName] = useState('');
+  const [productNameError, setProductNameError] = useState('');
   const [description, setDescription] = useState('');
-  const [descriptionError, setdescriptionError] = useState('');
- //disponibility input and error
-  const [selecteddisponibility, setSelecteddisponibility] = useState('');
-  const [disponibilityError, setdisponibilityError] = useState('');
-   //disponibility duration input
-  const [disponibilityduration, setdisponibilityduration] = useState('');
-   //promotion input 
-  const [promotion, setpromotion] = useState('');
-   //price input and error 
-  const [price, setprice] = useState('');
-  const [priceError, setpriceError] = useState('');
- //image input
+  const [descriptionError, setDescriptionError] = useState('');
+  const [price, setPrice] = useState('');
+  const [priceError, setPriceError] = useState('');
+  const [promotion, setPromotion] = useState('');
   const [image, setImage] = useState(null);
-  const [disponibilitydurationError, setdisponibilitydurationError] = useState('');
-
   const [categories, setCategories] = useState([]);
+  const [isModifying, setIsModifying] = useState(false);
+  const [productId, setProductId] = useState(null);
 
-
-  //for dispalay ... 
   const [selectedColor, setSelectedColor] = useState('#ffffff');
   const [animatedText, setAnimatedText] = useState('');
+
+  useEffect(() => {
+    const loadData = async () => {
+      const MODIFY = await AsyncStorage.getItem('MODIFY');
+      if (MODIFY === 'true') {
+        setIsModifying(true);
+        const storedProductId = await AsyncStorage.getItem('PRODUCTID');
+        setProductId(storedProductId);
+        loadProductDetails(storedProductId);
+      }
+      fetchCategories();
+      getColor();
+    };
+
+    loadData();
+  }, []);
 
   useEffect(() => {
     let text = "N ";
     let index = 0;
 
     const interval = setInterval(() => {
-        setAnimatedText((prev) => prev + text[index]);
+      setAnimatedText((prev) => prev + text[index]);
       index++;
       if (index === text.length) {
         clearInterval(interval);
       }
-    },0.5);
+    }, 100);
 
     return () => clearInterval(interval);
   }, []);
 
-  const disponibility = [
-    { label: 'yes', value: 'no' },
-    { label: 'no', value: 'yes' },
-    
-  ];
-
-  
-const gottolist = () =>{
-  // In Addcategories.js
-navigation.navigate(ListOfNewProducts)
-}
-const handleGoNext =()=>{
-  const AddIngredient = () => import('./AddIngredient');
-  navigation.navigate(AddIngredient)
-}
-
-const handleaddone = async () => {
-  let valid = true;
-console.log("qklsjdqlskj")
-  if (!Productname) {
-    setProductnameError('Name is required');
-    valid = false;
-  } else {
-    setProductnameError('');
-  }
-  if (!description) {
-    setdescriptionError('Description is required');
-    valid = false;
-  } else {
-    setdescriptionError('');
-  }
-  
-  
-  if (!price) {
-    setpriceError('Price is required');
-    valid = false;
-  } else {
-    setpriceError('');
-  }
-  if (!selectedCategory) {
-    setCategoryError('You should choose a category');
-    valid = false;
-  } else {
-    setCategoryError('');
-  }
-
-  if (valid) {
+  const getColor = async () => {
     try {
-      const formData = new FormData();
-      formData.append('name', Productname);
-      formData.append('description', description);
-      formData.append('price', price);
-      formData.append('promotion', promotion);
-      formData.append('photo', image); // Pass the default image URL or path
-      formData.append('categoryFK',selectedCategory);
-     
-      
-      const response = await axios.post(`${API_BASE_URL_PRODUCT}/create`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      if (response.status === 201) {
-        setProductname('');
-        setDescription('');
-        setSelecteddisponibility('');
-        setdisponibilityduration('');
-        setpromotion('');
-        setprice('');
-        setSelectedCategory('');
-        setImage(null);
+      const color = await AsyncStorage.getItem('color');
+      if (color !== null) {
+        setSelectedColor(color);
       }
     } catch (error) {
+      console.error('Failed to retrieve color from AsyncStorage', error);
     }
-  }
-};
+  };
 
+  const fetchCategories = async () => {
+    try {
+      const menuId = await AsyncStorage.getItem('MENUID');
+      const response = await axios.get(`${API_BASE_URL_CATEGORIES}/find/item/by/menu/${menuId}`);
+      const fetchedCategories = response.data.map((category) => ({
+        label: category.libelle,
+        value: category._id,
+      }));
+      setCategories(fetchedCategories);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  const loadProductDetails = async (productId) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL_PRODUCT}/find/item/${productId}`);
+      const product = response.data;
+      setProductName(product.name);
+      setDescription(product.description);
+      setPrice(product.price.toString());
+      setImage(product.photo);
+      setSelectedCategory(product.categoryFK._id);
+    } catch (error) {
+      console.error('Error loading product details:', error);
+    }
+  };
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -164,62 +125,97 @@ console.log("qklsjdqlskj")
       setImage(result.assets[0].uri);
     }
   };
-  useEffect(() => {
 
-const ifmodify =async ()=>{
- 
-  const MODIFY = await AsyncStorage.getItem('MODIFY');
-  if(MODIFY==='true'){
-    const productId = await AsyncStorage.getItem('PRODUCTID');
-    const response = await axios.get(`${API_BASE_URL_PRODUCT}/find/item/${productId}`);
-    console.log("priiiiiice   "+response.data)
-    
+  const validateFields = () => {
+    let valid = true;
 
-   setDescription(response.data.description)
-  setProductname(response.data.name)
-   setprice(response.data.price.toString())
-   setImage((response.data.photo))
-   //setSelectedCategory(response.data.)
-    await AsyncStorage.setItem('MODIFY','false');
-  }
-else{
-  console.log('non non nono non no ')
-}
-  
-}
-    const getColor = async () => {
-      try {
+    if (!productName) {
+      setProductNameError('Name is required');
+      valid = false;
+    } else {
+      setProductNameError('');
+    }
 
-        const color = await AsyncStorage.getItem('color');
-        if (color !== null) {
-          console.log('Retrieved color:', color);
-          setSelectedColor(color);
-        } else {
-          console.log('No color found, using default.');
-        }
-      } catch (error) {
-        console.error('Failed to retrieve color from AsyncStorage', error);
+    if (!description) {
+      setDescriptionError('Description is required');
+      valid = false;
+    } else {
+      setDescriptionError('');
+    }
+
+    if (!price) {
+      setPriceError('Price is required');
+      valid = false;
+    } else {
+      setPriceError('');
+    }
+
+    if (!selectedCategory) {
+      setCategoryError('You should choose a category');
+      valid = false;
+    } else {
+      setCategoryError('');
+    }
+
+    return valid;
+  };
+
+  const handleAddOrModifyProduct = async () => {
+    if (!validateFields()) return;
+
+    try {
+      const formData = new FormData();
+      formData.append('name', productName);
+      formData.append('description', description);
+      formData.append('price', price);
+      formData.append('promotion', promotion);
+      formData.append('photo', image);
+      formData.append('categoryFK', selectedCategory);
+
+      let response;
+      if (isModifying) {
+        response = await axios.put(`${API_BASE_URL_PRODUCT}/update/${productId}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        await AsyncStorage.setItem('MODIFY', 'false');
+      } else {
+        response = await axios.post(`${API_BASE_URL_PRODUCT}/create`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
       }
-    };
-  
-    const fetchCategories = async () => {
-      try {
-        const menuId = await AsyncStorage.getItem('MENUID');
-        const response = await axios.get(`${API_BASE_URL_CATEGORIES}/find/item/by/menu/${menuId}`);
-        const fetchedCategories = response.data.map((category) => ({
-          label: category.libelle,
-          value: category._id,
-        }));
-        setCategories(fetchedCategories);
-      } catch (error) {
-        console.error('Error fetching categories:', error);
+
+      if (response.status === 201 || response.status === 200) {
+        setProductName('');
+        setDescription('');
+
+        setPromotion('');
+        setPrice('');
+        setSelectedCategory('');
+        setImage(null);
+        ToastAndroid.show('Product saved successfully!', ToastAndroid.SHORT);
+        navigation.goBack();
+      } else {
+        ToastAndroid.show('Something went wrong!', ToastAndroid.SHORT);
       }
-    };
-    
-    fetchCategories();
-    getColor();
-    ifmodify();
-  }, []);
+    } catch (error) {
+      console.error('Error saving product:', error);
+      ToastAndroid.show('Error saving product!', ToastAndroid.SHORT);
+    }
+  };
+
+  const handleGoToList = () => {
+    navigation.navigate(ListOfNewProducts);
+  };
+
+  const handleGoNext = () => {
+    const AddIngredient = () => import('./AddIngredient');
+    navigation.navigate(AddIngredient);
+  };
+
   return (
     <ImageBackground
       source={require('../assets/backroundMenu2.jpeg')} // Replace this with your image URL or require a local image
@@ -237,85 +233,94 @@ else{
             <View style={styles.headerContainer}>
               <View style={styles.header}>
                 <Icon name="arrow-back" size={28} color="#000" onPress={() => navigation.goBack()} />
-                  
-                <Icon name="list-outline" size={28} color="#000" onPress={() => gottolist()} />
-
+                <Icon name="list-outline" size={28} color="#000" onPress={handleGoToList} />
               </View>
             </View>
             <View style={styles.content}>
               <Text style={styles.welcomeText}>{animatedText}</Text>
               <View style={styles.pickerWrapper}>
-  <RNPickerSelect
-    onValueChange={(value) => setSelectedCategory(value)}
-    items={categories}
-    placeholder={{
-      label: 'Select a category...',
-      value: null,
-      color: '#888',
-    }}
-    style={pickerSelectStyles}
-    value={selectedCategory}
-    useNativeAndroidPickerStyle={false} // This is important for Android
-  />
-
-</View>
-{CategoryError ? <Text style={styles.errorText}>{CategoryError}</Text> : null}
+                <RNPickerSelect
+                  onValueChange={(value) => setSelectedCategory(value)}
+                  items={categories}
+                  placeholder={{
+                    label: 'Select a category...',
+                    value: null,
+                    color: '#888',
+                  }}
+                  style={pickerSelectStyles}
+                  value={selectedCategory}
+                  useNativeAndroidPickerStyle={false} // This is important for Android
+                />
+              </View>
+              {categoryError ? <Text style={styles.errorText}>{categoryError}</Text> : null}
 
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
                   placeholder="Product name"
-                   placeholderTextColor="#BDBDBD"
-                  value={Productname}
-                  onChangeText={setProductname}
+                  placeholderTextColor="#BDBDBD"
+                  value={productName}
+                  onChangeText={setProductName}
                 />
               </View>
-              {ProductnameError ? <Text style={styles.errorText}>{ProductnameError}</Text> : null}
-              <View style={styles.inputContainerdisc}>
+              {productNameError ? <Text style={styles.errorText}>{productNameError}</Text> : null}
+
+              <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
                   placeholder="Description"
-                     placeholderTextColor="#BDBDBD"
+                  placeholderTextColor="#BDBDBD"
                   value={description}
                   onChangeText={setDescription}
                 />
               </View>
               {descriptionError ? <Text style={styles.errorText}>{descriptionError}</Text> : null}
 
-              <View style={styles.inputContainerprice}>
+              <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
-                  placeholder="price"
-                     placeholderTextColor="#BDBDBD"
+                  placeholder="Price"
+                  placeholderTextColor="#BDBDBD"
                   value={price}
-                  onChangeText={setprice}
+                  keyboardType="numeric"
+                  onChangeText={setPrice}
                 />
               </View>
               {priceError ? <Text style={styles.errorText}>{priceError}</Text> : null}
-             
 
-              <TouchableOpacity style={styles.imagePicker} onPress={pickImage}>
-                <Text style={styles.imagePickerText}>
-                  {image ? "Change Image" : "Pick an Image"}
-                </Text>
-                {image && <Image source={{ uri: image }} style={styles.imagePreview} />}
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Promotion (optional)"
+                  placeholderTextColor="#BDBDBD"
+                  value={promotion}
+                  keyboardType="numeric"
+                  onChangeText={setPromotion}
+                />
+              </View>
+
+              <TouchableOpacity onPress={pickImage}>
+                <View style={styles.imagePicker}>
+                  {image ? (
+                    <Image source={{ uri: image }} style={styles.imagePreview} />
+                  ) : (
+                    <Text style={styles.imagePickerText}>Pick an image</Text>
+                  )}
+                </View>
               </TouchableOpacity>
+
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.button} onPress={handleAddOrModifyProduct}>
+                  <Text style={styles.buttonText}>
+                    {isModifying ? 'Save Changes' : 'Add Product'}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={handleGoNext}>
+                  <Text style={styles.buttonText}>Next</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </ScrollView>
-          <View style={styles.footerContainer}>
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
-                <Text style={styles.buttonText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.button, styles.plusButton,{ backgroundColor: selectedColor }]} onPress={() =>handleaddone()}>
-                <Text style={[styles.buttonText, styles.plusButtonText]}>Add</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.button, styles.primaryButton,{ backgroundColor: selectedColor }]} onPress={()=>handleGoNext()}>
-                <Text style={[styles.buttonText, styles.primaryButtonText]}>Next</Text>
-              </TouchableOpacity>
-
-            </View>
-          </View>
         </KeyboardAvoidingView>
       </SafeAreaView>
     </ImageBackground>
@@ -504,7 +509,7 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   inputContainerdisc: {
-    flexDirection: 'row',
+
     backgroundColor: '#f1f1f1',
     paddingVertical: 10,
     paddingHorizontal: 15,
@@ -539,6 +544,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontStyle:'normal',
 
+    color: '#FFFFFFF',
+  },
+  inputdesc: {
+textAlign:'left',
+    fontSize: 16,
+    fontStyle:'normal',
     color: '#FFFFFFF',
   },
   errorText: {
