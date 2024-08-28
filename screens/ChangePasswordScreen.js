@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f1f1f1',
   },
   header: {
-    marginTop: 23,
+
     backgroundColor: '#f1f1f1',
     alignItems: 'flex-start',
     padding: 20,
@@ -181,6 +181,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   footerContainer: {
+    marginTop:30,
     width: '100%',
     maxWidth: 400,
   },

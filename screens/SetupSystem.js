@@ -82,20 +82,12 @@ const SetupSystem = () => {
     }
   };
 
-  const getUser = async (token) => {
-    try {
-      const response = await axios.get(`${API_BASE_URL_USER}/getUser`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Failed to get user data', error);
-      throw error;
-    }
-  };
+
+
 
   const getFranchise = async (id) => {
     try {
+
       const response = await axios.get(`${API_BASE_URL_FRANCHISE}/${id}`);
       return response.data;
     } catch (error) {
@@ -116,14 +108,8 @@ const SetupSystem = () => {
 
   const fetchFranchiseData = async () => {
     try {
-      
-      const token = await AsyncStorage.getItem('userToken');
-      if (!token) throw new Error('No token found');
-
-      const userData = await getUser(token);
-      if (userData.length > 0) {
-        const franchiseId = userData[0].franchiseFK;
-        const franchiseData = await getFranchise(franchiseId);
+      const FRANCHISEID = await AsyncStorage.getItem('FRANCHISEID');
+        const franchiseData = await getFranchise(FRANCHISEID);
         if (franchiseData) {
           setEstablishmentName(franchiseData.data.nameFr);
           setAddress(franchiseData.data.address);
@@ -141,7 +127,7 @@ const SetupSystem = () => {
 
           getCoordinatesForPlace(franchiseData.data.address);
         }
-      }
+      
     } catch (error) {
       console.error('Failed to load franchise data', error);
     }
@@ -220,12 +206,13 @@ const SetupSystem = () => {
 
     if (isValid) {
       try {
-        const token = await AsyncStorage.getItem('userToken');
-        if (!token) throw new Error('No token found');
+        const FRANCHISEID = await AsyncStorage.getItem('FRANCHISEID');
 
-        const userData = await getUser(token);
+   
+
+   
         if (userData.length > 0) {
-          const franchiseId = userData[0].franchiseFK;
+   
 
           const updatedData = {
             nameFr: establishmentName,
@@ -241,7 +228,7 @@ const SetupSystem = () => {
             twitterLink: socialNetworks.twitterLink,
           };
 
-          const updatedFranchise = await updateFranchise(franchiseId, updatedData);
+          const updatedFranchise = await updateFranchise(FRANCHISEID, updatedData);
           if (updatedFranchise.success) {
             Alert.alert('Success', 'Franchise information updated successfully');
           }
@@ -471,7 +458,7 @@ const styles = StyleSheet.create({
   card: {
     marginBottom: 10,
     borderRadius: 25,
-    backgroundColor: '#FFDCDD',
+    backgroundColor: '#f28b82',
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 10,

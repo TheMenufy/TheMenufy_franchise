@@ -83,6 +83,8 @@ export default function Login({ navigation }) {
       const { tokenLogin, user } = response.data;
       await AsyncStorage.setItem('userToken', tokenLogin);
       await AsyncStorage.setItem('USERID',user.id);
+     
+
       await AsyncStorage.setItem('userData', JSON.stringify(user));
       await AsyncStorage.setItem('rememberMe', JSON.stringify(rememberMe));
 
