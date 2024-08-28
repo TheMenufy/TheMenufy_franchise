@@ -33,8 +33,9 @@ export default function Categorielist({ navigation }) {
         
         const response = await axios.get(`${API_BASE_URL_CATEGORIES}/find/item/by/menu/${menuId}`);
         setCategories(response.data);
+      console.log(categories)
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error('Error fething categoies:', error);
       }
     };
 
@@ -245,4 +246,3 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
 });
- 

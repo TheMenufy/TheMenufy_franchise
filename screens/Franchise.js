@@ -91,7 +91,7 @@ const FranchiseScreen = () => {
               </View>
             </View>
           </TouchableOpacity>
-
+        
          
 
           <TouchableOpacity

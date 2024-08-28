@@ -181,6 +181,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   footerContainer: {
+    marginTop:30,
     width: '100%',
     maxWidth: 400,
     marginTop:30,

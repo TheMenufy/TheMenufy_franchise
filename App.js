@@ -1,5 +1,5 @@
 // App.js
-import * as React from 'react';
+import React, { useState, useCallback } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import login from './screens/Login';
@@ -26,10 +26,16 @@ import AddItem from './screens/AddItem';
 import AddRestaurant from './screens/AddRestaurant';
 import EditPorfileScreen from './screens/EditPorfileScreen';
 import Categorielist from './screens/Categorielist';
+import ListOfNewProducts from './screens/ListOfNewProducts';
+
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+
+
+
+
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="login">
@@ -76,12 +82,14 @@ export default function App() {
         <Stack.Screen name="AddMenuScreen" component={AddMenuScreen} options={{ headerShown: false  }} />
         <Stack.Screen name="Addcategories" component={Addcategories} options={{ headerShown: false  }} />
         <Stack.Screen name="ListOfNewCategorie" component={ListOfNewCategorie} options={{ headerShown: false  }} />
+        <Stack.Screen name="ListOfNewProducts" component={ListOfNewProducts} options={{ headerShown: false  }} />
+
         <Stack.Screen name="AddProductScreen" component={AddProductScreen} options={{ headerShown: false  }} />
         <Stack.Screen name="AddIngredient" component={AddIngredient} options={{ headerShown: false  }} />
         <Stack.Screen name="AddItem" component={AddItem} options={{ headerShown: false  }} />
         <Stack.Screen name="AddRestaurant" component={AddRestaurant} options={{ headerShown: false  }} />
         <Stack.Screen name="Categorielist" component={Categorielist}  options={{ headerShown: true ,title:"All categories" , headerTitleAlign: 'center', headerStyle: {
-      backgroundColor: '#f8d10a',
+      backgroundColor: '#f28b82',
 
     }, headerTitleStyle: {
       color: '#FFFFFF', // Set the title color to white

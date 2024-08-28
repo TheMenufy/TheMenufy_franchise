@@ -11,7 +11,7 @@ import {
   SafeAreaView,
   ImageBackground,
   Image,
-  ToastAndroid
+  Alert
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -57,63 +57,48 @@ const gottolist = () =>{
 const ListOfNewCategorie = () => import('./ListOfNewCategorie');
 navigation.navigate(ListOfNewCategorie)
 }
+const handleaddone = async () => {
+  const menuId = await AsyncStorage.getItem('MENUID');
 
-const handleaddone =async()  =>{
-  let valid = true;
-
-  if (categorieLiblle === '') {
-    setcategorieLiblleError('libelle is required');
-    valid = false;
-  } else {
-    setcategorieLiblleError('');
+  if (!categorieLiblle || !description) {
+    Alert.alert("Missing Information", "Please fill all the fields.");
+    return;
   }
-  if (description === '') {
-      setdescriptionError('Description is required');
-      valid = false;
-    } else {
-      setdescriptionError('');
-    }
 
-    if (valid) {
-      try {
-        // Fetch the menuId from AsyncStorage
-        const menuId = await AsyncStorage.getItem('MENUID');
-        
-      //console.log(menuId);
-        // Prepare the form data
-        const formData = new FormData();
-        formData.append('libelle', categorieLiblle);
-        formData.append('description', description);
-        formData.append('menu', menuId);
-  
-        if (image) {
-          // Assuming `image` is a file URI, convert it to a file object
-          const fileType = image.split('.').pop();
-          formData.append('photo', {
-            uri: image,
-            name: `photo.${fileType}`,
-            type: `image/${fileType}`,
-          });
-        }
-  
-        // Send the POST request to create the category
-        const response = await axios.post(`${API_BASE_URL_category}/create`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-  
-        console.log('Category added successfully:', response.data);
-  
-        // Reset the state after successful addition
-        setcategorieLiblle(''); 
+  const formData = new FormData();
+  formData.append('libelle', categorieLiblle);
+  formData.append('description', description);
+  formData.append('photo', image); // Pass the default photo string
+
+  try {
+    const response = await axios.post(`http://192.168.1.17:5555/category/add/${menuId}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    if (response.status === 201) {
+      setcategorieLiblle(''); 
         setDescription('');
         setImage(null);
-      } catch (error) {
-        console.error('Error adding category:', error);
-      }
+      Alert.alert("Success", "Category added successfully!");
+    } else {
+      Alert.alert("Error", "Failed to add category. Please try again.");
     }
-  };
+  } catch (error) {
+    if (error.response) {
+      console.error('Response data:', error.response.data);
+      console.error('Response status:', error.response.status);
+      console.error('Response headers:', error.response.headers);
+    } else if (error.request) {
+      console.error('Request data:', error.request);
+    } else {
+      console.error('Error message:', error.message);
+    }
+    Alert.alert("Error", "An error occurred while adding the category.");
+  }
+};
+
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,

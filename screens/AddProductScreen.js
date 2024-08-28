@@ -18,6 +18,7 @@ import * as ImagePicker from 'expo-image-picker'; // Make sure to install expo-i
 import RNPickerSelect from 'react-native-picker-select';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import ListOfNewProducts from './ListOfNewProducts';
 
 
 
@@ -81,16 +82,16 @@ export default function AddProductScreen({ navigation }) {
   
 const gottolist = () =>{
   // In Addcategories.js
-const ListOfNewCategorie = () => import('./ListOfNewCategorie');
-navigation.navigate(ListOfNewCategorie)
+navigation.navigate(ListOfNewProducts)
 }
 const handleGoNext =()=>{
   const AddIngredient = () => import('./AddIngredient');
   navigation.navigate(AddIngredient)
 }
+
 const handleaddone = async () => {
   let valid = true;
-
+console.log("qklsjdqlskj")
   if (!Productname) {
     setProductnameError('Name is required');
     valid = false;
@@ -103,18 +104,8 @@ const handleaddone = async () => {
   } else {
     setdescriptionError('');
   }
-  if (!selecteddisponibility) {
-    setdisponibilityError('Disponibility is required');
-    valid = false;
-  } else {
-    setdisponibilityError('');
-  }
-  if (!disponibilityduration) {
-    setdisponibilitydurationError('Duration is required');
-    valid = false;
-  } else {
-    setdisponibilitydurationError('');
-  }
+  
+  
   if (!price) {
     setpriceError('Price is required');
     valid = false;
@@ -134,22 +125,10 @@ const handleaddone = async () => {
       formData.append('name', Productname);
       formData.append('description', description);
       formData.append('price', price);
-      formData.append('disponibilityDuration', disponibilityduration);
       formData.append('promotion', promotion);
-     formData.append('categoryFK',selectedCategory);
-
-      if (image) {
-        // Assuming `image` is a file URI, convert it to a file object
-        const fileType = image.split('.').pop();
-        formData.append('img', {
-          uri: image,
-          name: `photo.${fileType}`,
-          type: `image/${fileType}`,
-        });
-      }
-
+      formData.append('photo', image); // Pass the default image URL or path
+      formData.append('categoryFK',selectedCategory);
      
-
       
       const response = await axios.post(`${API_BASE_URL_PRODUCT}/create`, formData, {
         headers: {
@@ -186,8 +165,31 @@ const handleaddone = async () => {
     }
   };
   useEffect(() => {
+
+const ifmodify =async ()=>{
+ 
+  const MODIFY = await AsyncStorage.getItem('MODIFY');
+  if(MODIFY==='true'){
+    const productId = await AsyncStorage.getItem('PRODUCTID');
+    const response = await axios.get(`${API_BASE_URL_PRODUCT}/find/item/${productId}`);
+    console.log("priiiiiice   "+response.data)
+    
+
+   setDescription(response.data.description)
+  setProductname(response.data.name)
+   setprice(response.data.price.toString())
+   setImage((response.data.photo))
+   //setSelectedCategory(response.data.)
+    await AsyncStorage.setItem('MODIFY','false');
+  }
+else{
+  console.log('non non nono non no ')
+}
+  
+}
     const getColor = async () => {
       try {
+
         const color = await AsyncStorage.getItem('color');
         if (color !== null) {
           console.log('Retrieved color:', color);
@@ -213,9 +215,10 @@ const handleaddone = async () => {
         console.error('Error fetching categories:', error);
       }
     };
-  
+    
     fetchCategories();
     getColor();
+    ifmodify();
   }, []);
   return (
     <ImageBackground
@@ -262,7 +265,7 @@ const handleaddone = async () => {
                 <TextInput
                   style={styles.input}
                   placeholder="Product name"
-                  placeholderTextColor="#888"
+                   placeholderTextColor="#BDBDBD"
                   value={Productname}
                   onChangeText={setProductname}
                 />
@@ -272,53 +275,18 @@ const handleaddone = async () => {
                 <TextInput
                   style={styles.input}
                   placeholder="Description"
-                  placeholderTextColor="#888"
+                     placeholderTextColor="#BDBDBD"
                   value={description}
                   onChangeText={setDescription}
                 />
               </View>
               {descriptionError ? <Text style={styles.errorText}>{descriptionError}</Text> : null}
-              <View style={styles.row}>
-  <View style={styles.pickerWrapperdisponibility}>
-    <RNPickerSelect
-      onValueChange={(value) => setSelecteddisponibility(value)}
-      items={disponibility}
-      placeholder={{
-        label: 'Disponibility',
-        value: null,
-        color: '#888',
-      }}
-      style={pickerSelectStylesdisponibility}
-      value={selecteddisponibility}
-      useNativeAndroidPickerStyle={false} // This is important for Android
-    />
-  </View>
-  {disponibilityError ? <Text style={styles.errorText}>{disponibilityError}</Text> : null}
 
-  <TextInput
-  style={[styles.inputContainerSmall, { fontSize: 14 }]} // Adjust the fontSize as needed
-  placeholder="Duration"
-  placeholderTextColor="#888"
-  value={disponibilityduration}
-  onChangeText={setdisponibilityduration}
-/>
-
- 
-</View>
-<View style={styles.inputContainerprice}>
-<TextInput
-  style={[styles.input, { fontSize: 14 }]} // Adjust the fontSize as needed
-  placeholder="Promotion"
-  placeholderTextColor="#888"
-  value={promotion}
-  onChangeText={setpromotion}
-/>
-</View>
               <View style={styles.inputContainerprice}>
                 <TextInput
                   style={styles.input}
                   placeholder="price"
-                  placeholderTextColor="#888"
+                     placeholderTextColor="#BDBDBD"
                   value={price}
                   onChangeText={setprice}
                 />
@@ -569,7 +537,9 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 16,
-    color: '#333',
+    fontStyle:'normal',
+
+    color: '#FFFFFFF',
   },
   errorText: {
     color: 'red',
