@@ -5,12 +5,17 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
 const FranchiseScreen = () => {
   const navigation = useNavigation();
   const API_BASE_URL_USER = 'http://192.168.1.17:5555/user';
   const API_BASE_URL_FRANCHISE = 'http://192.168.1.17:5555/franchise';
   const [selectedColor, setSelectedColor] = useState('#ffffff');
+  
+  //functions 
 
+
+  
   const getUser = async (token) => {
     try {
       const response = await axios.get(`${API_BASE_URL_USER}/getUser`, {
@@ -22,7 +27,7 @@ const FranchiseScreen = () => {
       throw error;
     }
   };
-
+  
   const getFranchise = async (id) => {
     try {
 
@@ -36,6 +41,7 @@ const FranchiseScreen = () => {
 
   const fetchFranchiseData = useCallback(async () => {
     try {
+      const FRANCHISEID = await AsyncStorage.getItem('FRANCHISEID');
       const token = await AsyncStorage.getItem('userToken');
       if (!token) throw new Error('No token found');
 
@@ -45,8 +51,11 @@ const FranchiseScreen = () => {
         const franchiseData = await getFranchise(franchiseId);
         if (franchiseData) {
           setSelectedColor(franchiseData.data.color);
+          await AsyncStorage.setItem('MENUID', franchiseData.data.menu);
+
         }
       }
+      
     } catch (error) {
       console.error('Failed to load franchise data', error);
     }
@@ -68,14 +77,7 @@ const FranchiseScreen = () => {
         <View style={styles.container}>
           <TouchableOpacity
             style={[styles.card, { backgroundColor: selectedColor }]}  // Apply selected color
-            onPress={() => navigation.navigate('RestaurantCategoriesScreen', {
-              restaurantName: 'Torino',
-              initialCategories: [
-                { id: '1', name: 'Appetizers' },
-                { id: '2', name: 'Main Courses' },
-                { id: '3', name: 'Desserts' },
-              ],
-            })}
+            onPress={() => navigation.navigate('Categorielist')}
           >
             <View style={styles.cardTop}>
               <Text style={styles.cardText}>Flavor Fusion</Text>
@@ -89,30 +91,8 @@ const FranchiseScreen = () => {
               </View>
             </View>
           </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.card, { backgroundColor: selectedColor }]}  // Apply selected color
-            onPress={() => navigation.navigate('RestaurantCategoriesScreen', {
-              restaurantName: 'Torino',
-              initialCategories: [
-                { id: '1', name: 'Appetizers' },
-                { id: '2', name: 'Main Courses' },
-                { id: '3', name: 'Desserts' },
-              ],
-            })}
-          >
-            <View style={styles.cardTop}>
-              <Text style={styles.cardText}>Delectable Delights</Text>
-            </View>
-            <View style={styles.cardContent}>
-              <View style={styles.cardLeft}>
-                <Text style={styles.cardLeftText}>Categories: 3{"\n"}Products: 25{"\n"}Ingredients: 14{"\n"}Items: 9</Text>
-              </View>
-              <View style={styles.cardRight}>
-                <Text style={styles.cardRightText}>6{"\n"}Restaurant use this menu</Text>
-              </View>
-            </View>
-          </TouchableOpacity>
+        
+         
 
           <TouchableOpacity
             style={[styles.addMenuButton, { backgroundColor: selectedColor }]}
@@ -120,7 +100,7 @@ const FranchiseScreen = () => {
               navigation.navigate('Addcategories')
             }}
           >
-            <Text style={styles.addMenuButtonText}>Add Category</Text>
+      <Text style={styles.addMenuButtonText}>Add Category</Text>
           </TouchableOpacity>
           
         </View>

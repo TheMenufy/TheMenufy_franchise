@@ -17,7 +17,7 @@ import axios from 'axios';
 
 const API_BASE_URL_CATEGORIES = 'http://192.168.1.17:5555/category';
 
-export default function ListOfNewCategorie({ navigation }) {
+export default function Categorielist({ navigation }) {
   const [selectedColor, setSelectedColor] = useState('#ffffff');
   const [categories, setCategories] = useState([]);
 
@@ -30,11 +30,12 @@ export default function ListOfNewCategorie({ navigation }) {
     const fetchCategories = async () => {
       try {
         const menuId = await AsyncStorage.getItem('MENUID');
-
+        
         const response = await axios.get(`${API_BASE_URL_CATEGORIES}/find/item/by/menu/${menuId}`);
         setCategories(response.data);
+      console.log(categories)
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error('Error fething categoies:', error);
       }
     };
 
@@ -71,11 +72,7 @@ export default function ListOfNewCategorie({ navigation }) {
             contentContainerStyle={styles.scrollViewContent}
             keyboardShouldPersistTaps="handled"
           >
-            <View style={styles.headerContainer}>
-              <View style={styles.header}>
-                <Icon name="arrow-back" size={28} color="#000" onPress={() => navigation.goBack()} />
-              </View>
-            </View>
+            
             <View style={styles.content}>
               {categories.length > 0 ? (
                 <View style={styles.categoryContainer}>
@@ -108,9 +105,14 @@ export default function ListOfNewCategorie({ navigation }) {
           </ScrollView>
           <View style={styles.footerContainer}>
             <View style={styles.buttonContainer}>
-              <TouchableOpacity style={[styles.button, styles.primaryButton, { backgroundColor: selectedColor }]} onPress={handlenext}>
-                <Text style={[styles.buttonText, styles.primaryButtonText]}>Next</Text>
-              </TouchableOpacity>
+            <TouchableOpacity
+            style={[styles.addMenuButton, { backgroundColor: selectedColor }]}
+            onPress={() => {
+              navigation.navigate('Addcategories')
+            }}
+          >
+      <Text style={styles.addMenuButtonText}>Add Category</Text>
+          </TouchableOpacity>
             </View>
           </View>
         </KeyboardAvoidingView>
@@ -135,7 +137,7 @@ const styles = StyleSheet.create({
   scrollViewContent: {
     flexGrow: 1,
     justifyContent: 'flex-start',
-    paddingTop: 60,
+    
   },
   emptyImage: {
     width: 250,
@@ -213,6 +215,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     marginHorizontal: 5,
+  },
+  addMenuButton: {
+    backgroundColor: '#f28b82',
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 15,
+    width: 330,
+    alignItems: 'center',
+    elevation: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+  },
+  addMenuButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   primaryButton: {
     backgroundColor: '#f28b82',

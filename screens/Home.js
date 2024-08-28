@@ -146,7 +146,7 @@ const Home = () => {
   
         if (role) {
           await AsyncStorage.setItem('userRole', role);
-          console.log('userName', role)
+          
         }
   
         if (address) {
