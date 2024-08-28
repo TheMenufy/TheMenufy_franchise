@@ -38,28 +38,48 @@ const AddRestaurantPage = () => {
   };
 
   const handleSubmit = async () => {
+    const token = await AsyncStorage.getItem('userToken');
+    const FranchiseID = await AsyncStorage.getItem('FRANCHISEID');
+    const color = await AsyncStorage.getItem('color');
+  
     if (!validateForm()) {
       return;
     }
-
-    console.log('FormData being sent:', formData); // Log the formData to the console
-
+  
+    const data = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      userName: formData.userName,
+      phone: formData.phone,
+      email: formData.email,
+      nameRes: formData.nameRes,
+      address: formData.address,
+      cuisineType: formData.cuisineType,
+      taxeTPS: formData.taxeTPS,
+      taxeTUQ: formData.taxeTUQ,
+      payCashMethod: formData.payCashMethod,
+      tokenLogin: token,
+      franchiseFK: FranchiseID,
+      color: color,
+    };
+  
+    console.log('JSON data being sent:', data); // Log the JSON data to the console
+  
     try {
-      const response = await axios.post('http://192.168.1.17:5555/user/addRestaurantFranchise', formData, {
+      const response = await axios.post('http://192.168.1.17:5555/user/addRestaurantFranchise', data, {
         headers: {
           'Content-Type': 'application/json',
         },
         withCredentials: true,
       });
-
+  
       Alert.alert("Success", response.data.message || "Restaurant added successfully");
       navigation.goBack();
     } catch (error) {
       console.error("Error adding restaurant:", error.response ? error.response.data : error.message);
-      Alert.alert("Error", "Failed to add restaurant. Please try again.");
+      Alert.alert("Error", "Failed to add restaurant.");
     }
   };
-
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>

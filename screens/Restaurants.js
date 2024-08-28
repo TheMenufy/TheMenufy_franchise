@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ImageBackground, ScrollView, TouchableOpacity }
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import defaultImage from '../assets/default_image.jpg'; // Adjust the path as needed
 
 const API_BASE_URL_RESTAURANTS = 'http://192.168.1.17:5555/restaurant';
 const API_BASE_URL = 'http://192.168.1.17:5555/user';
@@ -46,6 +47,7 @@ const RestaurantScreen = () => {
     if (franchiseFK) { // Assure que franchiseFK est chargé avant de récupérer les restaurants
       axios.get(`${API_BASE_URL_RESTAURANTS}/retrieveall`)
         .then(response => {
+          //console.log(response.data)
           const filteredRestaurants = response.data.filter(restaurant => restaurant.franchiseFK === franchiseFK);
           setRestaurants(filteredRestaurants); // Filtre les restaurants par franchiseFK
         })
@@ -84,8 +86,7 @@ const RestaurantScreen = () => {
             onPress={() => navigateToDetail(restaurant)}
           >
             <ImageBackground
-              source={{ uri: restaurant.images }}
-              style={styles.cardBackground}
+            source={restaurant.images ? { uri: restaurant.images } : defaultImage}              style={styles.cardBackground}
             >
               <Text style={styles.cardText}>{restaurant.nameRes}</Text>
             </ImageBackground>
