@@ -184,6 +184,8 @@ const styles = StyleSheet.create({
     marginTop:30,
     width: '100%',
     maxWidth: 400,
+    marginTop:30,
+
   },
   button: {
     backgroundColor: '#f28b82',
