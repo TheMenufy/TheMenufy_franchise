@@ -22,8 +22,10 @@ import ListOfNewCategorie from './screens/ListOfNewCategorie';
 import AddProductScreen from './screens/AddProductScreen';
 import AddIngredient from './screens/AddIngredient';
 import AddItem from './screens/AddItem';
-import EditPorfileScreen from './screens/EditPorfileScreen';
+
 import AddRestaurant from './screens/AddRestaurant';
+import EditPorfileScreen from './screens/EditPorfileScreen';
+import Categorielist from './screens/Categorielist';
 
 const Stack = createNativeStackNavigator();
 
@@ -62,7 +64,12 @@ export default function App() {
       color: '#FFFFFF', // Set the title color to white
     },}} />
         <Stack.Screen name="ProfilePage" component={ProfilePage} options={{ headerShown: false }}/>
-        <Stack.Screen name="SetupSystem" component={SetupSystem} options={{ headerShown: true ,title:"Setup System" , headerTitleAlign: 'center'}}/>
+        <Stack.Screen name="SetupSystem" component={SetupSystem} options={{ headerShown: true ,title:"Setup System" , headerTitleAlign: 'center', headerStyle: {
+      backgroundColor: '#f28b82',
+
+    }, headerTitleStyle: {
+      color: '#FFFFFF', // Set the title color to white
+    },}} />
         <Stack.Screen name="MenuScreen" component={MenuScreen} options={{ headerShown: false }}/>
         <Stack.Screen name="RestaurantCategoriesScreen" component={RestaurantCategoriesScreen} options={{ headerShown: false }}/>
         <Stack.Screen name="ChatPage" component={ChatPage} options={{ title: 'Chat' }} />
@@ -73,6 +80,13 @@ export default function App() {
         <Stack.Screen name="AddIngredient" component={AddIngredient} options={{ headerShown: false  }} />
         <Stack.Screen name="AddItem" component={AddItem} options={{ headerShown: false  }} />
         <Stack.Screen name="AddRestaurant" component={AddRestaurant} options={{ headerShown: false  }} />
+        <Stack.Screen name="Categorielist" component={Categorielist}  options={{ headerShown: true ,title:"All categories" , headerTitleAlign: 'center', headerStyle: {
+      backgroundColor: '#f8d10a',
+
+    }, headerTitleStyle: {
+      color: '#FFFFFF', // Set the title color to white
+    },}} />
+
 
 
 

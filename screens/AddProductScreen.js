@@ -17,10 +17,15 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import * as ImagePicker from 'expo-image-picker'; // Make sure to install expo-image-picker
 import RNPickerSelect from 'react-native-picker-select';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 
 
 export default function AddProductScreen({ navigation }) {
+
+
+  const API_BASE_URL_CATEGORIES = 'http://192.168.1.17:5555/category';
+  const API_BASE_URL_PRODUCT = 'http://192.168.1.17:5555/product';
 
   //category input and error 
   const [selectedCategory, setSelectedCategory] = useState(''); // State for selected category
@@ -45,6 +50,7 @@ export default function AddProductScreen({ navigation }) {
   const [image, setImage] = useState(null);
   const [disponibilitydurationError, setdisponibilitydurationError] = useState('');
 
+  const [categories, setCategories] = useState([]);
 
 
   //for dispalay ... 
@@ -52,7 +58,7 @@ export default function AddProductScreen({ navigation }) {
   const [animatedText, setAnimatedText] = useState('');
 
   useEffect(() => {
-    let text = "Now you can add your products and link it to a categorie that you'v created ";
+    let text = "N ";
     let index = 0;
 
     const interval = setInterval(() => {
@@ -65,58 +71,14 @@ export default function AddProductScreen({ navigation }) {
 
     return () => clearInterval(interval);
   }, []);
-  const categories = [
-    { label: 'Category 1', value: 'category1' },
-    { label: 'Category 2', value: 'category2' },
-    { label: 'Category 3', value: 'category3' },
-  ];
+
   const disponibility = [
     { label: 'yes', value: 'no' },
     { label: 'no', value: 'yes' },
     
   ];
 
-  const handleAddMenu = () => {
-    let valid = true;
-
-    if (Productname === '') {
-      setProductnameError('Name is required');
-      valid = false;
-    } else {
-      setProductnameError('');
-    }
-    if (description === '') {
-        setdescriptionError('Description is required');
-        valid = false;
-      } else {
-        setdescriptionError('');
-      }
-      if (disponibility === '') {
-        setdisponibilityError('disponibility is required');
-        valid = false;
-      } else {
-        setdisponibilityError('');
-      }
-      if (disponibilityduration === '') {
-        setdisponibilitydurationError('disponibility duration is required');
-        valid = false;
-      } else {
-        setdisponibilitydurationError('');
-      }
-      if (price === '') {
-        setpriceError('price is required');
-        valid = false;
-      } else {
-        setpriceError('');
-      }
-      
-
-    if (valid) {
-      // Perform add menu logic here
-     
-     // navigation.goBack(); // Navigate back after successful addition
-    }
-  };
+  
 const gottolist = () =>{
   // In Addcategories.js
 const ListOfNewCategorie = () => import('./ListOfNewCategorie');
@@ -126,56 +88,91 @@ const handleGoNext =()=>{
   const AddIngredient = () => import('./AddIngredient');
   navigation.navigate(AddIngredient)
 }
-const handleaddone =() =>{
+const handleaddone = async () => {
   let valid = true;
 
-  if (Productname === '') {
+  if (!Productname) {
     setProductnameError('Name is required');
     valid = false;
   } else {
     setProductnameError('');
   }
-  if (description === '') {
-      setdescriptionError('Description is required');
-      valid = false;
-    } else {
-      setdescriptionError('');
-    }
-    if (disponibility === '') {
-      setdisponibilityError('disponibility is required');
-      valid = false;
-    } else {
-      setdisponibilityError('');
-    }
-    if (selectedCategory === '') {
-      setCategoryError('you should choose a categorie');
-      valid = false;
-    } else {
-      setCategoryError('');
-    }
-   
-    if (price === '') {
-      setpriceError('price is required');
-      valid = false;
-    } else {
-      setpriceError('');
-    }
-    
+  if (!description) {
+    setdescriptionError('Description is required');
+    valid = false;
+  } else {
+    setdescriptionError('');
+  }
+  if (!selecteddisponibility) {
+    setdisponibilityError('Disponibility is required');
+    valid = false;
+  } else {
+    setdisponibilityError('');
+  }
+  if (!disponibilityduration) {
+    setdisponibilitydurationError('Duration is required');
+    valid = false;
+  } else {
+    setdisponibilitydurationError('');
+  }
+  if (!price) {
+    setpriceError('Price is required');
+    valid = false;
+  } else {
+    setpriceError('');
+  }
+  if (!selectedCategory) {
+    setCategoryError('You should choose a category');
+    valid = false;
+  } else {
+    setCategoryError('');
+  }
 
   if (valid) {
+    try {
+      const formData = new FormData();
+      formData.append('name', Productname);
+      formData.append('description', description);
+      formData.append('price', price);
+      formData.append('disponibilityDuration', disponibilityduration);
+      formData.append('promotion', promotion);
+     formData.append('categoryFK',selectedCategory);
 
-  setProductname(''); // Correctly set the state to an empty string
-  setDescription(''); // Correctly set the state to an empty string
-  setSelecteddisponibility(''); // Correctly set the state to an empty string
-  setdisponibilityduration(''); // Correctly set the state to an empty string
-  setpromotion(''); // Correctly set the state to an empty string
-  setprice(''); // Correctly set the state to an empty string
-  setSelectedCategory('');
-  selectedCategory
-  setImage(null);
-  ToastAndroid.show('Added successfully !', ToastAndroid.LONG);
+      if (image) {
+        // Assuming `image` is a file URI, convert it to a file object
+        const fileType = image.split('.').pop();
+        formData.append('img', {
+          uri: image,
+          name: `photo.${fileType}`,
+          type: `image/${fileType}`,
+        });
+      }
+
+     
+
+      
+      const response = await axios.post(`${API_BASE_URL_PRODUCT}/create`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.status === 201) {
+        setProductname('');
+        setDescription('');
+        setSelecteddisponibility('');
+        setdisponibilityduration('');
+        setpromotion('');
+        setprice('');
+        setSelectedCategory('');
+        setImage(null);
+      }
+    } catch (error) {
+    }
   }
-}
+};
+
+
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -202,7 +199,22 @@ const handleaddone =() =>{
         console.error('Failed to retrieve color from AsyncStorage', error);
       }
     };
-
+  
+    const fetchCategories = async () => {
+      try {
+        const menuId = await AsyncStorage.getItem('MENUID');
+        const response = await axios.get(`${API_BASE_URL_CATEGORIES}/find/item/by/menu/${menuId}`);
+        const fetchedCategories = response.data.map((category) => ({
+          label: category.libelle,
+          value: category._id,
+        }));
+        setCategories(fetchedCategories);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+  
+    fetchCategories();
     getColor();
   }, []);
   return (
@@ -288,16 +300,19 @@ const handleaddone =() =>{
   placeholder="Duration"
   placeholderTextColor="#888"
   value={disponibilityduration}
-  
+  onChangeText={setdisponibilityduration}
 />
+
+ 
+</View>
+<View style={styles.inputContainerprice}>
 <TextInput
-  style={[styles.inputContainerSmall, { fontSize: 14 }]} // Adjust the fontSize as needed
+  style={[styles.input, { fontSize: 14 }]} // Adjust the fontSize as needed
   placeholder="Promotion"
   placeholderTextColor="#888"
   value={promotion}
   onChangeText={setpromotion}
 />
- 
 </View>
               <View style={styles.inputContainerprice}>
                 <TextInput
@@ -416,7 +431,7 @@ const styles = StyleSheet.create({
     
     
     borderRadius: 15,
-    width: '27%', // Adjust this width to fit the row
+    width: '50%', // Adjust this width to fit the row
     height: 50,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
@@ -444,12 +459,12 @@ const styles = StyleSheet.create({
     elevation: 20, // Adjust elevation/shadow as needed
   },
   pickerWrapperdisponibility: {
-    width:'30%',
+    width:'40%',
     height:52,
     alignContent:'center',
     alignItems:'center',
     alignSelf:'center',
-    marginStart:15,
+
     marginRight:20,
     borderRadius: 15, // Set your desired border radius
     overflow: 'visible', // Ensure the rounded corners are visible

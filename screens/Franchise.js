@@ -77,14 +77,7 @@ const FranchiseScreen = () => {
         <View style={styles.container}>
           <TouchableOpacity
             style={[styles.card, { backgroundColor: selectedColor }]}  // Apply selected color
-            onPress={() => navigation.navigate('RestaurantCategoriesScreen', {
-              restaurantName: 'Torino',
-              initialCategories: [
-                { id: '1', name: 'Appetizers' },
-                { id: '2', name: 'Main Courses' },
-                { id: '3', name: 'Desserts' },
-              ],
-            })}
+            onPress={() => navigation.navigate('Categorielist')}
           >
             <View style={styles.cardTop}>
               <Text style={styles.cardText}>Flavor Fusion</Text>
