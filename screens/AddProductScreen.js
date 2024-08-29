@@ -10,8 +10,8 @@ import {
   ScrollView,
   SafeAreaView,
   ImageBackground,
-  Image,
-  ToastAndroid
+  Image, Alert
+  
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import * as ImagePicker from 'expo-image-picker'; // Make sure to install expo-image-picker
@@ -60,7 +60,7 @@ export default function AddProductScreen({ navigation }) {
   }, []);
 
   useEffect(() => {
-    let text = "N ";
+    let text = "Now you can add your products ";
     let index = 0;
 
     const interval = setInterval(() => {
@@ -228,14 +228,16 @@ export default function AddProductScreen({ navigation }) {
         setPrice('');
         setSelectedCategory('');
         setImage(null);
-        ToastAndroid.show('Product saved successfully!', ToastAndroid.SHORT);
+        Alert.alert("Success", "Product added successfully!");
+     //   ToastAndroid.show('Product saved successfully!', ToastAndroid.SHORT);
         navigation.navigate('AddProductScreen');
       } else {
-        ToastAndroid.show('Something went wrong!', ToastAndroid.SHORT);
+      //  ToastAndroid.show('Something went wrong!', ToastAndroid.SHORT);
       }
     } catch (error) {
       console.error('Error saving product:', error);
-      ToastAndroid.show('Error saving product!', ToastAndroid.SHORT);
+      Alert.alert("Error", "Error saving product!");
+   //   ToastAndroid.show('Error saving product!', ToastAndroid.SHORT);
     }
   };
 
