@@ -17,7 +17,7 @@ const AddRestaurantPage = () => {
     taxeTPS: '',
     taxeTUQ: '', // Changer de taxeTVQ à taxeTUQ
     payCashMethod: '',
-    tokenLogin: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Y2MzMGJhMmY0ODdmZDA0MzhjZjM2ZiIsInJvbGUiOiJyZXNGcmFuY2hpc2UiLCJpYXQiOjE3MjQ4NjY1NDksImV4cCI6MTcyNTQ3MTM0OX0.RiMMaCbEOWqBlz8lNp5gAotzjjtXoj7zzQHwiwlvKaQ', // Valeur par défaut
+   // tokenLogin: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0Y2MzMGJhMmY0ODdmZDA0MzhjZjM2ZiIsInJvbGUiOiJyZXNGcmFuY2hpc2UiLCJpYXQiOjE3MjQ4NjY1NDksImV4cCI6MTcyNTQ3MTM0OX0.RiMMaCbEOWqBlz8lNp5gAotzjjtXoj7zzQHwiwlvKaQ', // Valeur par défaut
   });
 
   const navigation = useNavigation();

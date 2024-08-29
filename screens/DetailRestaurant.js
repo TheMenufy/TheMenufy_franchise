@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, Dimensions, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import defaultImage from '../assets/default_image.jpg'; // Adjust the path as needed
 
 const DetailRestaurant = ({ route }) => {
   const { name, image, address, cuisineType, facebookLink, twitterLink, instagramLink, tiktokLink, phone, email } = route.params;
@@ -14,7 +15,7 @@ const DetailRestaurant = ({ route }) => {
 
   // Handle the button press
   const handleClickHere = () => {
-    navigation.navigate('ListOfNewCategorie'); // Navigate to MenuScreen
+    navigation.navigate('Categorielist'); // Navigate to MenuScreen
   };
 
   const handleUpdate = () => {
@@ -29,7 +30,8 @@ const DetailRestaurant = ({ route }) => {
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
         {/* Display the image using URI */}
-        <Image source={{ uri: image }} style={[styles.image, { width }]} />
+       
+        <Image  source={image ? { uri: image } : defaultImage}  style={[styles.image, { width }]} />
 
         {/* Restaurant name and View Menu link in a row */}
         <View style={styles.nameMenuContainer}>

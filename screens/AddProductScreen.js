@@ -101,6 +101,7 @@ export default function AddProductScreen({ navigation }) {
 
   const loadProductDetails = async (productId) => {
     try {
+      
       const response = await axios.get(`${API_BASE_URL_PRODUCT}/find/item/${productId}`);
       const product = response.data;
       setProductName(product.name);
@@ -108,6 +109,10 @@ export default function AddProductScreen({ navigation }) {
       setPrice(product.price.toString());
       setImage(product.photo);
       setSelectedCategory(product.categoryFK._id);
+  if(product.promotion){
+      setPromotion(product.promotion.toString())
+    }
+    else setPromotion('')
     } catch (error) {
       console.error('Error loading product details:', error);
     }
@@ -159,7 +164,28 @@ export default function AddProductScreen({ navigation }) {
 
     return valid;
   };
+  const handlecancel = async () => {
 
+    setProductName('');
+    setDescription('');
+    setPromotion('');
+    setPrice('');
+    setSelectedCategory('');
+    setImage(null);
+    await AsyncStorage.setItem('MODIFY', 'false');
+    navigation.goBack
+  }
+  const handlegoback = async () => {
+
+    setProductName('');
+    setDescription('');
+    setPromotion('');
+    setPrice('');
+    setSelectedCategory('');
+    setImage(null);
+    await AsyncStorage.setItem('MODIFY', 'false');
+    navigation.navigate('Addcategories')
+  }
   const handleAddOrModifyProduct = async () => {
     if (!validateFields()) return;
 
@@ -179,7 +205,14 @@ export default function AddProductScreen({ navigation }) {
             'Content-Type': 'multipart/form-data',
           },
         });
-        await AsyncStorage.setItem('MODIFY', 'false');
+        setProductName('');
+    setDescription('');
+    setPromotion('');
+    setPrice('');
+    setSelectedCategory('');
+    setImage(null);
+    await AsyncStorage.setItem('MODIFY', 'false');
+    
       } else {
         response = await axios.post(`${API_BASE_URL_PRODUCT}/create`, formData, {
           headers: {
@@ -191,13 +224,12 @@ export default function AddProductScreen({ navigation }) {
       if (response.status === 201 || response.status === 200) {
         setProductName('');
         setDescription('');
-
         setPromotion('');
         setPrice('');
         setSelectedCategory('');
         setImage(null);
         ToastAndroid.show('Product saved successfully!', ToastAndroid.SHORT);
-        navigation.goBack();
+        navigation.navigate('AddProductScreen');
       } else {
         ToastAndroid.show('Something went wrong!', ToastAndroid.SHORT);
       }
@@ -212,8 +244,8 @@ export default function AddProductScreen({ navigation }) {
   };
 
   const handleGoNext = () => {
-    const AddIngredient = () => import('./AddIngredient');
-    navigation.navigate(AddIngredient);
+    const Pruductlist = () => import('./Pruductlist');
+    navigation.navigate(Pruductlist);
   };
 
   return (
@@ -232,7 +264,7 @@ export default function AddProductScreen({ navigation }) {
           >
             <View style={styles.headerContainer}>
               <View style={styles.header}>
-                <Icon name="arrow-back" size={28} color="#000" onPress={() => navigation.goBack()} />
+                <Icon name="arrow-back" size={28} color="#000" onPress={handlegoback} />
                 <Icon name="list-outline" size={28} color="#000" onPress={handleGoToList} />
               </View>
             </View>
@@ -291,7 +323,7 @@ export default function AddProductScreen({ navigation }) {
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}
-                  placeholder="Promotion (optional)"
+                  placeholder="Promotion "
                   placeholderTextColor="#BDBDBD"
                   value={promotion}
                   keyboardType="numeric"
@@ -309,18 +341,24 @@ export default function AddProductScreen({ navigation }) {
                 </View>
               </TouchableOpacity>
 
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.button} onPress={handleAddOrModifyProduct}>
-                  <Text style={styles.buttonText}>
-                    {isModifying ? 'Save Changes' : 'Add Product'}
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={handleGoNext}>
-                  <Text style={styles.buttonText}>Next</Text>
-                </TouchableOpacity>
-              </View>
+
             </View>
           </ScrollView>
+          <View style={styles.footerContainer}>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.button} onPress={handlecancel}>
+                <Text style={styles.buttonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.button, styles.plusButton,{ backgroundColor: selectedColor }]} onPress={handleAddOrModifyProduct}>
+                <Text style={[styles.buttonText, styles.plusButtonText,backgroundColor=selectedColor]}> {isModifying ? 'Save' : 'Add'}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.button, styles.primaryButton,{ backgroundColor: selectedColor }]} onPress={handleGoNext}>
+                <Text style={[styles.buttonText, styles.primaryButtonText]}>Next</Text>
+              </TouchableOpacity>
+
+            </View>
+          </View>
         </KeyboardAvoidingView>
       </SafeAreaView>
     </ImageBackground>
@@ -390,6 +428,50 @@ alignSelf:'center',
   },
 });
 const styles = StyleSheet.create({
+  footerContainer: {
+    padding: 20,
+    width: '100%',
+    justifyContent: 'flex-end',
+   
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    maxWidth: 400,
+  },
+  button: {
+    backgroundColor: '#f1f1f1',
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+    borderRadius: 15,
+    alignItems: 'center',
+    flex: 1,
+    marginHorizontal: 5,
+  },
+  primaryButton: {
+    backgroundColor: '#f28b82',
+  },
+  plusButton: {
+    backgroundColor: '#76c7c0',
+  },
+  buttonText: {
+    color: '#333',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  buttonTextplus: {
+    color: '#333',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  primaryButtonText: {
+    color: '#fff',
+  },
+  plusButtonText: {
+    color: '#fff',
+    size:20,
+  },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -577,48 +659,5 @@ textAlign:'left',
     height: 100,
     marginTop: 10,
     borderRadius: 15,
-  },
-  footerContainer: {
-    padding: 20,
-    width: '100%',
-    justifyContent: 'flex-end',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    maxWidth: 400,
-  },
-  button: {
-    backgroundColor: '#f1f1f1',
-    paddingVertical: 15,
-    paddingHorizontal: 15,
-    borderRadius: 15,
-    alignItems: 'center',
-    flex: 1,
-    marginHorizontal: 5,
-  },
-  primaryButton: {
-    backgroundColor: '#f28b82',
-  },
-  plusButton: {
-    backgroundColor: '#76c7c0',
-  },
-  buttonText: {
-    color: '#333',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  buttonTextplus: {
-    color: '#333',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  primaryButtonText: {
-    color: '#fff',
-  },
-  plusButtonText: {
-    color: '#fff',
-    size:20,
   },
 });

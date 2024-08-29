@@ -1,7 +1,9 @@
 // App.js
-import React, { useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import login from './screens/Login';
 import home from './screens/Home';
 import ForgetPassword from './screens/ForgetPasswordScreen';
@@ -22,7 +24,7 @@ import ListOfNewCategorie from './screens/ListOfNewCategorie';
 import AddProductScreen from './screens/AddProductScreen';
 import AddIngredient from './screens/AddIngredient';
 import AddItem from './screens/AddItem';
-
+import Pruductlist from './screens/Pruductlist';
 import AddRestaurant from './screens/AddRestaurant';
 import EditPorfileScreen from './screens/EditPorfileScreen';
 import Categorielist from './screens/Categorielist';
@@ -33,7 +35,21 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
 
+  const [selectedColor, setSelectedColor] = useState('#f28b82');
 
+  useEffect(() => {
+    const getColor = async () => {
+      try {
+        const color = await AsyncStorage.getItem('color');
+        if (color !== null) {
+          setSelectedColor(color);
+        }
+      } catch (error) {
+        console.error('Failed to retrieve color from AsyncStorage', error);
+      }
+    };
+    getColor();
+  }, []);
 
 
   return (
@@ -89,12 +105,17 @@ export default function App() {
         <Stack.Screen name="AddItem" component={AddItem} options={{ headerShown: false  }} />
         <Stack.Screen name="AddRestaurant" component={AddRestaurant} options={{ headerShown: false  }} />
         <Stack.Screen name="Categorielist" component={Categorielist}  options={{ headerShown: true ,title:"All categories" , headerTitleAlign: 'center', headerStyle: {
-      backgroundColor: '#f28b82',
+      backgroundColor: selectedColor,
 
     }, headerTitleStyle: {
       color: '#FFFFFF', // Set the title color to white
     },}} />
+        <Stack.Screen name="Pruductlist" component={Pruductlist}  options={{ headerShown: true ,title:"All Products" , headerTitleAlign: 'center', headerStyle: {
+      backgroundColor: selectedColor,
 
+    }, headerTitleStyle: {
+      color: '#FFFFFF', // Set the title color to white
+    },}} />
 
 
 
