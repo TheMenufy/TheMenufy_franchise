@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, ImageBackground, ScrollView, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import defaultImage from '../assets/default_image.jpg'; // Adjust the path as needed
@@ -43,19 +43,28 @@ const RestaurantScreen = () => {
     fetchUserData();
   }, []);
 
-  useEffect(() => {
-    if (franchiseFK) { // Assure que franchiseFK est chargé avant de récupérer les restaurants
+  const fetchRestaurants = useCallback(() => {
+    if (franchiseFK) {
       axios.get(`${API_BASE_URL_RESTAURANTS}/retrieveall`)
         .then(response => {
-          //console.log(response.data)
           const filteredRestaurants = response.data.filter(restaurant => restaurant.franchiseFK === franchiseFK);
-          setRestaurants(filteredRestaurants); // Filtre les restaurants par franchiseFK
+          setRestaurants(filteredRestaurants);
         })
         .catch(error => {
           console.error('Error fetching restaurants:', error);
         });
     }
   }, [franchiseFK]);
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchRestaurants();
+    }, [fetchRestaurants])
+  );
 
   const navigateToDetail = (restaurant) => {
     navigation.navigate('DetailRestaurant', {
