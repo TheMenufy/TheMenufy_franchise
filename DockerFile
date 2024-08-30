@@ -1,0 +1,35 @@
+# Use the official Node.js image as the base image
+FROM node:18-bullseye-slim
+
+# Set the working directory
+WORKDIR /app
+
+# Install Python, make, and gcc (required for some npm packages)
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Expo CLI globally
+RUN npm install -g expo-cli
+
+# Install Watchman (optional but recommended for React Native)
+RUN apt-get update && apt-get install -y \
+    watchman \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy the package.json and package-lock.json files to the container
+COPY package.json yarn.lock ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the app's code to the container
+COPY . .
+
+# Expose port 19000 for Expo
+EXPOSE 19000
+
+# Start the Expo server
+CMD ["npm", "start"]

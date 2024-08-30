@@ -1,0 +1,66 @@
+pipeline {
+    agent any
+
+    environment {
+        // Define environment variables
+        NODE_ENV = 'development'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout the code from the repository
+                git branch: 'main', url: 'https://github.com/TheMenufy/TheMenufy_franchise'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                // Install npm dependencies
+                sh 'npm install'
+            }
+        }
+
+        stage('Lint') {
+            steps {
+                // Run linter
+                sh 'npm run lint'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                // Run tests
+                sh 'npm test'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                // Build the project
+                sh 'npm run build'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                // Example deployment step (customize as needed)
+                echo 'Deploying to server...'
+                // Here you could add deployment steps, like uploading the build to a server or cloud service.
+            }
+        }
+    }
+
+    post {
+        always {
+            // Cleanup
+            sh 'docker-compose down -v'
+        }
+        success {
+            echo 'Pipeline completed successfully.'
+        }
+        failure {
+            echo 'Pipeline failed.'
+        }
+    }
+}
