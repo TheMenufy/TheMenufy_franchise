@@ -6,6 +6,7 @@ import FranchiseScreen from '../screens/Franchise';
 import RestaurantScreen from '../screens/Restaurants';
 import ProfilePage from '../screens/Profile';
 import ConversationsPage from '../screens/Chat';
+import SetupSystem from '../screens/SetupSystem';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -49,8 +50,8 @@ function CustomTabBar({ state, descriptors, navigation, selectedColor }) {
           iconName = 'menu';
         } else if (route.name === 'Restaurants') {
           iconName = 'restaurant';
-        } else if (route.name === 'Chat') {
-          iconName = 'chatbubbles';
+        } else if (route.name === 'SSys') {
+          iconName = 'settings';
         }
 
         // Determine the button color based on the active route
@@ -240,8 +241,8 @@ const Home = () => {
         }}
       />
       <Tab.Screen
-        name="Chat"
-        component={ConversationsScreen}
+        name="SSys"
+        component={SetupSystem}
         options={{
           headerTitleAlign: 'center',
           headerStyle: {
@@ -282,13 +283,6 @@ const HomeScreen = ({ navigation }) => {
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
-        <TouchableOpacity
-          style={styles.setupButton}
-          onPress={() => navigation.navigate('SetupSystem')}
-        >
-          <Text style={styles.setupButtonText}>Setup System</Text>
-        </TouchableOpacity>
-
         <Text style={styles.welcomeText}>Welcome, {firstName}!</Text>
 
         <View style={styles.profileSummary}>
