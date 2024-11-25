@@ -22,8 +22,8 @@ import ListOfNewProducts from './ListOfNewProducts';
 
 export default function AddProductScreen({ navigation }) {
 
-  const API_BASE_URL_CATEGORIES = 'http://192.168.1.17:5555/category';
-  const API_BASE_URL_PRODUCT = 'http://192.168.1.17:5555/product';
+  const API_BASE_URL_CATEGORIES = 'http://192.168.1.14:5555/category';
+  const API_BASE_URL_PRODUCT = 'http://192.168.1.14:5555/product';
 
   // Input fields and errors
   const [selectedCategory, setSelectedCategory] = useState('');

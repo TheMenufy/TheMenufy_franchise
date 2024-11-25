@@ -16,8 +16,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
 // API URLs
-const API_BASE_URL_MENU = 'http://192.168.1.17:5555/menu';
-const API_BASE_URL_USER = 'http://192.168.1.17:5555/user';
+const API_BASE_URL_MENU = 'http://192.168.1.14:5555/menu';
+const API_BASE_URL_USER = 'http://192.168.1.14:5555/user';
 
 // Fetch user data
 const getUser = async (token) => {

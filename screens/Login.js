@@ -74,7 +74,7 @@ export default function Login({ navigation }) {
 
     try {
       
-      const response = await axios.post('http://192.168.1.17:5555/auth/login', {
+      const response = await axios.post('http://192.168.1.14:5555/auth/login', {
         email,
         password,
         rememberMe,

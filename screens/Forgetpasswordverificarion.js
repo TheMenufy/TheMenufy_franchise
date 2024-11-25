@@ -40,7 +40,7 @@ export default function ForgetPasswordVerification({ navigation }) {
   const validateCode = async (code) => {
     try {
       // Send the code with the correct key as per the server's expectations
-      const response = await axios.post('http://192.168.1.17:5555/auth/verifCode', { activationCodeForgotPass: code });
+      const response = await axios.post('http://192.168.1.14:5555/auth/verifCode', { activationCodeForgotPass: code });
      
       if (response.status === 201) {
         navigation.navigate('Changepasswordwithverif');

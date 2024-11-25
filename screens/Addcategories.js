@@ -20,7 +20,7 @@ import axios from 'axios';
 
 export default function Addcategories({ navigation }) {
 
-  const API_BASE_URL_category = 'http://192.168.1.17:5555/category';
+  const API_BASE_URL_category = 'http://192.168.1.14:5555/category';
   //the fields 
   const [categorieLiblle, setcategorieLiblle] = useState('');
   const [description, setDescription] = useState('');
@@ -71,7 +71,7 @@ const handleaddone = async () => {
   formData.append('photo', image); // Pass the default photo string
 
   try {
-    const response = await axios.post(`http://192.168.1.17:5555/category/add/${menuId}`, formData, {
+    const response = await axios.post(`http://192.168.1.14:5555/category/add/${menuId}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

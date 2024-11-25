@@ -66,7 +66,7 @@ const AddRestaurantPage = () => {
     console.log('JSON data being sent:', data); // Log the JSON data to the console
   
     try {
-      const response = await axios.post('http://192.168.1.17:5555/user/addRestaurantFranchise', data, {
+      const response = await axios.post('http://192.168.1.14:5555/user/addRestaurantFranchise', data, {
         headers: {
           'Content-Type': 'application/json',
         },

@@ -15,7 +15,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-const API_BASE_URL_CATEGORIES = 'http://192.168.1.17:5555/category';
+const API_BASE_URL_CATEGORIES = 'http://192.168.1.14:5555/category';
 
 
 const handleGoToListOfProduct = async (product) => {

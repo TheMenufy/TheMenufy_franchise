@@ -5,8 +5,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import defaultImage from '../assets/default_image.jpg'; // Adjust the path as needed
 
-const API_BASE_URL_RESTAURANTS = 'http://192.168.1.17:5555/restaurant';
-const API_BASE_URL = 'http://192.168.1.17:5555/user';
+const API_BASE_URL_RESTAURANTS = 'http://192.168.1.14:5555/restaurant';
+const API_BASE_URL = 'http://192.168.1.14:5555/user';
 
 const getUser = async (token) => {
   try {

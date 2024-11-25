@@ -67,7 +67,7 @@ const EditPorfileScreen = ({ navigation }) => {
 
     useEffect(() => {
 
-        fetch("http://192.168.1.17:5555/user" + "/utils/citiesByCountry")
+        fetch("http://192.168.1.14:5555/user" + "/utils/citiesByCountry")
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Erreur de réponse HTTP : " + response.status);
@@ -142,7 +142,7 @@ const EditPorfileScreen = ({ navigation }) => {
                 const token = await AsyncStorage.getItem('userToken');
                 await AsyncStorage.setItem(IMAGE_KEY, imageUri);
                
-                await axios.post("http://192.168.1.17:5555/user" + "/updateImage", formData, {
+                await axios.post("http://192.168.1.14:5555/user" + "/updateImage", formData, {
                     headers: {
                        Authorization: `Bearer ${token}` ,
                         'Content-Type': 'multipart/form-data',
@@ -175,7 +175,7 @@ const EditPorfileScreen = ({ navigation }) => {
                 
                 // If the token exists, make the API request
                 if (token) {
-                    const response = await axios.get("http://192.168.1.17:5555/user/getUser", {
+                    const response = await axios.get("http://192.168.1.14:5555/user/getUser", {
                         headers: { Authorization: `Bearer ${token}` },
                     });
 
@@ -200,7 +200,7 @@ const EditPorfileScreen = ({ navigation }) => {
             if (selectedCountry) {
                 let configuration = {
                     method: "PUT",
-                    url: "http://192.168.1.17:5555/user" + "/updateUserAdmin/"+userId,
+                    url: "http://192.168.1.14:5555/user" + "/updateUserAdmin/"+userId,
                     headers: {
                         Authorization: `Bearer ${token}`, // Include the token in the Authorization header
                     },
@@ -224,7 +224,7 @@ const EditPorfileScreen = ({ navigation }) => {
             } else {
                 configuration = {
                     method: "PUT",
-                    url: "http://192.168.1.17:5555/user" + "/updateUserAdmin/"+userId,
+                    url: "http://192.168.1.14:5555/user" + "/updateUserAdmin/"+userId,
                     headers: {
                         Authorization: `Bearer ${token}`, // Include the token in the Authorization header
                     },
@@ -287,7 +287,7 @@ const EditPorfileScreen = ({ navigation }) => {
                                     <Image source={userimage} style={styles.profileImage}  />
                                     :
                                     <Image 
-                                    source={{ uri: 'http://192.168.1.17:5555/uploads/user/' + client.image }}
+                                    source={{ uri: 'http://192.168.1.14:5555/uploads/user/' + client.image }}
                                     style={styles.profileImage}
                                 />
                                 

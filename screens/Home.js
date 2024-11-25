@@ -13,8 +13,10 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 
 
 const Tab = createBottomTabNavigator();
-const API_BASE_URL_FRANCHISE = 'http://192.168.1.17:5555/franchise';
-const API_BASE_URL = 'http://192.168.1.17:5555/user';
+const API_BASE_URL_FRANCHISE = 'http://192.168.1.14:5555/franchise';
+const API_BASE_URL = 'http://192.168.1.14:5555/user';
+
+
 
 function CustomTabBar({ state, descriptors, navigation, selectedColor }) {
   return (
@@ -50,8 +52,8 @@ function CustomTabBar({ state, descriptors, navigation, selectedColor }) {
           iconName = 'menu';
         } else if (route.name === 'Restaurants') {
           iconName = 'restaurant';
-        } else if (route.name === 'SSys') {
-          iconName = 'settings';
+        } else if (route.name === 'Chat') {
+          iconName = 'chatbubbles';
         }
 
         // Determine the button color based on the active route
@@ -241,8 +243,8 @@ const Home = () => {
         }}
       />
       <Tab.Screen
-        name="SSys"
-        component={SetupSystem}
+        name="Chat"
+        component={ConversationsPage}
         options={{
           headerTitleAlign: 'center',
           headerStyle: {
@@ -269,37 +271,96 @@ const HomeScreen = ({ navigation }) => {
         const storedRole = await AsyncStorage.getItem('userRole');
         const storedAddress = await AsyncStorage.getItem('userAddress');
 
-        if (storedFirstName) setFirstName(storedFirstName);
-        if (storedRole) setRole(storedRole);
-        if (storedAddress) setAddress(storedAddress);
+        setFirstName(storedFirstName || 'Guest');
+        setRole(storedRole || 'Unknown Role');
+        setAddress(storedAddress || 'Unknown Location');
       } catch (error) {
         console.error('Failed to load stored data', error);
+        Alert.alert('Error', 'Failed to load user data.');
       }
     };
 
     loadData();
   }, []);
 
+  // Mock restaurant news data
+  const restaurantNews = [
+    {
+      id: 1,
+      title: 'New Menu Launch!',
+      description: 'Check out our latest dishes at Bistro Delight.',
+      image: require('../assets/Torino.jpg'), // Remplacez par vos images locales
+    },
+    {
+      id: 2,
+      title: 'Happy Hour',
+      description: '50% off on all drinks at ChillZone from 5-7 PM.',
+      image: require('../assets/Torino.jpg'),
+    },
+    {
+      id: 3,
+      title: 'Grand Opening',
+      description: 'Join us for the grand opening of Urban Eats.',
+      image: require('../assets/Torino.jpg'),
+    },
+  ];
+  
+
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
+        {/* Setup System Button */}
+        <TouchableOpacity
+          style={styles.setupButton}
+          onPress={() => navigation.navigate('SetupSystem')}
+          accessible
+          accessibilityLabel="Setup System"
+          accessibilityHint="Navigate to setup system page"
+        >
+          <Text style={styles.setupButtonText}>Setup System</Text>
+        </TouchableOpacity>
+
+        {/* Welcome Message */}
         <Text style={styles.welcomeText}>Welcome, {firstName}!</Text>
 
+        {/* Profile Summary */}
         <View style={styles.profileSummary}>
           <Text style={styles.profileSummaryTitle}>Profile Summary</Text>
           <Text style={styles.profileSummaryText}>Role: {role}</Text>
           <Text style={styles.profileSummaryText}>Location: {address}</Text>
         </View>
 
-        {/* Placeholder for future news section */}
+        {/* Restaurant News Section */}
         <View style={styles.newsSection}>
-          <Text style={styles.newsHeading}>Latest News</Text>
-          <Text style={styles.newsPlaceholder}>Coming soon...</Text>
+          <Text style={styles.newsHeading}>Latest Restaurant News</Text>
+          {restaurantNews.map((news) => (
+            <TouchableOpacity
+              key={news.id}
+              style={styles.cardView}
+              accessible
+              accessibilityLabel={`News: ${news.title}`}
+              accessibilityHint="Tap to read more"
+              onPress={() => Alert.alert(news.title, news.description)}
+            >
+              <View style={styles.cardContent}>
+                <Image
+                  source={news.image}
+                  style={styles.cardImage}
+                />
+                <View>
+                  <Text style={styles.cardTitle}>{news.title}</Text>
+                  <Text style={styles.cardDescription}>{news.description}</Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+          ))}
         </View>
       </View>
     </ScrollView>
   );
 };
+
+
 
 
 
@@ -529,6 +590,57 @@ const styles = StyleSheet.create({
   messageTime: {
     fontSize: 14,
     color: '#aaa',
+  },
+  cardView: {
+    width: '100%',
+    backgroundColor: '#fff',
+    padding: 15,
+    borderRadius: 10,
+    marginVertical: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 5,
+  },
+  cardDescription: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 10,
+  },
+  cardIconContainer: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+  },
+  cardButton: {
+    backgroundColor: '#f28b82',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    alignSelf: 'flex-start',
+  },
+  cardButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  cardImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25, // Circular shape
+    marginRight: 15,
   },
 });
 

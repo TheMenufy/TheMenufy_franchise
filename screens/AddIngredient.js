@@ -31,7 +31,7 @@ const AddIngredient = () => {
         if (color !== null) {
           setSelectedColor(color);
         }
-        const response = await axios.get(`http://192.168.1.17:5555/ingredient/retrieve/${product}`);
+        const response = await axios.get(`http://192.168.1.14:5555/ingredient/retrieve/${product}`);
         setIngredients(response.data);
         console
       } catch (error) {
@@ -68,7 +68,7 @@ const AddIngredient = () => {
     }
 
     try {
-      const response = await axios.post(`http://192.168.1.17:5555/ingredient/add/${product}`, newIngredient);
+      const response = await axios.post(`http://192.168.1.14:5555/ingredient/add/${product}`, newIngredient);
       setIngredients([...ingredients, response.data.data]);
       setModalVisible(false);
       setNewIngredient({
