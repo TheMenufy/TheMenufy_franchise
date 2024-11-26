@@ -269,7 +269,7 @@ export default function AddProductScreen({ navigation }) {
               </View>
             </View>
             <View style={styles.content}>
-              <Text style={styles.welcomeText}>{animatedText}</Text>
+              <Text style={styles.welcomeText}>add a product</Text>
               <View style={styles.pickerWrapper}>
                 <RNPickerSelect
                   onValueChange={(value) => setSelectedCategory(value)}

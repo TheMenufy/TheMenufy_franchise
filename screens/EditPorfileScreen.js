@@ -2,71 +2,51 @@ import React, { useState, useEffect } from "react"
 import { Modal, ToastAndroid, KeyboardAvoidingView, TextInput, StyleSheet, Text, View, StatusBar, Image, TouchableOpacity, ActivityIndicator, ScrollView } from "react-native"
 import Icon from 'react-native-vector-icons/FontAwesome'
 import axios from 'axios';
-
 import { Picker } from '@react-native-picker/picker';
-
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import userimage from '../assets/images/user.png'
-
 const REGEX_INPUT = /^[a-zA-Z\s]+$/;
 const REGEX_date = /^(0?[1-9]|[12][0-9]|3[01])[./-](0?[1-9]|1[012])[./-]\d{4}$/;
-
 const EditPorfileScreen = ({ navigation }) => {
-
     // ------- popup ----------------------------------
     const [showPopup, setShowPopup] = useState(false);
-
     const displayPopup = (message) => {
-
         setShowPopup(true);
     };
     // --------- Langue -------------------
     const [currentLanguage, setCurrentLanguage] = useState('en');
     const [currentLanguageFR, setCurrentLanguageFR] = useState('fr');
-
-
     const [userName, setuserName] = useState('');
     const [Email, setEmail] = useState('');
     const [address, setAdresse] = useState('');
     const [Phone, setPhone] = useState('');
     const [image, setImage] = useState(null);
-
     const [client, setUser] = useState({});
-
     const [selectedCountry, setSelectedCountry] = useState("");
     const [citiesByCountry, setCitiesByCountry] = useState({});
     const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
     const [selectedCity, setSelectedCity] = useState("");
     const [cities, setCities] = useState([]);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
-
-
-
     const [galleryStatus, setGalleryStatus] = useState(null);
     const [isValiduserName, setIsValiduserName] = useState(true);
     const GALLERY_PERMISSION_KEY = '@my_app_gallery_permission';
     const IMAGE_KEY = '@my_app_image';
     const handleuserName = (input) => {
         setuserName(input);
-
     };
-
     const [isValidEmail, setIsValidEmail] = useState(true);
     const handleEmail = (input) => {
         setEmail(input);
         
     };
-
     const [isValidPhone, setIsValidPhone] = useState(true);
     const handlePhone = (input) => {
         setPhone(input);
        
     };
-
-
     useEffect(() => {
-
         fetch("http://192.168.1.17:5555/user" + "/utils/citiesByCountry")
             .then((response) => {
                 if (!response.ok) {
@@ -81,17 +61,13 @@ const EditPorfileScreen = ({ navigation }) => {
                 console.error(error);
             });
     }, []);
-
     const onCountryChange = (value) => {
         const selectedCities = citiesByCountry[value];
         const cities = selectedCities.map((city) => city.city);
         setSelectedCountry(value);
         setCities(cities);
     };
-
     /*-----------Edit Photo Profile -----------------*/
-
-
     useEffect(() => {
         (async () => {
             const status = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -113,8 +89,6 @@ const EditPorfileScreen = ({ navigation }) => {
                 }
             });
     }, []);
-
-
     const pickImage = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -122,22 +96,17 @@ const EditPorfileScreen = ({ navigation }) => {
             aspect: [4, 3],
             quality: 1,
         });
-
-
         if (!result.canceled && result.assets && result.assets.length > 0) {
             const imageUri = result.assets[0].uri;
             console.log('Image URI:', imageUri);
             setImage(imageUri);
-
             const formData = new FormData();
             const imageName = result.assets[0].fileName; // or any other name you prefer
-
             formData.append('image', {
                 uri: imageUri,
                 type: 'image/jpeg', // Make sure this matches the actual file type
                 name: imageName,
             });
-
             try {
                 const token = await AsyncStorage.getItem('userToken');
                 await AsyncStorage.setItem(IMAGE_KEY, imageUri);
@@ -148,24 +117,17 @@ const EditPorfileScreen = ({ navigation }) => {
                         'Content-Type': 'multipart/form-data',
                     },
                 });
-
                 console.log('Image mise à jour avec succès !');
             } catch (error) {
                 console.error("Error saving image to AsyncStorage or uploading", error);
             }
         }
-
     };
-
-
     if (hasGalleryPermission === null) {
         //return <ActivityIndicator />;
     } else if (hasGalleryPermission === false) {
         return <Text>No access to internal storage</Text>;
     }
-
-
-
     /*------------------------- liaison avec back : GET data------------------------------------ */
     useEffect(() => {
         const fetchUser = async () => {
@@ -178,7 +140,6 @@ const EditPorfileScreen = ({ navigation }) => {
                     const response = await axios.get("http://192.168.1.17:5555/user/getUser", {
                         headers: { Authorization: `Bearer ${token}` },
                     });
-
                     // Set the user data
                     setUser(response.data[0]);
                 } else {
@@ -188,10 +149,8 @@ const EditPorfileScreen = ({ navigation }) => {
                 console.error('Error fetching user data:', error);
             }
         };
-
         fetchUser();
     }, [client]);
-
     /* --------------------------Edit profile ---------------------------------------------- */
     const handleSubmit = async() => {
         const token = await AsyncStorage.getItem('userToken');
@@ -209,10 +168,8 @@ const EditPorfileScreen = ({ navigation }) => {
                         email: Email || client.email,
                         address: selectedCountry + ', ' + selectedCity || "Canada, Montreal",
                         phone: Phone || client.phone,
-
                     },
                 };
-
                 axios(configuration)
                     .then((result) => {
                         console.log("User data changed");
@@ -233,10 +190,8 @@ const EditPorfileScreen = ({ navigation }) => {
                         email: Email || client.email,
                         address: client.address,
                         phone: Phone || client.phone,
-
                     },
                 };
-
                 axios(configuration)
                     .then((result) => {
                         console.log("User data changed");
@@ -255,18 +210,14 @@ const EditPorfileScreen = ({ navigation }) => {
         navigation.push('Changepasswordscrean');
       };
     return (
-
         <KeyboardAvoidingView
             style={{ flex: 1 }}
-
         >
             <ScrollView
                 contentContainerStyle={styles.scrollViewContainer}
                 showsVerticalScrollIndicator={true} // Optional: Set to false if you want to hide the vertical scroll indicator
             >
                 <View style={styles.container}>
-
-
                     <StatusBar
                         barStyle="dark-content"
                         hidden={false}
@@ -274,14 +225,11 @@ const EditPorfileScreen = ({ navigation }) => {
                     />
                   
                   <Icon name='arrow-left' size={22} color='#F3F3F3' style={{ alignSelf: 'flex-start', marginTop: 20, marginLeft: 15 }}  />
-
                     <TouchableOpacity onPress={() => setShowConfirmModal(true)} >
-                        <Text style={styles.iconLng} >{('Save')} </Text>
+                        <Text style={styles.iconLng} >{('save')} </Text>
                     </TouchableOpacity>
-
                     <View style={{ flexDirection: 'column', justifyContent: 'center' }}>
                         <View style={{ alignItems: 'center', borderTopLeftRadius: 200, marginTop: 20 }}>
-
                             <TouchableOpacity onPress={() => pickImage()} style={styles.profileImageContainer}>
                             {client.image === 'client.png' ?
                                     <Image source={userimage} style={styles.profileImage}  />
@@ -296,11 +244,8 @@ const EditPorfileScreen = ({ navigation }) => {
               <Icon name="edit" size={25} color="#000000" />
             </View>
                             </TouchableOpacity>
-
                         </View>
-
                         {/* ----------------- Inputs -------------------------------------- */}
-
                         <View style={{ flexDirection: 'column', justifyContent: 'center', width: '80%', alignSelf: 'center', marginTop: 0 }}>
                             <View style={styles.viewInput}>
                                 <Text style={styles.label}>  {('User name')} </Text>
@@ -313,7 +258,6 @@ const EditPorfileScreen = ({ navigation }) => {
                                 />
                             </View>
                             {isValiduserName ? null : (<Text style={styles.invalid}>{('')}</Text>)}
-
                             <View style={styles.viewInput}>
                                 <Text style={styles.label}> {('email')} </Text>
                                 <TextInput
@@ -325,7 +269,6 @@ const EditPorfileScreen = ({ navigation }) => {
                                 />
                             </View>
                             {isValidEmail ? null : (<Text style={styles.invalid}>{('')}</Text>)}
-
                             <View style={styles.viewInput}>
                                 <Text style={styles.label}> {('Phone number')} </Text>
                                 <TextInput
@@ -340,7 +283,6 @@ const EditPorfileScreen = ({ navigation }) => {
                            
                             <Text style={styles.txtAdress}> {('address')} </Text>
                             <View style={styles.viewPicker}>
-
                                 <Picker
                                     selectedValue={selectedCountry}
                                     onValueChange={onCountryChange}
@@ -366,21 +308,14 @@ const EditPorfileScreen = ({ navigation }) => {
                                     </Picker>
                                 </View>
                                 : null}
-
 <TouchableOpacity style={styles.saveButton} onPress={handlenavigationtochangepassword}>
           <Text style={styles.saveButtonText}>Change Password</Text>
         </TouchableOpacity>
                         </View>
-
                         {/*----------------------------------------------------------------- */}
-
                     </View>
-
                     <View style={{ flex: 1, justifyContent: 'flex-end', flexDirection: 'column' }}>
                         <View style={styles.viewBar}>
-
-
-
                         </View>
                     </View>
                     <Modal
@@ -391,7 +326,6 @@ const EditPorfileScreen = ({ navigation }) => {
                     >
                         <View style={styles.popupContainer}>
                             <Icon name='times' size={22} color='#fff' style={{ alignSelf: 'flex-start', marginTop: 0, marginBottom: 5, marginLeft: 0 }} onPress={() => setShowPopup(false)} />
-
                             <Text style={styles.popupText}>{('language')}</Text>
                             <TouchableOpacity style={styles.closeButton} onPress={() => changeLanguage(currentLanguage === 'en' ? 'fr' : 'en')}>
                                 <Text style={styles.txtTouchablePopup}>French</Text>
@@ -399,7 +333,6 @@ const EditPorfileScreen = ({ navigation }) => {
                             <TouchableOpacity style={styles.closeButton} onPress={() => changeLanguage(currentLanguageFR === 'fr' ? 'en' : 'fr')}>
                                 <Text style={styles.txtTouchablePopup}>English</Text>
                             </TouchableOpacity>
-
                         </View>
                     </Modal>
                     <Modal
@@ -426,23 +359,16 @@ const EditPorfileScreen = ({ navigation }) => {
                             </View>
                         </View>
                     </Modal>
-
-
-
                 </View>
             </ScrollView>
         </KeyboardAvoidingView>
-
     );
-
 };
-
 EditPorfileScreen.navigationOptions = () => {
     return {
         headerShown: null,
     };
 };
-
 const styles = StyleSheet.create({
     saveButton: {
         backgroundColor: '#f28b82',
@@ -473,23 +399,19 @@ const styles = StyleSheet.create({
         height: 150, // Adjust the size as needed
         resizeMode: 'contain', // Adjust the resize mode as needed
     },
-
     textStyle: {
         color: 'tomato',
         fontWeight: "500"
     },
-
     modalButtons: {
         flexDirection: 'row', // This will position the buttons side by side
         width: '100%',
     },
-
     container: {
         height: '100%',
         backgroundColor: '#F3F3F3',
         flex: 1,
         flexDirection: 'column',
-
     },
     scrollViewContainer: {
         flexGrow: 1,
@@ -501,9 +423,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#F3F3F3',
         shadowOpacity: 500,
         elevation: 15,
-
     },
-
     send: {
         justifyContent: 'center',
         alignSelf: 'center',
@@ -513,7 +433,6 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         marginTop: 0,
         marginBottom: 50
-
     },
     sendTxt: {
         fontSize: 15,
@@ -546,20 +465,15 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         paddingLeft: 10,
     },
-
     viewInput: {
         flexDirection: 'column',
         marginTop: 5,
         borderRadius: 30,
-
     },
     label: {
         fontSize: 15,
         textAlign: 'left',
         marginTop: 10,
-
-
-
     },
     txtAdress: {
         marginTop: 10,
@@ -619,7 +533,6 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         marginRight: 10,
         width: '50%'
-
     },
     buttonstyle2: {
         backgroundColor: '#fff',
@@ -629,7 +542,6 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         marginRight: 10,
         width: '50%'
-
     },
     txtTouchablePopup: {
         color: '#fff',
@@ -655,7 +567,5 @@ const styles = StyleSheet.create({
         padding: 10,
         margin:5
       },
-
 });
-
 export default EditPorfileScreen;

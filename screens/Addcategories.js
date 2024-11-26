@@ -30,22 +30,8 @@ export default function Addcategories({ navigation }) {
 
   // extra for better displaying 
   const [selectedColor, setSelectedColor] = useState('#ffffff');
-  const [animatedText, setAnimatedText] = useState('');
 
-  useEffect(() => {
-    let text = "You can add a new categorie to this menu";
-    let index = 0;
 
-    const interval = setInterval(() => {
-        setAnimatedText((prev) => prev + text[index]);
-      index++;
-      if (index === text.length) {
-        clearInterval(interval);
-      }
-    },0.5); // Adjust the speed by changing the interval time
-
-    return () => clearInterval(interval);
-  }, []);
   const handlenext = () => {
     
     const AddProductScreen = () => import('./AddProductScreen');
@@ -156,7 +142,7 @@ const handleaddone = async () => {
               </View>
             </View>
             <View style={styles.content}>
-              <Text style={styles.welcomeText}>{animatedText}</Text>
+              <Text style={styles.welcomeText}>add categoie </Text>
               <View style={styles.inputContainer}>
                 <TextInput
                   style={styles.input}

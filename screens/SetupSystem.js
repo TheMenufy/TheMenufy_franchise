@@ -211,9 +211,9 @@ const SetupSystem = () => {
    
 
    
-        if (userData.length > 0) {
+        if (1) {
    
-
+         
           const updatedData = {
             nameFr: establishmentName,
             address,
