@@ -41,7 +41,7 @@ export default function AddProductScreen({ navigation }) {
   const [productId, setProductId] = useState(null);
 
   const [selectedColor, setSelectedColor] = useState('#ffffff');
-  const [animatedText, setAnimatedText] = useState('');
+  const [animatedText, setAnimatedText] = useState('Now you can add your products');
 
   useEffect(() => {
     const loadData = async () => {
@@ -59,20 +59,7 @@ export default function AddProductScreen({ navigation }) {
     loadData();
   }, []);
 
-  useEffect(() => {
-    let text = "Now you can add your products ";
-    let index = 0;
-
-    const interval = setInterval(() => {
-      setAnimatedText((prev) => prev + text[index]);
-      index++;
-      if (index === text.length) {
-        clearInterval(interval);
-      }
-    }, 100);
-
-    return () => clearInterval(interval);
-  }, []);
+  
 
   const getColor = async () => {
     try {

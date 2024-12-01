@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef }  from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ImageBackground, Alert, ScrollView } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FranchiseScreen from '../screens/Franchise';
@@ -289,22 +289,21 @@ const HomeScreen = ({ navigation }) => {
       id: 1,
       title: 'New Menu Launch!',
       description: 'Check out our latest dishes at Bistro Delight.',
-      image: require('../assets/Torino.jpg'), // Remplacez par vos images locales
+      image: require('../assets/Street19.jpg'), // Remplacez par vos images locales
     },
     {
       id: 2,
       title: 'Happy Hour',
       description: '50% off on all drinks at ChillZone from 5-7 PM.',
-      image: require('../assets/Torino.jpg'),
+      image: require('../assets/TorinoTunis.jpg'),
     },
     {
       id: 3,
       title: 'Grand Opening',
       description: 'Join us for the grand opening of Urban Eats.',
-      image: require('../assets/Torino.jpg'),
+      image: require('../assets/HammamLif.jpg'),
     },
   ];
-  
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -342,16 +341,16 @@ const HomeScreen = ({ navigation }) => {
               accessibilityHint="Tap to read more"
               onPress={() => Alert.alert(news.title, news.description)}
             >
-              <View style={styles.cardContent}>
-                <Image
-                  source={news.image}
-                  style={styles.cardImage}
-                />
-                <View>
+              <ImageBackground
+                source={news.image}
+                style={styles.cardImageBackground}
+                imageStyle={styles.cardImage}
+              >
+                <View style={styles.cardContent}>
                   <Text style={styles.cardTitle}>{news.title}</Text>
                   <Text style={styles.cardDescription}>{news.description}</Text>
                 </View>
-              </View>
+              </ImageBackground>
             </TouchableOpacity>
           ))}
         </View>
@@ -359,7 +358,6 @@ const HomeScreen = ({ navigation }) => {
     </ScrollView>
   );
 };
-
 
 
 
@@ -536,7 +534,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 25,
     borderRadius: 15,
-    marginHorizontal:16,
+    marginHorizontal: 16,
     alignItems: 'center',
     width: '90%',
     marginBottom: 20,
@@ -593,8 +591,6 @@ const styles = StyleSheet.create({
   },
   cardView: {
     width: '100%',
-    backgroundColor: '#fff',
-    padding: 15,
     borderRadius: 10,
     marginVertical: 10,
     shadowColor: '#000',
@@ -605,18 +601,26 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 5,
-    borderWidth: 1,
-    borderColor: '#ddd',
+    overflow: 'hidden', // Ensure the background image is clipped to the border radius
+  },
+  cardImageBackground: {
+    width: '100%',
+    height: 150,
+    justifyContent: 'flex-end',
+  },
+  cardContent: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    padding: 10,
   },
   cardTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#fff',
     marginBottom: 5,
   },
   cardDescription: {
     fontSize: 16,
-    color: '#666',
+    color: '#fff',
     marginBottom: 10,
   },
   cardIconContainer: {
@@ -636,12 +640,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
   },
-  cardImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25, // Circular shape
-    marginRight: 15,
-  },
 });
+
+
 
 export default Home;

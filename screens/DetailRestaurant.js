@@ -30,8 +30,7 @@ const DetailRestaurant = ({ route }) => {
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
         {/* Display the image using URI */}
-       
-        <Image  source={image ? { uri: image } : defaultImage}  style={[styles.image, { width }]} />
+        <Image source={image ? { uri: image } : defaultImage} style={[styles.image, { width }]} />
 
         {/* Restaurant name and View Menu link in a row */}
         <View style={styles.nameMenuContainer}>
@@ -44,18 +43,21 @@ const DetailRestaurant = ({ route }) => {
         {/* Cuisine type displayed as a hashtag */}
         <Text style={styles.description}>{cuisineHashtag}</Text>
 
-        <View style={styles.infoSection}>
+        {/* Address Card */}
+        <View style={styles.card}>
           <Text style={styles.heading}>Address:</Text>
           <Text style={styles.address}>{address}</Text>
         </View>
 
-        <View style={styles.infoSection}>
+        {/* Contact Card */}
+        <View style={styles.card}>
           <Text style={styles.heading}>Contact:</Text>
           <Text style={styles.phone}>{phone}</Text>
           <Text style={styles.email}>{email}</Text>
         </View>
 
-        <View style={styles.infoSection}>
+        {/* Social Media Links Card */}
+        <View style={styles.card}>
           <Text style={styles.heading}>Follow us:</Text>
           <Text style={styles.link}>{facebookLink}</Text>
           <Text style={styles.link}>{twitterLink}</Text>
@@ -63,6 +65,7 @@ const DetailRestaurant = ({ route }) => {
           <Text style={styles.link}>{tiktokLink}</Text>
         </View>
 
+        {/* Buttons */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.updateButton} onPress={handleUpdate}>
             <Text style={styles.buttonText}>Update</Text>
@@ -158,6 +161,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginRight: 10,
     flex: 1,
+    alignItems: 'center',
   },
   deleteButton: {
     backgroundColor: '#f44336',
@@ -165,11 +169,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     borderRadius: 5,
     flex: 1,
+    alignItems: 'center',
   },
-  infoSection: {
-    width: '100%',
-    paddingHorizontal: 20,
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  card: {
+    width: '90%',
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
     marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 5,
   },
 });
 
