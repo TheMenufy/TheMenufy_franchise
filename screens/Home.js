@@ -259,29 +259,47 @@ const Home = () => {
   );
 };
 
+
+
 const HomeScreen = ({ navigation }) => {
   const [firstName, setFirstName] = useState('');
   const [role, setRole] = useState('');
   const [address, setAddress] = useState('');
+  const [theme, setTheme] = useState('light'); // Default theme is light
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const storedFirstName = await AsyncStorage.getItem('userName');
-        const storedRole = await AsyncStorage.getItem('userRole');
-        const storedAddress = await AsyncStorage.getItem('userAddress');
+  // Fetch theme from AsyncStorage
+  const fetchTheme = async () => {
+    try {
+      const savedTheme = await AsyncStorage.getItem('theme');
+      setTheme(savedTheme || 'light'); // Default to 'light' if no theme is stored
+    } catch (error) {
+      console.error('Failed to load theme:', error);
+    }
+  };
 
-        setFirstName(storedFirstName || 'Guest');
-        setRole(storedRole || 'Unknown Role');
-        setAddress(storedAddress || 'Unknown Location');
-      } catch (error) {
-        console.error('Failed to load stored data', error);
-        Alert.alert('Error', 'Failed to load user data.');
-      }
-    };
+  // Load user data from AsyncStorage
+  const loadUserData = async () => {
+    try {
+      const storedFirstName = await AsyncStorage.getItem('userName');
+      const storedRole = await AsyncStorage.getItem('userRole');
+      const storedAddress = await AsyncStorage.getItem('userAddress');
+      
+      setFirstName(storedFirstName || 'Guest');
+      setRole(storedRole || 'Unknown Role');
+      setAddress(storedAddress || 'Unknown Location');
+    } catch (error) {
+      console.error('Failed to load stored data', error);
+      Alert.alert('Error', 'Failed to load user data.');
+    }
+  };
 
-    loadData();
-  }, []);
+  // Fetch theme and user data when screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      fetchTheme();
+      loadUserData();
+    }, [])
+  );
 
   // Mock restaurant news data
   const restaurantNews = [
@@ -289,7 +307,7 @@ const HomeScreen = ({ navigation }) => {
       id: 1,
       title: 'New Menu Launch!',
       description: 'Check out our latest dishes at Bistro Delight.',
-      image: require('../assets/Street19.jpg'), // Remplacez par vos images locales
+      image: require('../assets/Street19.jpg'),
     },
     {
       id: 2,
@@ -305,9 +323,14 @@ const HomeScreen = ({ navigation }) => {
     },
   ];
 
+  // Dynamic styles based on theme
+  const containerStyle = theme === 'dark' ? styles.containerDark : styles.containerLight;
+  const textStyle = theme === 'dark' ? styles.textDark : styles.textLight;
+  const cardViewStyle = theme === 'dark' ? { ...styles.cardView, backgroundColor: 'black' } : styles.cardView;
+
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <View style={styles.container}>
+      <View style={[styles.container, containerStyle]}>
         {/* Setup System Button */}
         <TouchableOpacity
           style={styles.setupButton}
@@ -316,26 +339,27 @@ const HomeScreen = ({ navigation }) => {
           accessibilityLabel="Setup System"
           accessibilityHint="Navigate to setup system page"
         >
-          <Text style={styles.setupButtonText}>Setup System</Text>
+          <Text style={[styles.setupButtonText, textStyle]}>Setup System</Text>
         </TouchableOpacity>
 
         {/* Welcome Message */}
-        <Text style={styles.welcomeText}>Welcome, {firstName}!</Text>
+        <Text style={[styles.welcomeText, textStyle]}>Welcome, {firstName}!</Text>
 
         {/* Profile Summary */}
-        <View style={styles.profileSummary}>
-          <Text style={styles.profileSummaryTitle}>Profile Summary</Text>
-          <Text style={styles.profileSummaryText}>Role: {role}</Text>
-          <Text style={styles.profileSummaryText}>Location: {address}</Text>
+        <View style={[styles.profileSummary, theme === 'dark' && styles.profileSummaryDark]}>
+        <Text style={[styles.profileSummaryTitle, textStyle]}>Profile Summary</Text>
+        <Text style={[styles.profileSummaryText, textStyle]}>Role: {role}</Text>
+        <Text style={[styles.profileSummaryText, textStyle]}>Location: {address}</Text>
         </View>
+
 
         {/* Restaurant News Section */}
         <View style={styles.newsSection}>
-          <Text style={styles.newsHeading}>Latest Restaurant News</Text>
+          <Text style={[styles.newsHeading, textStyle]}>Latest Restaurant News</Text>
           {restaurantNews.map((news) => (
             <TouchableOpacity
               key={news.id}
-              style={styles.cardView}
+              style={cardViewStyle}
               accessible
               accessibilityLabel={`News: ${news.title}`}
               accessibilityHint="Tap to read more"
@@ -360,8 +384,6 @@ const HomeScreen = ({ navigation }) => {
 };
 
 
-
-
 const ProfileScreen = () => {
   return <ProfilePage />;
 };
@@ -381,12 +403,12 @@ const ConversationsScreen = () => {
 const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#fff', // Default background color for light mode
     paddingVertical: 20,
   },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#fff', // Default background color for light mode
     padding: 10,
   },
   welcomeText: {
@@ -394,9 +416,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
+    color: '#000', // Default text color for light mode
   },
   profileSummary: {
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#f9f9f9', // Default background color for light mode
     borderRadius: 10,
     padding: 15,
     marginBottom: 20,
@@ -413,11 +436,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#333',
+    color: '#333', // Default text color for light mode
   },
   profileSummaryText: {
     fontSize: 16,
-    color: '#666',
+    color: '#666', // Default text color for light mode
     marginBottom: 5,
   },
   newsSection: {
@@ -428,9 +451,10 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: '#000', // Default text color for light mode
   },
   newsCard: {
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#f9f9f9', // Default background color for light mode
     padding: 15,
     borderRadius: 10,
     marginBottom: 10,
@@ -446,10 +470,11 @@ const styles = StyleSheet.create({
   newsTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#000', // Default text color for light mode
   },
   newsDescription: {
     fontSize: 16,
-    color: '#666',
+    color: '#666', // Default text color for light mode
     marginTop: 5,
   },
   profileHeader: {
@@ -473,19 +498,20 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 5,
+    color: '#000', // Default text color for light mode
   },
   role: {
     fontSize: 18,
     marginBottom: 5,
-    color: '#555',
+    color: '#555', // Default text color for light mode
   },
   phoneNumber: {
     fontSize: 16,
-    color: '#888',
+    color: '#888', // Default text color for light mode
   },
   detailsSection: {
     width: '100%',
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#f9f9f9', // Default background color for light mode
     borderRadius: 10,
     padding: 15,
     shadowColor: '#000',
@@ -501,17 +527,17 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#333',
+    color: '#333', // Default text color for light mode
   },
   detailText: {
     fontSize: 16,
     marginBottom: 5,
-    color: '#666',
+    color: '#666', // Default text color for light mode
   },
   tabBar: {
     flexDirection: 'row',
     height: 60,
-    backgroundColor: 'white',
+    backgroundColor: 'white', // Default background color for light mode
     borderTopWidth: 0.5,
     borderTopColor: '#ccc',
     justifyContent: 'space-around',
@@ -548,10 +574,11 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 20,
+    color: '#000', // Default text color for light mode
   },
   conversationCard: {
     width: '100%',
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#f9f9f9', // Default background color for light mode
     padding: 15,
     borderRadius: 10,
     marginBottom: 10,
@@ -580,10 +607,11 @@ const styles = StyleSheet.create({
   conversationName: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: '#000', // Default text color for light mode
   },
   lastMessage: {
     fontSize: 16,
-    color: '#666',
+    color: '#666', // Default text color for light mode
   },
   messageTime: {
     fontSize: 14,
@@ -640,7 +668,39 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
   },
+
+  // Dark Mode Styles
+  containerDark: {
+    backgroundColor: '#121212',
+  },
+  textDark: {
+    color: '#fff',
+  },
+  profileSummaryDark: {
+    backgroundColor: '#333',
+  },
+  newsHeadingDark: {
+    color: '#fff',
+  },
+  newsCardDark: {
+    backgroundColor: '#444',
+  },
+  newsTitleDark: {
+    color: '#fff',
+  },
+  newsDescriptionDark: {
+    color: '#bbb',
+  },
+  headingDark: {
+    color: '#fff',
+  },
+  cardImageBackgroundDark: {
+    opacity: 0.7,
+  },
+  
 });
+
+
 
 
 

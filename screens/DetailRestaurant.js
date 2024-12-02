@@ -29,13 +29,15 @@ const DetailRestaurant = ({ route }) => {
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
-        {/* Display the image using URI */}
-        <Image source={image ? { uri: image } : defaultImage} style={[styles.image, { width }]} />
+        {/* Display the image using URI with a blurred background effect */}
+        <View style={styles.imageContainer}>
+          <Image source={image ? { uri: image } : defaultImage} style={[styles.image, { width }]} />
+        </View>
 
         {/* Restaurant name and View Menu link in a row */}
         <View style={styles.nameMenuContainer}>
           <Text style={styles.name}>{name}</Text>
-          <TouchableOpacity onPress={handleClickHere}>
+          <TouchableOpacity onPress={handleClickHere} style={styles.viewMenuButton}>
             <Text style={styles.viewMenu}>View Menu</Text>
           </TouchableOpacity>
         </View>
@@ -88,12 +90,18 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     marginTop: 0,
+    paddingBottom: 20,
+  },
+  imageContainer: {
+    position: 'relative',
+    marginBottom: 20,
+    width: '100%',
+    height: 250,
   },
   image: {
     height: 250,
     resizeMode: 'cover',
     borderRadius: 10,
-    marginBottom: 20,
   },
   nameMenuContainer: {
     flexDirection: 'row',
@@ -104,12 +112,24 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   name: {
-    fontSize: 26,
+    fontSize: 28,
     fontWeight: 'bold',
+    color: '#333',
+    textShadowColor: '#fff',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+  },
+  viewMenuButton: {
+    borderWidth: 1,
+    borderColor: '#007BFF',
+    borderRadius: 20,
+    paddingVertical: 6,
+    paddingHorizontal: 15,
+    backgroundColor: '#007BFF',
   },
   viewMenu: {
     fontSize: 18,
-    color: '#007BFF',
+    color: '#fff',
     textDecorationLine: 'underline',
   },
   description: {
@@ -120,13 +140,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   heading: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: 'bold',
     marginVertical: 10,
+    color: '#333',
   },
   address: {
     fontSize: 18,
-    color: '#333',
+    color: '#555',
     marginBottom: 20,
   },
   phone: {
@@ -156,20 +177,22 @@ const styles = StyleSheet.create({
   },
   updateButton: {
     backgroundColor: '#4CAF50',
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 5,
-    marginRight: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 30,
     flex: 1,
     alignItems: 'center',
+    marginRight: 10,
+    elevation: 4,
   },
   deleteButton: {
     backgroundColor: '#f44336',
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 5,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 30,
     flex: 1,
     alignItems: 'center',
+    elevation: 4,
   },
   buttonText: {
     color: '#fff',
@@ -179,14 +202,14 @@ const styles = StyleSheet.create({
   card: {
     width: '90%',
     backgroundColor: '#fff',
-    borderRadius: 10,
+    borderRadius: 12,
     padding: 20,
     marginBottom: 20,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 6,
   },
 });
 

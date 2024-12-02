@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ImageBackground, ScrollView, TouchableOpacity }
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import defaultImage from '../assets/default_image.jpg'; // Adjust the path as needed
+import defaultImage from '../assets/default_image.jpg'; // Ajustez le chemin si nécessaire
 
 const API_BASE_URL_RESTAURANTS = 'http://192.168.1.14:5555/restaurant';
 const API_BASE_URL = 'http://192.168.1.14:5555/user';
@@ -23,7 +23,18 @@ const getUser = async (token) => {
 const RestaurantScreen = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [franchiseFK, setFranchiseFK] = useState(null);
+  const [theme, setTheme] = useState('light'); // Définir un état pour le thème
   const navigation = useNavigation();
+
+  // Fonction pour récupérer le thème stocké
+  const fetchTheme = async () => {
+    try {
+      const savedTheme = await AsyncStorage.getItem('theme');
+      setTheme(savedTheme || 'light'); // Par défaut 'light' si aucune valeur n'est trouvée
+    } catch (error) {
+      console.error('Failed to load theme:', error);
+    }
+  };
 
   const fetchUserData = async () => {
     try {
@@ -40,7 +51,7 @@ const RestaurantScreen = () => {
   };
 
   useEffect(() => {
-    fetchUserData();
+    fetchUserData(); // Charger les données utilisateur une fois au démarrage
   }, []);
 
   const fetchRestaurants = useCallback(() => {
@@ -57,13 +68,14 @@ const RestaurantScreen = () => {
   }, [franchiseFK]);
 
   useEffect(() => {
-    fetchUserData();
-  }, []);
+    fetchRestaurants(); // Charger les restaurants lors du montage du composant
+  }, [fetchRestaurants]);
 
   useFocusEffect(
     useCallback(() => {
-      fetchRestaurants();
-    }, [fetchRestaurants])
+      fetchRestaurants(); // Récupérer les restaurants à chaque fois que la page devient active
+      fetchTheme(); // Récupérer et appliquer le thème à chaque fois que la page devient active
+    }, [])
   );
 
   const navigateToDetail = (restaurant) => {
@@ -85,9 +97,12 @@ const RestaurantScreen = () => {
     navigation.navigate('AddRestaurant'); // Naviguer vers la page d'ajout de restaurant
   };
 
+  const containerStyle = theme === 'dark' ? styles.containerDark : styles.containerLight;
+  const cardBackgroundStyle = theme === 'dark' ? styles.cardBackgroundDark : styles.cardBackgroundLight;
+
   return (
     <ScrollView contentContainerStyle={styles.scrollView}>
-      <View style={styles.container}>
+      <View style={[styles.container, containerStyle]}>
         {restaurants.map((restaurant) => (
           <TouchableOpacity
             key={restaurant._id}
@@ -95,7 +110,8 @@ const RestaurantScreen = () => {
             onPress={() => navigateToDetail(restaurant)}
           >
             <ImageBackground
-            source={restaurant.images ? { uri: restaurant.images } : defaultImage}              style={styles.cardBackground}
+              source={restaurant.images ? { uri: restaurant.images } : defaultImage}
+              style={[styles.cardBackground, cardBackgroundStyle]}
             >
               <Text style={styles.cardText}>{restaurant.nameRes}</Text>
             </ImageBackground>
@@ -128,6 +144,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 10,
   },
+  containerLight: {
+    backgroundColor: '#fff',
+  },
+  containerDark: {
+    backgroundColor: '#333',
+  },
   card: {
     width: '100%',
     aspectRatio: 16 / 9,
@@ -135,11 +157,18 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: 'hidden',
   },
-  cardBackground: {
+  cardBackgroundLight: {
     flex: 1,
     resizeMode: 'cover',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  cardBackgroundDark: {
+    flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#444', // Une couleur de fond plus sombre
   },
   cardText: {
     fontSize: 24,
